@@ -1,0 +1,37 @@
+{
+  "name": "shrinkpack",
+  "version": "0.1.0",
+  "description": "Check-in your dependencies as tarballs with npm shrinkwrap.",
+  "main": "shrinkpack",
+  "author": "Jamie Mason <siunmaru@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/JamieMason/shrinkpack",
+  "bin": {
+    "shrinkpack": "shrinkpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JamieMason/shrinkpack.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JamieMason/shrinkpack/issues"
+  },
+  "dependencies": {
+    "chalk": "0.5.1",
+    "is": "2.2.1",
+    "shelljs": "0.3.0"
+  },
+  "keywords": [
+    "bundle",
+    "shrinkwrap",
+    "offline",
+    "npm",
+    "deployments",
+    "deploy",
+    "install",
+    "package",
+    "cache",
+    "save",
+    "import"
+  ]
+}
