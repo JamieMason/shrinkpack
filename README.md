@@ -134,3 +134,5 @@ done
   }
 }
 ```
+
+You can check it's worked as expected by deleting the node_modules folder and re-installing your dependencies `npm install --loglevel http`, if you see no http requests logged in your console then shrinkpack has done it's job.
