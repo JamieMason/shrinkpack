@@ -1,5 +1,7 @@
 # shrinkpack
 
+[![Join the chat at https://gitter.im/JamieMason/shrinkpack](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JamieMason/shrinkpack?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 > Remove npm registry as a <abbr title="Single Point Of Failure">SPOF</abbr>, check-in your dependencies as tarballs.
 
 Shrinkpack compliments the [npm shrinkwrap](https://docs.npmjs.com/cli/shrinkwrap) command by maintaining a `node_shrinkwrap` directory which can be checked into source control. This directory contains a tarball for every dependency in your project, including nested dependencies.
