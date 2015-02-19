@@ -1,6 +1,6 @@
 {
   "name": "shrinkpack",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Check-in your dependencies as tarballs with npm shrinkwrap.",
   "main": "shrinkpack",
   "author": "Jamie Mason <siunmaru@gmail.com>",
