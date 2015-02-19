@@ -3,10 +3,12 @@ var fs = require('fs');
 var is = require('is');
 var path = require('path');
 var shell = require('shelljs');
+var when = require('when');
 
 var log = require('./src/log');
 var tarball = require('./src/tarball');
 var traverse = require('./src/traverse');
+var terminal = require('./src/terminal');
 
 function getProjectPath() {
   return process.env.PWD;
@@ -78,6 +80,7 @@ module.exports = {
     var graphData = require(graph);
     var projectPath = getProjectPath();
     var savePath = tarball.getSavePath();
+    var saveOperations = [];
 
     log.info('saving dependencies to', log.underline(savePath));
 
@@ -96,21 +99,31 @@ module.exports = {
 
         value.resolved = path.relative(projectPath, packed);
 
-        shell.exec('npm cache add ' + shortName);
-
-        log.info('save', log.underline(packed));
-
-        shell.cp('-f', cached, packed);
+        saveOperations.push(
+          terminal
+          .exec('npm cache add ' + shortName)
+          .then(function() {
+            log.info('save', log.underline(packed));
+            shell.cp('-f', cached, packed);
+          })
+        );
 
       }
 
     });
 
-    log.info('update', log.underline(graph));
-
-    fs.writeFileSync(graph, JSON.stringify(graphData, null, 2));
-
-    done(null);
+    when.all(saveOperations)
+      .then(
+        function() {
+          log.info('update', log.underline(graph));
+          fs.writeFileSync(graph, JSON.stringify(graphData, null, 2));
+          done(null);
+        },
+        function() {
+          console.log('failure', arguments);
+          done('error');
+        }
+      );
 
   }
 
