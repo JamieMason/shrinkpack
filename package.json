@@ -22,6 +22,9 @@
     "shelljs": "0.3.0",
     "when": "3.7.2"
   },
+  "devDependencies": {
+    "conventional-changelog": "0.0.11"
+  },
   "keywords": [
     "bundle",
     "shrinkwrap",
