@@ -19,7 +19,8 @@
   "dependencies": {
     "chalk": "0.5.1",
     "is": "2.2.1",
-    "shelljs": "0.3.0"
+    "shelljs": "0.3.0",
+    "when": "3.7.2"
   },
   "keywords": [
     "bundle",
