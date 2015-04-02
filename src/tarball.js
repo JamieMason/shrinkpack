@@ -2,8 +2,12 @@ var os = require('os');
 var path = require('path');
 
 var isWindows = /^win[0-9]{2}$/.test(os.platform());
-var HOME = process.env[isWindows ? 'USERPROFILE' : 'HOME'];
+var HOME = process.env[isWindows ? 'APPDATA' : 'HOME'];
 var CACHE = isWindows ? 'npm-cache' : '.npm';
+
+function getProjectPath() {
+  return process.env.PWD || process.cwd();
+}
 
 module.exports = {
 
@@ -41,7 +45,7 @@ module.exports = {
     if (name && version) {
       return path.resolve(
         path.join(
-          process.env.PWD,
+          getProjectPath(),
           'node_shrinkwrap',
           name + '-' + version + '.tgz'
         )
@@ -49,7 +53,7 @@ module.exports = {
     }
     return path.resolve(
       path.join(
-        process.env.PWD,
+        getProjectPath(),
         'node_shrinkwrap'
       )
     );
