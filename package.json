@@ -7,7 +7,7 @@
   "license": "MIT",
   "homepage": "https://github.com/JamieMason/shrinkpack",
   "bin": {
-    "shrinkpack": "shrinkpack"
+    "shrinkpack": "index.js"
   },
   "repository": {
     "type": "git",
