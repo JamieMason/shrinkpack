@@ -68,7 +68,7 @@ module.exports = {
 
     log.info('npm shrinkwrap into', log.underline(graph));
 
-    shell.exec('npm shrinkwrap', {
+    shell.exec('npm shrinkwrap --dev', {
       silent: true
     });
 
