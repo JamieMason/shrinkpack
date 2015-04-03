@@ -4,6 +4,9 @@
   "description": "Check-in your dependencies as tarballs with npm shrinkwrap.",
   "main": "shrinkpack",
   "author": "Jamie Mason <siunmaru@gmail.com>",
+  "contributors": [
+    "Jason Hewison <jasonhewison@chunkysamurai.com>"
+  ],
   "license": "MIT",
   "homepage": "https://github.com/JamieMason/shrinkpack",
   "bin": {
