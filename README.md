@@ -4,17 +4,19 @@
 
 > Remove npm registry as a <abbr title="Single Point Of Failure">SPOF</abbr>, check-in your dependencies as tarballs.
 
-Shrinkpack compliments the [npm shrinkwrap](https://docs.npmjs.com/cli/shrinkwrap) command by maintaining a `node_shrinkwrap` directory which can be checked into source control. This directory contains a tarball for every dependency in your project, including nested dependencies.
+Shrinkpack compliments the [npm shrinkwrap](https://docs.npmjs.com/cli/shrinkwrap) command by maintaining a `node_shrinkwrap` directory in your project, which can be ignored in your editor and checked into source control. 
+
+The directory contains the exact same tarballs npm install downloads from [https://registry.npmjs.org](https://registry.npmjs.org) and the rest of the npm install process is exactly the same. The only difference is that no network activity is necessary when installing and building your project.
 
 ## Installation
 
 ```
-npm install -g shrinkpack
+npm install --save-dev shrinkpack
 ```
 
-## Status
+## Usage
 
-This is a new project which in it's current form is a working proof of concept.
+Whenever the contents of your package.json change, run `npm shrinkwrap` to generate a new dependency graph, then run `shrinkpack` to update the contents of the `node_shrinkwrap` directory.
 
 ## Feedback
 
@@ -63,7 +65,7 @@ If `lolwut@0.2.4` contains a regression and you're not using `npm shrinkwrap` th
 
 With you hopefully convinced of the merits of `npm shrinkwrap`, `shrinkpack` will hopefully be seen as a small and complimentary addition.
 
-`shrinkpack` (a kind-of-but-probably-not mix of `npm shrinkwrap` and `npm pack`) takes `npm shrinkwrap` a little further by taking the .tgz tarballs of that specific, shrinkwrapped dependency graph saved by `npm shrinkwrap` and  stores them within your project.
+`shrinkpack` hopes to take `npm shrinkwrap` a little further by taking the .tgz tarballs of that specific, shrinkwrapped dependency graph saved by `npm shrinkwrap` and  stores them within your project.
 
 This means;
 
@@ -136,25 +138,26 @@ This is typical behaviour, npm downloads the packages from the registry and inst
 └── package.json
 ```
 
-Next Carina runs `shrinkpack` from the my-project directory.
+Next Carina runs `npm shrinkwrap --dev` from the my-project directory.
 
 ```
-clean /Users/fold_left/Development/my-project
-npm install into /Users/fold_left/Development/my-project/node_modules
-npm shrinkwrap into /Users/fold_left/Development/my-project/npm-shrinkwrap.json
-analysing dependency graph
-saving dependencies to /Users/fold_left/Development/my-project/node_shrinkwrap
-save /Users/fold_left/Development/my-project/node_shrinkwrap/chalk-0.5.1.tgz
-save /Users/fold_left/Development/my-project/node_shrinkwrap/ansi-styles-1.1.0.tgz
-save /Users/fold_left/Development/my-project/node_shrinkwrap/escape-string-regexp-1.0.2.tgz
-save /Users/fold_left/Development/my-project/node_shrinkwrap/has-ansi-0.1.0.tgz
-save /Users/fold_left/Development/my-project/node_shrinkwrap/ansi-regex-0.2.1.tgz
-save /Users/fold_left/Development/my-project/node_shrinkwrap/strip-ansi-0.3.0.tgz
-save /Users/fold_left/Development/my-project/node_shrinkwrap/ansi-regex-0.2.1.tgz
-save /Users/fold_left/Development/my-project/node_shrinkwrap/supports-color-0.2.0.tgz
-save /Users/fold_left/Development/my-project/node_shrinkwrap/lodash-3.2.0.tgz
-update /Users/fold_left/Development/my-project/npm-shrinkwrap.json
-done
+$ npm shrinkwrap --dev
+wrote npm-shrinkwrap.json
+```
+
+Then she runs `shrinkpack`.
+
+```
+$ shrinkpack
++ chalk@0.5.1
++ ansi-styles@1.1.0
++ escape-string-regexp@1.0.3
++ ansi-regex@0.2.1
++ lodash@3.2.0
++ has-ansi@0.1.0
++ supports-color@0.2.0
++ strip-ansi@0.3.0
+shrinkpack +8 -0
 ```
 
 Leaving the following directory structure.
@@ -176,7 +179,7 @@ Leaving the following directory structure.
 └── package.json
 ```
 
-An up to date `npm-shrinkwrap.json` has also been created, which references via the `resolved` property, the checked-in packages in the `node_shrinkwrap` directory.
+`npm-shrinkwrap.json` has also been updated so that each `resolved` property points to the checked-in packages in the `node_shrinkwrap` directory.
 
 ```json
 {
@@ -274,4 +277,4 @@ This is new behaviour, npm didn't hit the network at all. Instead it read the pa
 
 ### Changing and removing dependencies
 
-Simply edit your package.json and re-run `shrinkwrap` to update your `npm-shrinkwrap.json` file and `node_shrinkwrap` directory.
+Simply edit your package.json and re-run `npm shrinkwrap` followed by `shrinkpack`.
