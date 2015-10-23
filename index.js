@@ -2,137 +2,170 @@
 
 'use strict';
 
-var childProcess = require('child_process');
+// 3rd party modules
+
+var chalk = require('chalk');
 var fs = require('fs');
-var is = require('is');
+var npm = require('npm');
 var path = require('path');
-var shell = require('shelljs');
 var when = require('when');
 
-var log = require('./src/log');
-var tarball = require('./src/tarball');
-var traverse = require('./src/traverse');
-var terminal = require('./src/terminal');
+// Modules
 
-function getProjectPath() {
-  return process.env.PWD || process.cwd();
+var file = require('./src/file');
+var npmCache = require('./src/npmCache');
+var shrinkpack = require('./src/shrinkpack');
+var shrinkwrap = require('./src/shrinkwrap');
+
+// Run
+
+loadNpm()
+    .then(getConfig)
+    .then(createDirectory)
+    .then(getDeps)
+    .then(prune)
+    .then(getMissingDeps)
+    .then(addMissingDeps)
+    .then(updateShrinkwrap)
+    .then(displaySummary, displayFailure);
+
+// Implementation
+
+function loadNpm() {
+    return when.promise(function(resolve) {
+        npm.load(resolve);
+    });
 }
 
-function getFilePath(file) {
-  return path.normalize(
-    path.join(
-      getProjectPath(),
-      file
-    )
-  );
-}
+function getConfig() {
+    var projectPath = getPathToProject();
+    var graphPath = path.join(projectPath, 'npm-shrinkwrap.json');
+    var graph = require(graphPath);
+    var shrinkpackPath = path.join(projectPath, 'node_shrinkwrap');
 
-module.exports = {
-
-  update: function(done) {
-    module.exports.clean(function() {
-      module.exports.rebuild(function() {
-        module.exports.save(done);
-      });
-    });
-  },
-
-  clean: function(done) {
-
-    var graph = getFilePath('npm-shrinkwrap.json');
-    var dependencies = getFilePath('node_modules');
-    var savePath = tarball.getSavePath();
-
-    log.info('clean', log.underline(getProjectPath()));
-
-    shell.rm('-f', graph);
-    shell.rm('-rf', dependencies);
-    shell.rm('-rf', savePath);
-
-    done(null);
-
-  },
-
-  rebuild: function(done) {
-
-    var graph = getFilePath('npm-shrinkwrap.json');
-    var dependencies = getFilePath('node_modules');
-
-    log.info('npm install into', log.underline(dependencies));
-
-    console.log(log.styles.gray.open);
-
-    shell.exec('npm install');
-
-    console.log(log.styles.gray.close);
-
-    log.info('npm shrinkwrap into', log.underline(graph));
-
-    shell.exec('npm shrinkwrap --dev', {
-      silent: true
-    });
-
-    done(null);
-
-  },
-
-  save: function(done) {
-
-    log.info('analysing dependency graph');
-
-    var graph = getFilePath('npm-shrinkwrap.json');
-    var graphData = require(graph);
-    var projectPath = getProjectPath();
-    var savePath = tarball.getSavePath();
-    var saveOperations = [];
-
-    log.info('saving dependencies to', log.underline(savePath));
-
-    shell.mkdir('-p', savePath);
-
-    traverse(graphData, function(value, chain) {
-
-      if (is.object(value) && is.string(value.resolved)) {
-
-        var name = chain[chain.length - 1];
-        var version = value.version;
-        var shortName = name + '@' + version;
-        var url = tarball.getRegistryUrl(name, version);
-        var cached = tarball.getCachePath(name, version);
-        var packed = tarball.getSavePath(name, version);
-
-        value.resolved = path.relative(projectPath, packed);
-
-        saveOperations.push(
-          terminal
-          .exec('npm cache add ' + shortName)
-          .then(function() {
-            log.info('save', log.underline(packed));
-            shell.cp('-f', cached, packed);
-          })
-        );
-
-      }
-
-    });
-
-    when.all(saveOperations)
-      .then(
-        function() {
-          log.info('update', log.underline(graph));
-          fs.writeFileSync(graph, JSON.stringify(graphData, null, 2));
-          done(null);
-        },
-        function() {
-          console.log('failure', arguments);
-          done('error');
+    return {
+        deps: [],
+        graph: graph,
+        missingDeps: [],
+        prunedPaths: [],
+        path: {
+            project: projectPath,
+            graph: graphPath,
+            shrinkpack: shrinkpackPath,
+            npmCache: npm.config.get('cache')
         }
-      );
+    };
+}
 
-  }
+function createDirectory(config) {
+    if (!fs.existsSync(config.path.shrinkpack)) {
+        fs.mkdirSync(config.path.shrinkpack);
+    }
+    return config;
+}
 
-};
+function getDeps(config) {
+    config.deps = shrinkwrap.toArray(config);
+    return config;
+}
 
-module.exports.update(function() {
-  log.info('done');
-});
+function prune(config) {
+    return shrinkpack.prune(config)
+        .then(function(prunedPaths) {
+            config.prunedPaths = prunedPaths;
+            return config;
+        }, function(err) {
+            console.error(err);
+            return err;
+        }, function(msg) {
+            console.info(chalk.red(msg));
+            return msg;
+        });
+}
+
+function getMissingDeps(config) {
+    config.missingDeps = shrinkpack.getMissingPackages(config);
+    return config;
+}
+
+function addMissingDeps(config) {
+    return when.all(
+        config.missingDeps.map(addMissingDep)
+    ).then(function() {
+        return config;
+    });
+
+    function addMissingDep(dep) {
+        return when(dep)
+            .then(addToNpmCache)
+            .then(addToShrinkpack);
+    }
+}
+
+function addToNpmCache(dep) {
+    return npmCache.ensure(dep)
+        .then(function() {
+            return dep;
+        }, function(err) {
+            console.error(err);
+            return err;
+        }, function(msg) {
+            return msg;
+        });
+}
+
+function addToShrinkpack(dep) {
+    return shrinkpack.addPackage(dep)
+        .then(function() {
+            return dep;
+        }, function(err) {
+            console.error(err);
+            return err;
+        }, function(msg) {
+            console.info(chalk.green(msg));
+            return msg;
+        });
+}
+
+function updateShrinkwrap(config) {
+    rewritePaths();
+
+    return file.write(config.path.graph, JSON.stringify(config.graph, null, 2))
+        .then(function() {
+            return config;
+        }, function(err) {
+            return err;
+        }, function(msg) {
+            return msg;
+        });
+
+    function rewritePaths() {
+        config.deps.forEach(rewritePath);
+    }
+
+    function rewritePath(dep) {
+        dep.shrinkwrap.resolved = dep.tarball.shrinkpack.replace(config.path.project + '/', '');
+    }
+}
+
+function getPathToProject() {
+    return process.env.PWD || process.cwd();
+}
+
+function displaySummary(config) {
+    console.info(
+        'shrinkpack %s %s',
+        chalk.green('+' + config.missingDeps.length),
+        chalk.red('-' + config.prunedPaths.length)
+    );
+    process.exit(0);
+}
+
+function displayFailure(err) {
+    console.error(
+        chalk.red('Please raise an issue at %s\n\n%s'),
+        chalk.underline('https://github.com/JamieMason/shrinkpack/issues'),
+        String(err.stack).replace(/^/gm, '    ')
+    );
+    process.exit(1);
+}
