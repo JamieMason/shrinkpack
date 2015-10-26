@@ -65,7 +65,8 @@ function prune(options) {
     }
 
     function onNotify(source) {
-        return '- ' + source.replace(/^.+\/|\.tgz/g, '').replace('-', '@');
+        var filename = source.slice(source.lastIndexOf('/') + 1, source.lastIndexOf('.'));
+        return '- ' + filename.replace('-', '@');
     }
 }
 
