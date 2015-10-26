@@ -1,7 +1,7 @@
 {
   "name": "shrinkpack",
-  "description": "Check-in your dependencies as tarballs with npm shrinkwrap.",
-  "version": "0.3.1",
+  "description": "Fast, resilient, reproducible builds with npm install.",
+  "version": "0.3.2",
   "author": "Jamie Mason <siunmaru@gmail.com>",
   "bin": {
     "shrinkpack": "index.js"
