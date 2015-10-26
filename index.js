@@ -145,7 +145,7 @@ function updateShrinkwrap(config) {
     }
 
     function rewritePath(key, object) {
-        if (object.resolved.indexOf('.tgz') !== -1) {
+        if (object.resolved.search(/\.tgz|\.tar\.gz/) !== -1) {
             object.resolved = './node_shrinkwrap' + object.resolved.slice(
                     object.resolved.lastIndexOf('/'),
                     object.resolved.length
