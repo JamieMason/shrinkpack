@@ -38,7 +38,7 @@ function loadNpm() {
 }
 
 function getConfig() {
-    var projectPath = getPathToProject();
+    var projectPath = process.env.PWD || process.cwd();
     var graphPath = path.join(projectPath, 'npm-shrinkwrap.json');
     var graph = require(graphPath);
     var shrinkpackPath = path.join(projectPath, 'node_shrinkwrap');
@@ -100,34 +100,35 @@ function addMissingDeps(config) {
             .then(addToNpmCache)
             .then(addToShrinkpack);
     }
-}
 
-function addToNpmCache(dep) {
-    return npmCache.ensure(dep)
-        .then(function() {
-            return dep;
-        }, function(err) {
-            console.error(err);
-            return err;
-        }, function(msg) {
-            return msg;
-        });
-}
+    function addToNpmCache(dep) {
+        return npmCache.ensure(dep)
+            .then(function() {
+                return dep;
+            }, function(err) {
+                console.error(err);
+                return err;
+            }, function(msg) {
+                return msg;
+            });
+    }
 
-function addToShrinkpack(dep) {
-    return shrinkpack.addPackage(dep)
-        .then(function() {
-            return dep;
-        }, function(err) {
-            console.error(err);
-            return err;
-        }, function(msg) {
-            console.info(chalk.green(msg));
-            return msg;
-        });
+    function addToShrinkpack(dep) {
+        return shrinkpack.addPackage(dep)
+            .then(function() {
+                return dep;
+            }, function(err) {
+                console.error(err);
+                return err;
+            }, function(msg) {
+                console.info(chalk.green(msg));
+                return msg;
+            });
+    }
 }
 
 function updateShrinkwrap(config) {
+
     rewritePaths();
 
     return file.write(config.path.graph, JSON.stringify(config.graph, null, 2))
@@ -140,16 +141,12 @@ function updateShrinkwrap(config) {
         });
 
     function rewritePaths() {
-        config.deps.forEach(rewritePath);
+        shrinkwrap.recurse(config.graph, rewritePath);
     }
 
-    function rewritePath(dep) {
-        dep.shrinkwrap.resolved = dep.tarball.shrinkpack.replace(config.path.project + '/', '');
+    function rewritePath(key, object) {
+        object.resolved = 'node_shrinkwrap' + object.resolved.slice(object.resolved.lastIndexOf('/'), object.resolved.length);
     }
-}
-
-function getPathToProject() {
-    return process.env.PWD || process.cwd();
 }
 
 function displaySummary(config) {
