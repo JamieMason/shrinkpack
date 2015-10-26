@@ -1,3 +1,13 @@
+<a name="0.3.3"></a>
+## [0.3.3](https://github.com/JamieMason/shrinkpack/compare/0.3.2...v0.3.3) (2015-10-26)
+
+
+### Bug Fixes
+
+* **rewrite:** ignore deps not resolving to a tgz ([ad98849](https://github.com/JamieMason/shrinkpack/commit/ad98849))
+
+
+
 <a name="0.3.2"></a>
 ## [0.3.2](https://github.com/JamieMason/shrinkpack/compare/0.3.1...v0.3.2) (2015-10-26)
 
