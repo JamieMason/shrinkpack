@@ -145,7 +145,12 @@ function updateShrinkwrap(config) {
     }
 
     function rewritePath(key, object) {
-        object.resolved = 'node_shrinkwrap' + object.resolved.slice(object.resolved.lastIndexOf('/'), object.resolved.length);
+        if (object.resolved.indexOf('.tgz') !== -1) {
+            object.resolved = './node_shrinkwrap' + object.resolved.slice(
+                    object.resolved.lastIndexOf('/'),
+                    object.resolved.length
+            );
+        }
     }
 }
 
