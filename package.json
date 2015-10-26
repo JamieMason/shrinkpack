@@ -1,7 +1,7 @@
 {
   "name": "shrinkpack",
   "description": "Fast, resilient, reproducible builds with npm install.",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "author": "Jamie Mason <siunmaru@gmail.com>",
   "bin": {
     "shrinkpack": "index.js"
