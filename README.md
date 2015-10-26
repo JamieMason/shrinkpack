@@ -2,21 +2,33 @@
 
 [![Join the chat at https://gitter.im/JamieMason/shrinkpack](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JamieMason/shrinkpack?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-> Remove npm registry as a <abbr title="Single Point Of Failure">SPOF</abbr>, check-in your dependencies as tarballs.
+Shrinkpack compliments the [npm shrinkwrap](https://docs.npmjs.com/cli/shrinkwrap) command by maintaining a `node_shrinkwrap` directory in your project, containing the exact same tarballs that `npm install` downloads from [https://registry.npmjs.org](https://registry.npmjs.org).
 
-Shrinkpack compliments the [npm shrinkwrap](https://docs.npmjs.com/cli/shrinkwrap) command by maintaining a `node_shrinkwrap` directory in your project, which can be ignored in your editor and checked into source control. 
-
-The directory contains the exact same tarballs npm install downloads from [https://registry.npmjs.org](https://registry.npmjs.org) and the rest of the npm install process is exactly the same. The only difference is that no network activity is necessary when installing and building your project.
+The rest of the `npm install` process is exactly the same. The only difference is that no network activity is necessary when installing and building your project. The `node_shrinkwrap` directory can be ignored in your editor (much like is done with the `node_modules` directory) but is instead checked into source control.
 
 ## Installation
 
 ```
-npm install --save-dev shrinkpack
+npm install --global shrinkpack
 ```
 
 ## Usage
 
-Whenever the contents of your package.json change, run `npm shrinkwrap` to generate a new dependency graph, then run `shrinkpack` to update the contents of the `node_shrinkwrap` directory.
+> For context, please see the [target problem](#target-problem) and [justification](#justification) sections of this README.
+
+Whenever we add, remove, or update an npm dependency — we should test our application for regressions before locking down our dependencies to avoid them mutating over time.
+
+Managing an `npm-shrinkwrap.json` file can be done as follows;
+
+```shell
+# generate an up-to-date npm-shrinkwrap.json (--dev includes devDependencies)
+npm shrinkwrap --dev
+
+# update node_shrinkwrap and localise npm-shrinkwrap.json
+shrinkpack
+```
+
+You can also optionally choose to run `npm prune` and `npm dedupe` beforehand, to ensure `node_modules` is optimised.
 
 ## Feedback
 
@@ -51,7 +63,7 @@ A tagged release should be a locked-down, fixed point in time which has been tes
 
 Without `npm shrinkwrap` that's not guaranteed. 
 
-Consider this snippet from the package.json of a nested dependency in your project as an example;
+Consider this snippet from the `package.json` of a nested dependency in your project as an example;
 
 ```json
 "dependencies": {
@@ -277,4 +289,4 @@ This is new behaviour, npm didn't hit the network at all. Instead it read the pa
 
 ### Changing and removing dependencies
 
-Simply edit your package.json and re-run `npm shrinkwrap` followed by `shrinkpack`.
+Simply edit your `package.json` and re-run `npm shrinkwrap` followed by `shrinkpack`.
