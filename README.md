@@ -2,7 +2,7 @@
 
 [![Join the chat at https://gitter.im/JamieMason/shrinkpack](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JamieMason/shrinkpack?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Shrinkpack compliments the [npm shrinkwrap](https://docs.npmjs.com/cli/shrinkwrap) command by maintaining a `node_shrinkwrap` directory in your project, containing the exact same tarballs that `npm install` downloads from [https://registry.npmjs.org](https://registry.npmjs.org).
+Shrinkpack complements the [npm shrinkwrap](https://docs.npmjs.com/cli/shrinkwrap) command by maintaining a `node_shrinkwrap` directory in your project, containing the exact same tarballs that `npm install` downloads from [https://registry.npmjs.org](https://registry.npmjs.org).
 
 The rest of the `npm install` process is exactly the same. The only difference is that no network activity is necessary when installing and building your project. The `node_shrinkwrap` directory can be ignored in your editor (much like is done with the `node_modules` directory) but is instead checked into source control.
 
@@ -75,7 +75,7 @@ If `lolwut@0.2.4` contains a regression and you're not using `npm shrinkwrap` th
 
 ### shrinkpack
 
-With you hopefully convinced of the merits of `npm shrinkwrap`, `shrinkpack` will hopefully be seen as a small and complimentary addition.
+With you hopefully convinced of the merits of `npm shrinkwrap`, `shrinkpack` will hopefully be seen as a small and complementary addition.
 
 `shrinkpack` hopes to take `npm shrinkwrap` a little further by taking the .tgz tarballs of that specific, shrinkwrapped dependency graph saved by `npm shrinkwrap` and  stores them within your project.
 
@@ -84,7 +84,7 @@ This means;
 + No need for repeated requests to registry.npmjs.org.
 + Each package/version pair can be checked in as a single tarball, avoiding commits with all kinds of noisy diffs.
 + Packages can be checked in, while still installed by members of the team on different operating systems.
-+ Compliments the typical `npm shrinkwrap` workflow.
++ Complements the typical `npm shrinkwrap` workflow.
 
 ## Workflow Example
 
