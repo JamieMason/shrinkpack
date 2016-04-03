@@ -40,7 +40,7 @@ function toArray(options) {
     }
 
     function getShrinkpackPath(name, meta) {
-        return path.join(options.path.shrinkpack, name + '-' + meta.version + '.tgz');
+        return path.join(options.path.shrinkpack, name.replace(/\//g, '-') + '-' + meta.version + '.tgz');
     }
 
     function getNpmCachePath(name, meta) {
@@ -50,7 +50,6 @@ function toArray(options) {
     function getid(decoratedDep) {
         return decoratedDep.id;
     }
-
 }
 
 function recurse(object, fn, key) {
