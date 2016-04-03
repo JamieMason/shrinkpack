@@ -6,20 +6,20 @@
 
 var chalk = require('chalk');
 var fs = require('fs');
-var npm = require('npm');
 var path = require('path');
 var when = require('when');
 
-// Modules
+// modules
 
+var exec = require('./src/exec');
 var file = require('./src/file');
 var npmCache = require('./src/npmCache');
 var shrinkpack = require('./src/shrinkpack');
 var shrinkwrap = require('./src/shrinkwrap');
 
-// Run
+// run
 
-loadNpm()
+getNpmCachePath()
     .then(getConfig)
     .then(createDirectory)
     .then(getDeps)
@@ -29,15 +29,13 @@ loadNpm()
     .then(updateShrinkwrap)
     .then(displaySummary, displayFailure);
 
-// Implementation
+// implementation
 
-function loadNpm() {
-    return when.promise(function(resolve) {
-        npm.load(resolve);
-    });
+function getNpmCachePath() {
+    return exec('npm config get cache');
 }
 
-function getConfig() {
+function getConfig(npmCachePath) {
     var projectPath = process.env.PWD || process.cwd();
     var graphPath = path.join(projectPath, 'npm-shrinkwrap.json');
     var graph = require(graphPath);
@@ -52,7 +50,7 @@ function getConfig() {
             project: projectPath,
             graph: graphPath,
             shrinkpack: shrinkpackPath,
-            npmCache: npm.config.get('cache')
+            npmCache: npmCachePath
         }
     };
 }
