@@ -4,7 +4,7 @@
 
 var is = require('is');
 var path = require('path');
-var uniq = require('lodash/array/uniq');
+var uniq = require('lodash.uniq');
 
 // Public
 
