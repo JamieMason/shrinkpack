@@ -2,33 +2,41 @@
 
 // 3rd party modules
 
+var exec = require('./exec');
 var guard = require('when/guard');
-var npm = require('npm');
-var when = require('when');
 
-// Public
+// public
 
 module.exports = {
     ensure: guard(guard.n(10), ensurePackageIsCached)
 };
 
-// Implementation
+// implementation
 
 function ensurePackageIsCached(dep) {
-    return when.promise(promiseCacheEntry);
+    return isCached(dep)
+        .then(function onCacheCheck(inCache) {
+            return inCache ? dep : addToCache(dep)
+                .then(function onCached() {
+                    return dep;
+                });
+        });
+}
 
-    function promiseCacheEntry(resolve, reject, notify) {
+function isCached(dep) {
+    return exec('npm cache ls ' + dep.id)
+        .then(function onComplete(stdout) {
+            return stdout.indexOf('package.json') !== -1;
+        }, function onError(err) {
+            throw new Error('error checking if ' + dep.id + ' is already in npm cache: ' + err.toString());
+        });
+}
 
-        notify('cache ' + dep.id);
-
-        npm.commands.cache.read(dep.name, dep.shrinkwrap.version, false, onComplete);
-
-        function onComplete(err) {
-            if (err) {
-                reject('error adding ' + dep.id + ' to npm cache: ' + err.toString());
-            } else {
-                resolve(dep);
-            }
-        }
-    }
+function addToCache(dep) {
+    return exec('npm cache add ' + dep.shrinkwrap.resolved)
+        .then(function onComplete() {
+            return dep;
+        }, function onError(err) {
+            throw new Error('error checking if ' + dep.id + ' is already in npm cache: ' + err.toString());
+        });
 }
