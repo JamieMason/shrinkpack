@@ -143,7 +143,7 @@ function updateShrinkwrap(config) {
     }
 
     function rewritePath(key, object) {
-        if (object.resolved.search(/\.tgz|\.tar\.gz/) !== -1) {
+        if (object.resolved.search(/\.tgz|\.tar\.gz|\.git/) !== -1) {
             object.resolved = './node_shrinkwrap/' + key.replace(/\//g, '-') + '-' + object.version + '.tgz';
         }
     }
