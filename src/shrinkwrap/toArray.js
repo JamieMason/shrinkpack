@@ -7,6 +7,7 @@ var uniq = require('lodash.uniq');
 
 // modules
 
+var getTarballName = require('./getTarballName');
 var recurse = require('./recurse');
 
 // public
@@ -39,7 +40,7 @@ function toArray (options) {
   }
 
   function getShrinkpackPath (name, meta) {
-    return path.join(options.path.shrinkpack, name.replace(/\//g, '-') + '-' + meta.version + '.tgz');
+    return path.join(options.path.shrinkpack, getTarballName(name, meta.version));
   }
 
   function getNpmCachePath (name, meta) {
