@@ -1,5 +1,19 @@
+<a name="0.6.0"></a>
+# [0.6.0](https://github.com/JamieMason/shrinkpack/compare/0.5.0...v0.6.0) (2016-04-04)
+
+
+### Bug Fixes
+
+* **resolve:** normalize scoped module dependency name ([d02cc3e](https://github.com/JamieMason/shrinkpack/commit/d02cc3e))
+
+### Features
+
+* **shrinkwrap:** handle dependencies with a missing "resolved" property ([ef5ecd2](https://github.com/JamieMason/shrinkpack/commit/ef5ecd2)), closes [#18](https://github.com/JamieMason/shrinkpack/issues/18)
+
+
+
 <a name="0.5.0"></a>
-# [0.5.0](https://github.com/JamieMason/shrinkpack/compare/0.4.1...v0.5.0) (2016-04-03)
+# [0.5.0](https://github.com/JamieMason/shrinkpack/compare/0.4.1...0.5.0) (2016-04-03)
 
 
 ### Features

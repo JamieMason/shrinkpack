@@ -22,17 +22,19 @@ npm install shrinkpack --save
 ## Dev Dependencies
 
 - [commit-release](https://github.com/JamieMason/commit-release): Commit and tag a release for a conventional changelog project.
-- [esformatter](https://github.com/millermedeiros/esformatter): ECMAScript code beautifier/formatter
-- [esformatter-braces](https://github.com/pgilad/esformatter-braces): esformatter plugin: enforces braces around statements
-- [esformatter-dot-notation](https://github.com/pgilad/esformatter-dot-notation): esformatter plugin for transforming object bracket usage to dot notation
-- [esformatter-jsx](https://github.com/royriojas/esformatter-jsx): esformatter plugin: format javascript files that contain React JSX blocks
-- [esformatter-parseint](https://github.com/kewah/esformatter-parseint): esformatter plugin that adds the radix parameter to parseInt
-- [esformatter-quotes](https://github.com/millermedeiros/esformatter-quotes): esformatter plugin: enforces coding style that string literals are delimited with single or double quotes.
-- [esformatter-remove-trailing-commas](https://github.com/kewah/esformatter-remove-trailing-commas): Remove trailing commas
-- [esformatter-semicolons](https://github.com/bulyshko/esformatter-semicolons): esformatter plugin for adding missing and removing unnecessary semicolons
-- [esformatter-use-strict](https://github.com/briandipalma/esformatter-use-strict): esformatter plugin that adds a global use strict at the top of a module
-- [esformatter-var-each](https://github.com/twolfson/esformatter-var-each): Esformatter plugin that converts comma `var` statements into separate `var` statements
+- [cz-conventional-changelog](https://github.com/commitizen/cz-conventional-changelog): Commitizen adapter following the conventional-changelog format.
+- [esformatter-literal-notation](https://github.com/kewah/esformatter-literal-notation): esformatter plugin that converts array and object constructors to literal notations
+- [esformatter-semicolon-first](https://github.com/millermedeiros/esformatter-semicolon-first): esformatter plugin: add semicolon before &#39;[&#39; and &#39;(&#39; if it&#39;s the start of a line.
+- [esformatter-spaced-lined-comment](https://github.com/briandipalma/esformatter-spaced-lined-comment): esformatter plugin for adding a space as the first character in a line comment
 - [eslint](https://github.com/eslint/eslint): An AST-based pattern checker for JavaScript.
+- [eslint-config-semistandard](https://github.com/Flet/eslint-config-semistandard): eslint sharable config for semistandard
+- [eslint-config-standard](https://github.com/feross/eslint-config-standard): JavaScript Standard Style - ESLint Shareable Config
+- [eslint-plugin-promise](https://github.com/xjamundx/eslint-plugin-promise): Enforce best practices for JavaScript promises
+- [eslint-plugin-react](https://github.com/yannickcr/eslint-plugin-react): React specific linting rules for ESLint
+- [eslint-plugin-standard](https://github.com/xjamundx/eslint-plugin-standard): ESlint Plugin for the Standard Linter
+- [ghooks](https://github.com/gtramontina/ghooks): Simple git hooks
+- [semistandard-format](https://github.com/ricardofbarros/semistandard-format): attempts to reformat javascript to comply with feross/standard style but with semicolons
+- [validate-commit-msg](https://github.com/kentcdodds/validate-commit-msg): Script to validate a commit message follows the conventional changelog standard
 
 
 ## License
