@@ -4,14 +4,24 @@
 
 var exec = require('./exec');
 var guard = require('when/guard');
+var when = require('when');
 
 // public
 
 module.exports = {
-  ensure: guard(guard.n(10), ensurePackageIsCached)
+  ensure: guard(guard.n(10), downloadTarball)
 };
 
 // implementation
+
+function downloadTarball (dep) {
+  return ensurePackageIsResolved(dep)
+    .then(ensurePackageIsCached);
+}
+
+function ensurePackageIsResolved (dep) {
+  return dep.resolved ? when.resolve(dep) : resolveTarball(dep);
+}
 
 function ensurePackageIsCached (dep) {
   return isCached(dep)
@@ -20,6 +30,16 @@ function ensurePackageIsCached (dep) {
         .then(function onCached () {
           return dep;
         });
+    });
+}
+
+function resolveTarball (dep) {
+  return exec('npm view ' + dep.id + ' --json')
+    .then(function onComplete (stdout) {
+      dep.resolved = JSON.parse(stdout).dist.tarball;
+      return dep;
+    }, function onError (err) {
+      throw new Error('error resolving missing tarball url in ' + dep.id + ': ' + err.toString());
     });
 }
 
