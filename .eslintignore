@@ -1,7 +1,0 @@
-**/*.unit.spec.js
-**/*.min.js
-**/*.dist.js
-**/view/*.js
-src/lib
-src/template.js
-src/app/templates.js
