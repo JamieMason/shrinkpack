@@ -2,7 +2,7 @@
   "name": "shrinkpack",
   "description": "Fast, resilient, reproducible builds with npm install.",
   "version": "0.5.0",
-  "author": "Jamie Mason <siunmaru@gmail.com>",
+  "author": "Jamie Mason (https://github.com/JamieMason)",
   "bin": {
     "shrinkpack": "index.js"
   },
@@ -19,7 +19,11 @@
     }
   },
   "contributors": [
-    "Jason Hewison <jasonhewison@chunkysamurai.com>"
+    "Chris Wheatley (https://github.com/swirlycheetah)",
+    "David Cook (https://github.com/divergentdave)",
+    "Dylan Piercey (https://github.com/DylanPiercey)",
+    "Jason Hewison (https://github.com/ChunkySamurai)",
+    "Mark Erikson (https://github.com/markerikson)"
   ],
   "dependencies": {
     "chalk": "1.1.3",
