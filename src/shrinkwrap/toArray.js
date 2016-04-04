@@ -2,16 +2,16 @@
 
 // 3rd party modules
 
-var is = require('is');
 var path = require('path');
 var uniq = require('lodash.uniq');
 
+// modules
+
+var recurse = require('./recurse');
+
 // public
 
-module.exports = {
-  recurse: recurse,
-  toArray: toArray
-};
+module.exports = toArray;
 
 // implementation
 
@@ -48,16 +48,5 @@ function toArray (options) {
 
   function getid (decoratedDep) {
     return decoratedDep.id;
-  }
-}
-
-function recurse (object, fn, key) {
-  if (is.object(object)) {
-    if (is.string(object.resolved)) {
-      fn(key, object);
-    }
-    Object.keys(object).forEach(function (_key) {
-      recurse(object[_key], fn, _key);
-    });
   }
 }
