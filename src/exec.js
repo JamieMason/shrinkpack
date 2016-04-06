@@ -5,10 +5,8 @@ module.exports = executeShellScript;
 
 function executeShellScript (command) {
   return when.promise(function (resolve, reject, notify) {
-    exec(command, function onExec (err, stdout, stderr) {
+    exec(command, function onExec (err, stdout) {
       if (err) {
-        reject(err);
-      } else if (stderr) {
         reject(err);
       } else {
         resolve(stdout.trim());
