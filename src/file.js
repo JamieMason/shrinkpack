@@ -31,11 +31,11 @@ function copyFile (source, target) {
     readStream.pipe(writeStream);
 
     function onReadError (err) {
-      reject('error reading ' + source + ': ' + err.toString());
+      reject('error reading ' + source + ': ' + String(err));
     }
 
     function onWriteError (err) {
-      reject('error writing ' + target + ': ' + err.toString());
+      reject('error writing ' + target + ': ' + String(err));
     }
 
     function onWriteEnd () {
@@ -53,7 +53,7 @@ function removeFile (source) {
 
     function onFileRemove (err) {
       if (err) {
-        reject(err.toString());
+        reject(String(err));
       } else {
         resolve(source);
       }
@@ -70,7 +70,7 @@ function writeFile (target, contents) {
 
     function onFileWrite (err) {
       if (err) {
-        reject(err.toString());
+        reject(String(err));
       } else {
         resolve(target);
       }
