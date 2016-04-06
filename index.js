@@ -105,7 +105,7 @@ function addMissingDeps (config) {
         return dep;
       }, function (err) {
         console.error(err);
-        return err;
+        return dep;
       }, function (msg) {
         return msg;
       });
