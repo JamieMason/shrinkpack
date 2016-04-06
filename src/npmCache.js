@@ -39,7 +39,7 @@ function resolveTarball (dep) {
       dep.resolved = JSON.parse(stdout).dist.tarball;
       return dep;
     }, function onError (err) {
-      throw new Error('error resolving missing tarball url in ' + dep.id + ': ' + err.toString());
+      throw new Error('error resolving missing tarball url in ' + dep.id + ': ' + String(err));
     });
 }
 
@@ -48,7 +48,7 @@ function isCached (dep) {
     .then(function onComplete (stdout) {
       return stdout.indexOf('package.json') !== -1;
     }, function onError (err) {
-      throw new Error('error checking if ' + dep.id + ' is already in npm cache: ' + err.toString());
+      throw new Error('error checking if ' + dep.id + ' is already in npm cache: ' + String(err));
     });
 }
 
@@ -57,6 +57,6 @@ function addToCache (dep) {
     .then(function onComplete () {
       return dep;
     }, function onError (err) {
-      throw new Error('error checking if ' + dep.id + ' is already in npm cache: ' + err.toString());
+      throw new Error('error checking if ' + dep.id + ' is already in npm cache: ' + String(err));
     });
 }
