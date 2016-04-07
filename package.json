@@ -15,7 +15,7 @@
     },
     "ghooks": {
       "commit-msg": "validate-commit-msg",
-      "pre-commit": "npm run format && npm run lint"
+      "pre-commit": "npm run lint"
     }
   },
   "contributors": [
@@ -35,17 +35,8 @@
   "devDependencies": {
     "commit-release": "0.5.0",
     "cz-conventional-changelog": "1.1.5",
-    "esformatter-literal-notation": "1.0.1",
-    "esformatter-semicolon-first": "1.1.0",
-    "esformatter-spaced-lined-comment": "2.0.1",
-    "eslint": "2.6.0",
-    "eslint-config-semistandard": "6.0.1",
-    "eslint-config-standard": "5.1.0",
-    "eslint-plugin-promise": "1.1.0",
-    "eslint-plugin-react": "4.2.3",
-    "eslint-plugin-standard": "1.3.2",
     "ghooks": "1.0.3",
-    "semistandard-format": "2.1.0",
+    "semistandard": "7.0.5",
     "validate-commit-msg": "2.3.1"
   },
   "homepage": "https://github.com/JamieMason/shrinkpack",
@@ -70,7 +61,6 @@
   },
   "scripts": {
     "commit-release": "commit-release",
-    "format": "semistandard-format -w",
-    "lint": "eslint --config .eslintrc . --fix"
+    "lint": "semistandard"
   }
 }
