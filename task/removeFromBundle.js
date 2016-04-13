@@ -21,7 +21,7 @@ function removeDep (dep) {
   }
 
   function fail (err) {
-    console.error(chalk.red('failed to remove %s'), dep.id);
+    console.error(chalk.red('! failed to remove %s'), dep.id);
     throw err;
   }
 }

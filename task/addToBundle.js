@@ -21,7 +21,7 @@ function bundlePackage (dep) {
   }
 
   function fail (err) {
-    console.error(chalk.red('failed to shrinkpack %s'), dep.id);
+    console.error(chalk.red('! failed to shrinkpack %s'), dep.id);
     throw err;
   }
 }
