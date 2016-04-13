@@ -20,7 +20,7 @@ function resolvePackage (dep) {
       resolve();
     } else {
       console.error(chalk.red('failed to resolve tarball for %s'), dep.id);
-      reject();
+      reject(new Error('failed to resolve tarball for ' + dep.id));
     }
   });
 }
