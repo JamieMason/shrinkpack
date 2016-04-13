@@ -16,7 +16,7 @@ function cachePackage (dep) {
     .catch(fail);
 
   function fail (err) {
-    console.error(chalk.red('failed to download %s'), dep.id);
+    console.error(chalk.red('! failed to download %s'), dep.id);
     throw err;
   }
 }

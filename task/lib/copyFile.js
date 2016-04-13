@@ -18,12 +18,12 @@ function copyFile (source, target) {
     readStream.pipe(writeStream);
 
     function onReadError (err) {
-      console.error(chalk.red('unable to read file %s'), source);
+      console.error(chalk.red('! failed to read file %s'), source);
       reject(err);
     }
 
     function onWriteError (err) {
-      console.error(chalk.red('unable to write file %s'), target);
+      console.error(chalk.red('! failed to write file %s'), target);
       reject(err);
     }
 
