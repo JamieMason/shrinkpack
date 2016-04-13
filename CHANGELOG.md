@@ -1,5 +1,27 @@
+<a name="0.10.0"></a>
+# [0.10.0](https://github.com/JamieMason/shrinkpack/compare/0.6.0...v0.10.0) (2016-04-13)
+
+
+### Bug Fixes
+
+* **logging:** improve consistency of error messages ([3f26bc2](https://github.com/JamieMason/shrinkpack/commit/3f26bc2))
+* **logging:** improve how errors are serialised ([22e852f](https://github.com/JamieMason/shrinkpack/commit/22e852f))
+* **promises:** ensure promises are always rejected with an error object ([dfe779c](https://github.com/JamieMason/shrinkpack/commit/dfe779c))
+* **resolve:** forward dependency on error ([f28197a](https://github.com/JamieMason/shrinkpack/commit/f28197a))
+* **shell:** don't reject promise on stderr ([cc5e55e](https://github.com/JamieMason/shrinkpack/commit/cc5e55e)), closes [#26](https://github.com/JamieMason/shrinkpack/issues/26)
+* **shell:** rate-limit disk operations ([3c3de88](https://github.com/JamieMason/shrinkpack/commit/3c3de88))
+
+### Features
+
+* **logging:** add prompts for when npm shrinkwrap needs to be run ([f3a3eed](https://github.com/JamieMason/shrinkpack/commit/f3a3eed))
+* **logging:** add prompts for when npm shrinkwrap needs to be run ([409062c](https://github.com/JamieMason/shrinkpack/commit/409062c))
+* **shrinkpack:** refactor into tasks, improve logging ([c8aa147](https://github.com/JamieMason/shrinkpack/commit/c8aa147))
+* **shrinkwrap:** query registry if unable to patch missing resolved property locally ([1aa9964](https://github.com/JamieMason/shrinkpack/commit/1aa9964))
+
+
+
 <a name="0.6.0"></a>
-# [0.6.0](https://github.com/JamieMason/shrinkpack/compare/0.5.0...v0.6.0) (2016-04-04)
+# [0.6.0](https://github.com/JamieMason/shrinkpack/compare/0.5.0...0.6.0) (2016-04-04)
 
 
 ### Bug Fixes
