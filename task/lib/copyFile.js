@@ -1,9 +1,10 @@
 // 3rd party modules
 var chalk = require('chalk');
 var fs = require('graceful-fs');
+var guard = require('when/guard');
 
 // public
-module.exports = copyFile;
+module.exports = guard(guard.n(10), copyFile);
 
 // implementation
 function copyFile (source, target) {
