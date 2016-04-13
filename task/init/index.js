@@ -41,7 +41,7 @@ function init () {
   };
 }
 
-function getGraph(graphPath) {
+function getGraph (graphPath) {
   if (!fs.existsSync(graphPath)) {
     console.error(chalk.red('! npm-shrinkwrap.json is missing, create it using `npm shrinkwrap --dev` then try again'));
     process.exit(1);
