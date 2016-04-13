@@ -1,17 +1,9 @@
-'use strict';
-
-// 3rd party modules
-
-var is = require('is');
-
 // public
-
 module.exports = recurse;
 
 // implementation
-
 function recurse (value, handler, key) {
-  if (is.object(value)) {
+  if (isObject(value)) {
     if (isRootNode(value, key)) {
       stepInto(value.dependencies, handler);
     } else if (isPackage(value, key)) {
@@ -39,4 +31,8 @@ function stepInto (value, handler) {
   for (var key in value) {
     recurse(value[key], handler, key);
   }
+}
+
+function isObject (value) {
+  return !!value && (value.constructor === Object);
 }
