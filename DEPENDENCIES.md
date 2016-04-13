@@ -15,7 +15,8 @@ npm install shrinkpack --save
 ## Dependencies
 
 - [chalk](https://github.com/chalk/chalk): Terminal string styling done right. Much color.
-- [is](https://github.com/enricomarino/is): the definitive JavaScript type testing library
+- [glob](https://github.com/isaacs/node-glob): a little globber
+- [graceful-fs](https://github.com/isaacs/node-graceful-fs): A drop-in replacement for fs, making various improvements.
 - [lodash.uniq](https://github.com/lodash/lodash): The lodash method `_.uniq` exported as a module.
 - [when](https://github.com/cujojs/when): A lightweight Promises/A+ and when() implementation, plus other async goodies.
 
