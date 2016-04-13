@@ -1,165 +1,57 @@
 #!/usr/bin/env node
 
-'use strict';
+// tasks
+var task = {
+  init: require('./task/init'),
+  describeChanges: require('./task/describeChanges'),
+  resolveTarball: require('./task/resolveTarball'),
+  addToCache: require('./task/addToCache'),
+  addToBundle: require('./task/addToBundle'),
+  rewriteGraph: require('./task/rewriteGraph'),
+  removeFromBundle: require('./task/removeFromBundle'),
+  displaySummary: require('./task/displaySummary'),
+  displayFailure: require('./task/displayFailure')
+};
 
-// 3rd party modules
+var config = task.init();
 
-var chalk = require('chalk');
-var fs = require('fs');
-var path = require('path');
-var when = require('when');
+describeChanges()
+  .then(resolveTarball)
+  .then(addToCache)
+  .then(addToBundle)
+  .then(removeFromBundle)
+  .then(rewriteGraph)
+  .then(displaySummary)
+  .catch(displayFailure);
 
-// modules
-
-var exec = require('./src/exec');
-var file = require('./src/file');
-var npmCache = require('./src/npmCache');
-var shrinkpack = require('./src/shrinkpack');
-var shrinkwrap = require('./src/shrinkwrap');
-
-// run
-
-getNpmCachePath()
-  .then(getConfig)
-  .then(createDirectory)
-  .then(getDeps)
-  .then(prune)
-  .then(getMissingDeps)
-  .then(addMissingDeps)
-  .then(updateShrinkwrap)
-  .then(displaySummary, displayFailure);
-
-// implementation
-
-function getNpmCachePath () {
-  return exec('npm config get cache');
+function describeChanges () {
+  return task.describeChanges(config);
 }
 
-function getConfig (npmCachePath) {
-  var projectPath = process.env.PWD || process.cwd();
-  var graphPath = path.join(projectPath, 'npm-shrinkwrap.json');
-  var graph = require(graphPath);
-  var shrinkpackPath = path.join(projectPath, 'node_shrinkwrap');
-
-  return {
-    deps: [],
-    graph: graph,
-    missingDeps: [],
-    prunedPaths: [],
-    path: {
-      project: projectPath,
-      graph: graphPath,
-      shrinkpack: shrinkpackPath,
-      npmCache: npmCachePath
-    }
-  };
+function resolveTarball () {
+  return task.resolveTarball(config.deps.unresolved);
 }
 
-function createDirectory (config) {
-  if (!fs.existsSync(config.path.shrinkpack)) {
-    fs.mkdirSync(config.path.shrinkpack);
-  }
-  return config;
+function addToCache () {
+  return task.addToCache(config.deps.missingFromCache);
 }
 
-function getDeps (config) {
-  config.deps = shrinkwrap.toArray(config);
-  return config;
+function addToBundle () {
+  return task.addToBundle(config.deps.missingFromBundle);
 }
 
-function prune (config) {
-  return shrinkpack.prune(config)
-    .then(function (prunedPaths) {
-      config.prunedPaths = prunedPaths;
-      return config;
-    }, function (err) {
-      console.error(err);
-      return err;
-    }, function (msg) {
-      console.info(chalk.red(msg));
-      return msg;
-    });
+function rewriteGraph () {
+  return task.rewriteGraph(config.path.graph, config.deps.all, config.graph);
 }
 
-function getMissingDeps (config) {
-  config.missingDeps = shrinkpack.getMissingPackages(config);
-  return config;
+function removeFromBundle () {
+  return task.removeFromBundle(config.deps.removeFromBundle);
 }
 
-function addMissingDeps (config) {
-  return when.all(
-    config.missingDeps.map(addMissingDep)
-  ).then(function () {
-    return config;
-  });
-
-  function addMissingDep (dep) {
-    return when(dep)
-      .then(addToNpmCache)
-      .then(addToShrinkpack);
-  }
-
-  function addToNpmCache (dep) {
-    return npmCache.ensure(dep)
-      .then(function () {
-        return dep;
-      }, function (err) {
-        console.error(err);
-        return dep;
-      }, function (msg) {
-        return msg;
-      });
-  }
-
-  function addToShrinkpack (dep) {
-    return shrinkpack.addPackage(dep)
-      .then(function () {
-        return dep;
-      }, function (err) {
-        console.error(err);
-        return err;
-      }, function (msg) {
-        console.info(chalk.green(msg));
-        return msg;
-      });
-  }
-}
-
-function updateShrinkwrap (config) {
-  rewritePaths();
-
-  return file.write(config.path.graph, JSON.stringify(config.graph, null, 2))
-    .then(function () {
-      return config;
-    }, function (err) {
-      return err;
-    }, function (msg) {
-      return msg;
-    });
-
-  function rewritePaths () {
-    shrinkwrap.recurse(config.graph, rewritePath);
-  }
-
-  function rewritePath (key, object) {
-    object.resolved = './node_shrinkwrap/' + shrinkwrap.getTarballName(key, object.version);
-  }
-}
-
-function displaySummary (config) {
-  console.info(
-    'shrinkpack %s %s',
-    chalk.green('+' + config.missingDeps.length),
-    chalk.red('-' + config.prunedPaths.length)
-  );
-  process.exit(0);
+function displaySummary () {
+  return task.displaySummary(config);
 }
 
 function displayFailure (err) {
-  console.error(
-    chalk.red('Please raise an issue at %s\n\n%s'),
-    chalk.underline('https://github.com/JamieMason/shrinkpack/issues'),
-    String(err.stack).replace(/^/gm, '    ')
-  );
-  process.exit(1);
+  return task.displayFailure(err);
 }
