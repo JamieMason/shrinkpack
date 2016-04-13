@@ -6,6 +6,10 @@ Shrinkpack complements the [npm shrinkwrap](https://docs.npmjs.com/cli/shrinkwra
 
 The rest of the `npm install` process is exactly the same. The only difference is that no network activity is necessary when installing and building your project. The `node_shrinkwrap` directory can be ignored in your editor (much like is done with the `node_modules` directory) but is instead checked into source control.
 
+## Example
+
+![screenshot](https://raw.githubusercontent.com/JamieMason/shrinkpack/master/screenshot.png)
+
 ## Installation
 
 ```
