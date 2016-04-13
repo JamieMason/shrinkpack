@@ -16,12 +16,12 @@ var task = {
 var config = task.init();
 
 describeChanges()
-  .then(resolveTarball)
-  .then(addToCache)
-  .then(addToBundle)
-  .then(removeFromBundle)
-  .then(rewriteGraph)
-  .then(displaySummary)
+  .then(resolveTarball, displayFailure)
+  .then(addToCache, displayFailure)
+  .then(addToBundle, displayFailure)
+  .then(removeFromBundle, displayFailure)
+  .then(rewriteGraph, displayFailure)
+  .then(displaySummary, displayFailure)
   .catch(displayFailure);
 
 function describeChanges () {
