@@ -1,4 +1,5 @@
 // 3rd party modules
+var chalk = require('chalk');
 var childProcess = require('child_process');
 var fs = require('graceful-fs');
 var path = require('path');
@@ -14,7 +15,7 @@ module.exports = init;
 function init () {
   var pwd = process.env.PWD || process.cwd();
   var graphPath = path.join(pwd, 'npm-shrinkwrap.json');
-  var graph = require(graphPath);
+  var graph = getGraph(graphPath);
   var pathToBundle = createDirectory(pwd);
   var npmCachePath = getNpmCachePath();
   var npmCache = readNpmCache();
@@ -38,6 +39,19 @@ function init () {
       shrinkpack: pathToBundle
     }
   };
+}
+
+function getGraph(graphPath) {
+  if (!fs.existsSync(graphPath)) {
+    console.error(chalk.red('! npm-shrinkwrap.json is missing, create it using `npm shrinkwrap --dev` then try again'));
+    process.exit(1);
+  }
+  var source = fs.readFileSync(graphPath, 'utf8');
+  if (source.indexOf('node_shrinkwrap/') !== -1) {
+    console.error(chalk.red('! npm-shrinkwrap.json is already shrinkpacked, update it using `npm shrinkwrap --dev` then try again'));
+    process.exit(1);
+  }
+  return JSON.parse(source);
 }
 
 function createDirectory (pwd) {
