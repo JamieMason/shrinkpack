@@ -1,18 +1,18 @@
 // 3rd party modules
-var exec = require('child_process').exec;
+var fs = require('graceful-fs');
 var guard = require('when/guard');
 
 // public
-module.exports = guard(guard.n(10), shell);
+module.exports = guard(guard.n(10), removeFile);
 
 // implementation
-function shell (command) {
+function removeFile (source) {
   return new Promise(function (resolve, reject) {
-    exec(command, function onExec (err, stdout) {
+    fs.unlink(source, function onRemoveFile (err) {
       if (err) {
         reject(err);
       } else {
-        resolve(String(stdout).trim());
+        resolve();
       }
     });
   });
