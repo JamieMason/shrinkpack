@@ -38,9 +38,24 @@ function getPkgJson (pkgPath) {
 }
 
 function getPkgPath (dep) {
-  return glob.sync('node_modules/**/' + dep.name + '/package.json', {
-    realpath: true
-  })[0] || '';
+  var depPackagePath = "node_modules/" + dep.name + "/package.json";
+  var result = '';
+  
+  try {
+    // Assume the file is directly located at the top of /node_modules, in
+    // which case we can just access it directly.
+    fs.accessSync(depPackagePath, fs.F_OK);
+    result = fs.realpathSync(depPackagePath);
+  } 
+  catch (e) {
+    // It isn't accessible directly.  Perhaps the package is nested somewhere
+    // under /node_modules, so we'll need to do a deeper search.
+    result = glob.sync('node_modules/**/' + dep.name + '/package.json', {
+      realpath: true
+    })[0] || '';
+  }
+  
+  return result;
 }
 
 function resolveRemotely (dep) {
