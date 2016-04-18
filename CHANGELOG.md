@@ -1,5 +1,20 @@
+<a name="0.10.2"></a>
+## [0.10.2](https://github.com/JamieMason/shrinkpack/compare/0.10.0...v0.10.2) (2016-04-18)
+
+
+### Bug Fixes
+
+* **resolve:** consider a package unresolved if it resolves to shrinkpack ([bb8f7df](https://github.com/JamieMason/shrinkpack/commit/bb8f7df))
+* **shrinkpack:** removeFromBundle is provided a tarball path ([f6efe47](https://github.com/JamieMason/shrinkpack/commit/f6efe47)), closes [#30](https://github.com/JamieMason/shrinkpack/issues/30)
+
+### Performance Improvements
+
+* **resolve:** avoid using glob.sync to resolve tarball url ([28a1bdb](https://github.com/JamieMason/shrinkpack/commit/28a1bdb))
+
+
+
 <a name="0.10.0"></a>
-# [0.10.0](https://github.com/JamieMason/shrinkpack/compare/0.6.0...v0.10.0) (2016-04-13)
+# [0.10.0](https://github.com/JamieMason/shrinkpack/compare/0.6.0...0.10.0) (2016-04-13)
 
 
 ### Bug Fixes
