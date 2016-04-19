@@ -26,7 +26,10 @@ function resolveLocally (dep) {
 function readPkgJson (dep, pkgPath) {
   return new Promise(function (resolve) {
     var meta = require(pkgPath);
-    if (!meta || !meta.dist || !meta.dist.tarball) {
+    if (!meta || meta.version !== dep.shrinkwrap.version) {
+      console.info(chalk.gray('? %s version mismatch in %s'), dep.id, pkgPath);
+      resolve('');
+    } else if (!meta || !meta.dist || !meta.dist.tarball || meta.version !== dep.shrinkwrap.version) {
       console.info(chalk.gray('? %s has no "dist.tarball" in %s'), dep.id, pkgPath);
       resolve('');
     } else {
