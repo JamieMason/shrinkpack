@@ -19,7 +19,11 @@ function resolveDep (dep) {
     .then(onFinalAttempt);
 
   function onLocalAttempt (tarballUrl) {
-    return tarballUrl || resolveRemotely(dep);
+    if (!tarballUrl) {
+      console.info(chalk.gray('? %s contacting registry...'), dep.id);
+      return resolveRemotely(dep);
+    }
+    return tarballUrl;
   }
 
   function onFinalAttempt (tarballUrl) {
