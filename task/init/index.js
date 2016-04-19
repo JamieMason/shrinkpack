@@ -37,7 +37,8 @@ function init () {
       npmCache: npmCachePath,
       project: pwd,
       shrinkpack: pathToBundle
-    }
+    },
+    startTime: new Date()
   };
 }
 
