@@ -2,8 +2,11 @@
 var fs = require('graceful-fs');
 var guard = require('when/guard');
 
+// modules
+var rateLimit = require('./rateLimit');
+
 // public
-module.exports = guard(guard.n(10), removeFile);
+module.exports = guard(rateLimit, removeFile);
 
 // implementation
 function removeFile (source) {

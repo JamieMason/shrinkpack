@@ -3,8 +3,11 @@ var chalk = require('chalk');
 var fs = require('graceful-fs');
 var guard = require('when/guard');
 
+// modules
+var rateLimit = require('./rateLimit');
+
 // public
-module.exports = guard(guard.n(10), copyFile);
+module.exports = guard(rateLimit, copyFile);
 
 // implementation
 function copyFile (source, target) {
