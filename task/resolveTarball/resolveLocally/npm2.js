@@ -1,4 +1,5 @@
 // 3rd party modules
+var chalk = require('chalk');
 var glob = require('glob');
 var path = require('path');
 
@@ -15,6 +16,7 @@ function getPkgPathNpm2 (dep) {
 }
 
 function buildIndex (dep, done) {
+  console.info(chalk.gray('? indexing package.json files... (not needed in npm3+)'), dep.id);
   return new Promise(function (resolve) {
     glob('node_modules/**/package.json', onGlob);
 
