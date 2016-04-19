@@ -64,7 +64,7 @@ function createDirectory (pwd) {
 }
 
 function isUnresolved (dep) {
-  return !dep.shrinkwrap.resolved || String(dep.shrinkwrap.resolved).indexOf('node_shrinkwrap') !== -1;
+  return !dep.shrinkwrap.resolved;
 }
 
 function getNpmCachePath () {
