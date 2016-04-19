@@ -18,17 +18,9 @@ function getPkgPathNpm2 (dep) {
 function buildIndex (dep, done) {
   console.info(chalk.gray('? indexing package.json files... (not needed in npm3+)'), dep.id);
   return new Promise(function (resolve) {
-    glob('node_modules/**/package.json', onGlob);
-
-    function onGlob (err, files) {
-      if (err) {
-        pkgPathByName = {};
-        resolve();
-      } else {
-        pkgPathByName = files.reduce(addPathToIndex, {});
-        resolve();
-      }
-    }
+    var files = glob.sync('node_modules/**/package.json');
+    pkgPathByName = files.reduce(addPathToIndex, {});
+    resolve();
 
     function addPathToIndex (index, pkgPath) {
       var name = pkgPath.replace('/package.json', '').replace(/.*\//, '');
