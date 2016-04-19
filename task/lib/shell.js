@@ -2,8 +2,11 @@
 var exec = require('child_process').exec;
 var guard = require('when/guard');
 
+// modules
+var rateLimit = require('./rateLimit');
+
 // public
-module.exports = guard(guard.n(10), shell);
+module.exports = guard(rateLimit, shell);
 
 // implementation
 function shell (command) {
