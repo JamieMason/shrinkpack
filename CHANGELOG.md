@@ -1,5 +1,25 @@
+<a name="0.12.1"></a>
+## [0.12.1](https://github.com/JamieMason/shrinkpack/compare/0.10.2...v0.12.1) (2016-04-19)
+
+
+### Bug Fixes
+
+* **resolve:** ensure package.json version matches when searching locally ([effa5b9](https://github.com/JamieMason/shrinkpack/commit/effa5b9)), closes [#35](https://github.com/JamieMason/shrinkpack/issues/35)
+* **resolve:** revert bb8f7df ([0934e70](https://github.com/JamieMason/shrinkpack/commit/0934e70))
+
+### Features
+
+* **logging:** display time taken in summary ([d8b99d0](https://github.com/JamieMason/shrinkpack/commit/d8b99d0))
+* **resolve:** improve logging on how tarballs are being resolved ([7880716](https://github.com/JamieMason/shrinkpack/commit/7880716))
+
+### Performance Improvements
+
+* **resolve:** resolve package.json according to npm version ([eb286a3](https://github.com/JamieMason/shrinkpack/commit/eb286a3))
+
+
+
 <a name="0.10.2"></a>
-## [0.10.2](https://github.com/JamieMason/shrinkpack/compare/0.10.0...v0.10.2) (2016-04-18)
+## [0.10.2](https://github.com/JamieMason/shrinkpack/compare/0.10.0...0.10.2) (2016-04-18)
 
 
 ### Bug Fixes
