@@ -1,5 +1,15 @@
+<a name="0.12.2"></a>
+## [0.12.2](https://github.com/JamieMason/shrinkpack/compare/0.12.1...v0.12.2) (2016-04-21)
+
+
+### Performance Improvements
+
+* **resolve:** bring back glob.sync when globbing npm2 packages ([cbb338d](https://github.com/JamieMason/shrinkpack/commit/cbb338d))
+
+
+
 <a name="0.12.1"></a>
-## [0.12.1](https://github.com/JamieMason/shrinkpack/compare/0.10.2...v0.12.1) (2016-04-19)
+## [0.12.1](https://github.com/JamieMason/shrinkpack/compare/0.10.2...0.12.1) (2016-04-19)
 
 
 ### Bug Fixes
