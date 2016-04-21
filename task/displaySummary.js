@@ -14,7 +14,7 @@ function displaySummary (config) {
     chalk.green('+' + config.deps.missingFromBundle.length),
     chalk.red('-' + config.deps.removeFromBundle.length),
     chalk.yellow('↓' + config.deps.missingFromCache.length),
-    chalk.green('✓' + config.deps.unresolved.length),
+    chalk.green('✓' + config.deps.missingAndUnresolved.length),
     chalk.grey(getTimeBetween(config.startTime, new Date()))
   ].join(' '));
   process.exit(0);

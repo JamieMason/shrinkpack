@@ -21,14 +21,16 @@ function init () {
   var npmCache = readNpmCache();
   var deps = readGraph(graph, pathToBundle, npmCachePath);
   var diff = getDiff(pathToBundle, deps, npmCache);
+  var unresolved = deps.filter(isUnresolved);
 
   return {
     deps: {
       all: deps,
+      missingAndUnresolved: unresolved.filter(needsResolving),
       missingFromBundle: diff.missingFromBundle,
       missingFromCache: diff.missingFromCache,
       removeFromBundle: diff.removeFromBundle,
-      unresolved: deps.filter(isUnresolved)
+      unresolved: unresolved
     },
     graph: graph,
     npmCache: npmCache,
@@ -40,6 +42,10 @@ function init () {
     },
     startTime: new Date()
   };
+
+  function needsResolving (dep) {
+    return diff.missingFromBundle.indexOf(dep) !== -1 && diff.missingFromCache.indexOf(dep) !== -1;
+  }
 }
 
 function getGraph (graphPath) {

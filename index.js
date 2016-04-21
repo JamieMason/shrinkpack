@@ -29,7 +29,7 @@ function describeChanges () {
 }
 
 function resolveTarball () {
-  return task.resolveTarball(config.deps.unresolved);
+  return task.resolveTarball(config.deps.missingAndUnresolved);
 }
 
 function addToCache () {
