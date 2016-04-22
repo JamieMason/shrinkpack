@@ -55,8 +55,7 @@ function getGraph (graphPath) {
   }
   var source = fs.readFileSync(graphPath, 'utf8');
   if (source.indexOf('node_shrinkwrap/') !== -1) {
-    console.error(chalk.red('! npm-shrinkwrap.json is already shrinkpacked, update it using `npm shrinkwrap --dev` then try again'));
-    process.exit(1);
+    console.warn(chalk.yellow('! npm-shrinkwrap.json is already shrinkpacked, you may want to update it using `npm shrinkwrap --dev` before shrinkpacking'));
   }
   return JSON.parse(source);
 }
