@@ -53,12 +53,7 @@ function getGraph (graphPath) {
     console.error(chalk.red('! npm-shrinkwrap.json is missing, create it using `npm shrinkwrap --dev` then try again'));
     process.exit(1);
   }
-  var source = fs.readFileSync(graphPath, 'utf8');
-  if (source.indexOf('node_shrinkwrap/') !== -1) {
-    console.error(chalk.red('! npm-shrinkwrap.json is already shrinkpacked, update it using `npm shrinkwrap --dev` then try again'));
-    process.exit(1);
-  }
-  return JSON.parse(source);
+  return JSON.parse(fs.readFileSync(graphPath, 'utf8'));
 }
 
 function createDirectory (pwd) {
