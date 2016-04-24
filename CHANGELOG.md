@@ -1,5 +1,19 @@
+<a name="0.12.3"></a>
+## [0.12.3](https://github.com/JamieMason/shrinkpack/compare/0.12.2...v0.12.3) (2016-04-24)
+
+
+### Bug Fixes
+
+* **shrinkpack:** don't quit if repo is already shrinkpacked ([bbe9cf5](https://github.com/JamieMason/shrinkpack/commit/bbe9cf5))
+
+### Performance Improvements
+
+* **resolve:** only fix "resolved" property for packages that need downloading ([b2cf8b3](https://github.com/JamieMason/shrinkpack/commit/b2cf8b3)), closes [#37](https://github.com/JamieMason/shrinkpack/issues/37)
+
+
+
 <a name="0.12.2"></a>
-## [0.12.2](https://github.com/JamieMason/shrinkpack/compare/0.12.1...v0.12.2) (2016-04-21)
+## [0.12.2](https://github.com/JamieMason/shrinkpack/compare/0.12.1...0.12.2) (2016-04-21)
 
 
 ### Performance Improvements
