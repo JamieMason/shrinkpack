@@ -1,57 +1,55 @@
-#!/usr/bin/env node
-
-// tasks
 var task = {
-  init: require('./task/init'),
-  describeChanges: require('./task/describeChanges'),
-  resolveTarball: require('./task/resolveTarball'),
-  addToCache: require('./task/addToCache'),
-  addToBundle: require('./task/addToBundle'),
-  rewriteGraph: require('./task/rewriteGraph'),
-  removeFromBundle: require('./task/removeFromBundle'),
-  displaySummary: require('./task/displaySummary'),
-  displayFailure: require('./task/displayFailure')
+  init: require('./src/init'),
+  resolveTarball: require('./src/resolveTarball'),
+  addToCache: require('./src/addToCache'),
+  addToBundle: require('./src/addToBundle'),
+  rewriteGraph: require('./src/rewriteGraph'),
+  removeFromBundle: require('./src/removeFromBundle')
 };
 
-var config = task.init();
+module.exports = {
+  analyse: analyse,
+  update: update
+};
 
-describeChanges()
-  .then(resolveTarball, displayFailure)
-  .then(addToCache, displayFailure)
-  .then(addToBundle, displayFailure)
-  .then(removeFromBundle, displayFailure)
-  .then(rewriteGraph, displayFailure)
-  .then(displaySummary, displayFailure)
-  .catch(displayFailure);
-
-function describeChanges () {
-  return task.describeChanges(config);
+function analyse (directory) {
+  return Promise.resolve(task.init(directory));
 }
 
-function resolveTarball () {
-  return task.resolveTarball(config.deps.missingAndUnresolved);
-}
+function update (config) {
+  return resolveTarball()
+    .then(addToCache, onFail)
+    .then(addToBundle, onFail)
+    .then(removeFromBundle, onFail)
+    .then(rewriteGraph, onFail)
+    .then(onSuccess, onFail)
+    .catch(onFail);
 
-function addToCache () {
-  return task.addToCache(config.deps.missingFromCache);
-}
+  function resolveTarball () {
+    return task.resolveTarball(config.deps.missingAndUnresolved);
+  }
 
-function addToBundle () {
-  return task.addToBundle(config.deps.missingFromBundle);
-}
+  function addToCache () {
+    return task.addToCache(config.deps.missingFromCache);
+  }
 
-function rewriteGraph () {
-  return task.rewriteGraph(config.path.graph, config.deps.all, config.graph);
-}
+  function addToBundle () {
+    return task.addToBundle(config.deps.missingFromBundle);
+  }
 
-function removeFromBundle () {
-  return task.removeFromBundle(config.deps.removeFromBundle);
-}
+  function rewriteGraph () {
+    return task.rewriteGraph(config.path.graph, config.deps.all, config.graph);
+  }
 
-function displaySummary () {
-  return task.displaySummary(config);
-}
+  function removeFromBundle () {
+    return task.removeFromBundle(config.deps.removeFromBundle);
+  }
 
-function displayFailure (err) {
-  return task.displayFailure(err);
+  function onSuccess () {
+    return config;
+  }
+
+  function onFail (err) {
+    return Promise.reject(err);
+  }
 }

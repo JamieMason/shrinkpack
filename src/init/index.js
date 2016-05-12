@@ -12,8 +12,7 @@ var readGraph = require('./readGraph');
 module.exports = init;
 
 // implementation
-function init () {
-  var pwd = process.env.PWD || process.cwd();
+function init (pwd) {
   var graphPath = path.join(pwd, 'npm-shrinkwrap.json');
   var graph = getGraph(graphPath);
   var pathToBundle = createDirectory(pwd);

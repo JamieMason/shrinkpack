@@ -4,7 +4,7 @@
   "version": "0.12.3",
   "author": "Jamie Mason (https://github.com/JamieMason)",
   "bin": {
-    "shrinkpack": "index.js"
+    "shrinkpack": "cli.js"
   },
   "bugs": {
     "url": "https://github.com/JamieMason/shrinkpack/issues"
@@ -28,6 +28,7 @@
   ],
   "dependencies": {
     "chalk": "1.1.3",
+    "commander": "2.9.0",
     "glob": "7.0.3",
     "graceful-fs": "4.1.3",
     "lodash.uniq": "4.2.1",
