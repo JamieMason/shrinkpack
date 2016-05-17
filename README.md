@@ -35,7 +35,7 @@ npm install --global shrinkpack
 
 Whenever we add, remove, or update an npm dependency — we should test our application for regressions before locking down our dependencies to avoid them mutating over time.
 
-Managing an `npm-shrinkwrap.json` file can be done as follows;
+Managing an `npm-shrinkwrap.json` file can be done as follows:
 
 ```shell
 # generate an up-to-date npm-shrinkwrap.json (--dev includes devDependencies)
