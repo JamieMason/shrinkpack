@@ -19,5 +19,6 @@ function describeChanges (config) {
   console.info(chalk.blue('i %s are in your npm cache'), totalCached);
   console.info(chalk.blue('i %s need downloading'), totalUncached);
   console.info(chalk.blue('i %s have a missing "resolved" property'), totalMissingAndUnresolved);
-  return Promise.resolve();
+
+  return config;
 }

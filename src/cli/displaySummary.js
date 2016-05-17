@@ -2,7 +2,7 @@
 var chalk = require('chalk');
 
 // modules
-var getTimeBetween = require('./lib/getTimeBetween');
+var getTimeBetween = require('../lib/getTimeBetween');
 
 // public
 module.exports = displaySummary;
