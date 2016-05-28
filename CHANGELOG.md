@@ -1,10 +1,21 @@
+<a name="0.12.4"></a>
+## [0.12.4](https://github.com/JamieMason/shrinkpack/compare/0.12.3...v0.12.4) (2016-05-28)
+
+
+### Bug Fixes
+
+* **npm:** warn of regression in npm 3.8.9 ([b49d36f](https://github.com/JamieMason/shrinkpack/commit/b49d36f))
+
+
+
 <a name="0.12.3"></a>
-## [0.12.3](https://github.com/JamieMason/shrinkpack/compare/0.12.2...v0.12.3) (2016-04-24)
+## [0.12.3](https://github.com/JamieMason/shrinkpack/compare/0.12.2...0.12.3) (2016-04-24)
 
 
 ### Bug Fixes
 
 * **shrinkpack:** don't quit if repo is already shrinkpacked ([bbe9cf5](https://github.com/JamieMason/shrinkpack/commit/bbe9cf5))
+
 
 ### Performance Improvements
 
@@ -31,10 +42,12 @@
 * **resolve:** ensure package.json version matches when searching locally ([effa5b9](https://github.com/JamieMason/shrinkpack/commit/effa5b9)), closes [#35](https://github.com/JamieMason/shrinkpack/issues/35)
 * **resolve:** revert bb8f7df ([0934e70](https://github.com/JamieMason/shrinkpack/commit/0934e70))
 
+
 ### Features
 
 * **logging:** display time taken in summary ([d8b99d0](https://github.com/JamieMason/shrinkpack/commit/d8b99d0))
 * **resolve:** improve logging on how tarballs are being resolved ([7880716](https://github.com/JamieMason/shrinkpack/commit/7880716))
+
 
 ### Performance Improvements
 
@@ -50,6 +63,7 @@
 
 * **resolve:** consider a package unresolved if it resolves to shrinkpack ([bb8f7df](https://github.com/JamieMason/shrinkpack/commit/bb8f7df))
 * **shrinkpack:** removeFromBundle is provided a tarball path ([f6efe47](https://github.com/JamieMason/shrinkpack/commit/f6efe47)), closes [#30](https://github.com/JamieMason/shrinkpack/issues/30)
+
 
 ### Performance Improvements
 
@@ -70,6 +84,7 @@
 * **shell:** don't reject promise on stderr ([cc5e55e](https://github.com/JamieMason/shrinkpack/commit/cc5e55e)), closes [#26](https://github.com/JamieMason/shrinkpack/issues/26)
 * **shell:** rate-limit disk operations ([3c3de88](https://github.com/JamieMason/shrinkpack/commit/3c3de88))
 
+
 ### Features
 
 * **logging:** add prompts for when npm shrinkwrap needs to be run ([f3a3eed](https://github.com/JamieMason/shrinkpack/commit/f3a3eed))
@@ -86,6 +101,7 @@
 ### Bug Fixes
 
 * **resolve:** normalize scoped module dependency name ([d02cc3e](https://github.com/JamieMason/shrinkpack/commit/d02cc3e))
+
 
 ### Features
 
@@ -148,7 +164,6 @@
 
 
 
-
 <a name="0.3.0"></a>
 # [0.3.0](https://github.com/JamieMason/shrinkpack/compare/db4f279...0.3.0) (2015-10-23)
 
@@ -157,6 +172,7 @@
 
 * **shrinkpack:** Rate-limit shell operations ([c474b40](https://github.com/JamieMason/shrinkpack/commit/c474b40))
 * **shrinkpack:** Repair support for Windows ([bc5e53c](https://github.com/JamieMason/shrinkpack/commit/bc5e53c))
+
 
 ### Features
 
