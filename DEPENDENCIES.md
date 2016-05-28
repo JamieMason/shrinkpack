@@ -15,6 +15,7 @@ npm install shrinkpack --save
 ## Dependencies
 
 - [chalk](https://github.com/chalk/chalk): Terminal string styling done right. Much color.
+- [commander](https://github.com/tj/commander.js): the complete solution for node.js command-line programs
 - [glob](https://github.com/isaacs/node-glob): a little globber
 - [graceful-fs](https://github.com/isaacs/node-graceful-fs): A drop-in replacement for fs, making various improvements.
 - [lodash.uniq](https://github.com/lodash/lodash): The lodash method `_.uniq` exported as a module.
