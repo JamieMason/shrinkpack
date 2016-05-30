@@ -11,6 +11,12 @@ npm install shrinkpack --save
 ```
 
 
+## Tests
+
+```sh
+npm install
+npm test
+```
 
 ## Dependencies
 

@@ -1,5 +1,15 @@
+<a name="0.12.5"></a>
+## [0.12.5](https://github.com/JamieMason/shrinkpack/compare/0.12.4...v0.12.5) (2016-05-30)
+
+
+### Bug Fixes
+
+* **npm:** regression appeared in npm 3.8.8, not 3.8.9 ([3b55ab2](https://github.com/JamieMason/shrinkpack/commit/3b55ab2))
+
+
+
 <a name="0.12.4"></a>
-## [0.12.4](https://github.com/JamieMason/shrinkpack/compare/0.12.3...v0.12.4) (2016-05-28)
+## [0.12.4](https://github.com/JamieMason/shrinkpack/compare/0.12.3...0.12.4) (2016-05-28)
 
 
 ### Bug Fixes
