@@ -68,6 +68,6 @@
     "commit-release": "commit-release",
     "lint": "semistandard --format",
     "build-tests": "docker build -t shrinkpack-tests .",
-    "test": "docker run --rm -e NPM_VERSION=3.9.5 shrinkpack-tests"
+    "test": "docker-compose run --rm -e NPM_VERSION=3.9.5 tests"
   }
 }
