@@ -9,6 +9,7 @@ function header() {
 }
 
 npm config set loglevel error --global
+npm config set registry http://npm_registry:4873
 
 header "install npm@$NPM_VERSION"
 npm install -g npm@$NPM_VERSION
