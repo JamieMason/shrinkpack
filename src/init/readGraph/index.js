@@ -22,6 +22,7 @@ function readGraph (graph, pathToBundle, npmCachePath) {
       bundle: getShrinkwrapEntry(name, meta),
       id: name + '@' + meta.version,
       name: name,
+      scope: getPackageScope(name),
       shrinkwrap: meta,
       tarball: {
         shrinkpack: getShrinkpackPath(name, meta),
@@ -44,5 +45,10 @@ function readGraph (graph, pathToBundle, npmCachePath) {
 
   function getTarballName (name, version) {
     return name.replace(/\//g, '-') + '-' + version + '.tgz';
+  }
+
+  function getPackageScope (name) {
+    var scope = name.substring(0, name.indexOf('/'));
+    return (scope !== name) ? scope : '';
   }
 }

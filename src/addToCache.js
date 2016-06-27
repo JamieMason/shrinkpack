@@ -12,7 +12,7 @@ function addToCache (deps) {
 
 function cachePackage (dep) {
   console.info(chalk.yellow('↓ %s from %s'), dep.id, dep.shrinkwrap.resolved);
-  return shell('npm cache add ' + dep.shrinkwrap.resolved)
+  return shell('npm cache --scope=' + dep.scope + ' add ' + dep.shrinkwrap.resolved)
     .catch(fail);
 
   function fail (err) {

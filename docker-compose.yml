@@ -12,5 +12,4 @@ services:
                 environment:
                         NPM_VERSION: 3.8.7
                 links:
-                        - npm_registry
-
+                        - npm_registry:secure_registry
