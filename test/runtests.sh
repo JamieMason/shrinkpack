@@ -11,6 +11,12 @@ function header() {
 npm config set loglevel error --global
 npm config set registry http://npm_registry:4873
 
+npm login --scope=@telerik --registry=http://secure_registry:4873 <<!
+shrinkpack
+shrinkpack
+shrinkpack@example.com
+!
+
 header "install npm@$NPM_VERSION"
 npm install -g npm@$NPM_VERSION
 INSTALLED_NPM_VERSION="$(npm --version)"
@@ -37,10 +43,19 @@ npm install
 
 header "shrinkpacked project: shrinkwrap"
 npm shrinkwrap --dev
+CONTROL_SHRINKWRAP="$(cat npm-shrinkwrap.json)"
 
 header "shrinkpacked project: shrinkpack"
 node /usr/src/shrinkpack/cli.js
+ON_SHRINKPACK_SHRINKWRAP="$(cat npm-shrinkwrap.json)"
 ON_SHRINKPACK_RUN="$(find ./node_modules | sort)"
+
+if [ "$ON_SHRINKPACK_SHRINKWRAP" == "$CONTROL_SHRINKWRAP" ]; then
+  header "failed: running shrinkpack doesn't change shrinkwrap file"
+  exit 1
+else
+  header "√ running shrinkpack updates the shrinkwrap file"
+fi
 
 if [ "$ON_SHRINKPACK_RUN" != "$CONTROL_INSTALLATION" ]; then
   header "failed: running shrinkpack changes installation"
