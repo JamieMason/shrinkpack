@@ -1,3 +1,18 @@
+<a name="0.13.1"></a>
+## [0.13.1](https://github.com/JamieMason/shrinkpack/compare/0.12.3...v0.13.1) (2016-07-01)
+
+
+### Bug Fixes
+
+* **npm:** regression fixed in npm 3.10.4 ([cb87a87](https://github.com/JamieMason/shrinkpack/commit/cb87a87)), closes [#45](https://github.com/JamieMason/shrinkpack/issues/45)
+
+
+### Features
+
+* **shrinkwrap:** support private/scoped packages ([2707067](https://github.com/JamieMason/shrinkpack/commit/2707067)), closes [#50](https://github.com/JamieMason/shrinkpack/issues/50)
+
+
+
 <a name="0.12.5"></a>
 ## [0.12.5](https://github.com/JamieMason/shrinkpack/compare/0.12.4...v0.12.5) (2016-05-30)
 
