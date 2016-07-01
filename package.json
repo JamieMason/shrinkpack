@@ -42,7 +42,7 @@
     "validate-commit-msg": "2.3.1"
   },
   "engines": {
-    "npm": "<3.8.8"
+    "npm": "<3.8.8 >=3.10.4"
   },
   "homepage": "https://github.com/JamieMason/shrinkpack",
   "keywords": [
@@ -68,6 +68,6 @@
     "commit-release": "commit-release",
     "lint": "semistandard --format",
     "build-tests": "docker build -t shrinkpack-tests .",
-    "test": "docker-compose run --rm -e NPM_VERSION=3.9.5 tests"
+    "test": "docker-compose run --rm -e NPM_VERSION=3.10.4 tests"
   }
 }
