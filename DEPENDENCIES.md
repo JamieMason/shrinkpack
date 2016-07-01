@@ -2,22 +2,6 @@
 
 Fast, resilient, reproducible builds with npm install.
 
-## Installation
-
-Download node at [nodejs.org](http://nodejs.org) and install it, if you haven't already.
-
-```sh
-npm install shrinkpack --save
-```
-
-
-## Tests
-
-```sh
-npm install
-npm test
-```
-
 ## Dependencies
 
 - [chalk](https://github.com/chalk/chalk): Terminal string styling done right. Much color.
