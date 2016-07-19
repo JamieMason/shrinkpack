@@ -10,6 +10,7 @@ The rest of the `npm install` process is exactly the same. The only difference i
 
 + [Example](#example)
 + [Installation](#installation)
++ [Requirements](#requirements)
 + [Usage](#usage)
 + [Target Problem](#target-problem)
 + [Justification](#justification)
@@ -28,6 +29,10 @@ The rest of the `npm install` process is exactly the same. The only difference i
 ```
 npm install --global shrinkpack
 ```
+
+## Requirements
+
+Shrinkpack requires a version of `npm` >= `3.10.4`
 
 ## Usage
 
