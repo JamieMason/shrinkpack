@@ -21,7 +21,7 @@ The rest of the `npm install` process is exactly the same. The only difference i
 
 ## Example
 
-![screenshot](https://raw.githubusercontent.com/JamieMason/shrinkpack/master/screenshot.png)
+[![asciicast](https://asciinema.org/a/etx4eyz37jn03kcmkh10am44c.png)](https://asciinema.org/a/etx4eyz37jn03kcmkh10am44c)
 
 ## Installation
 
