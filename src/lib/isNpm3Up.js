@@ -10,6 +10,9 @@ function isNpm3Up () {
 }
 
 function getNpmVersion () {
+  if (!childProcess.execSync) {
+    childProcess.execSync = require('exec-sync');
+  }
   return childProcess.execSync('npm --version', {
     encoding: 'utf8'
   }).trim();
