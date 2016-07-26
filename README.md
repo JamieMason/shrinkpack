@@ -1,27 +1,38 @@
 # shrinkpack
 
-[![Join the chat at https://gitter.im/JamieMason/shrinkpack](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JamieMason/shrinkpack?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![NPM version](http://img.shields.io/npm/v/shrinkpack.svg?style=flat-square)](https://www.npmjs.com/package/shrinkpack)
+[![NPM downloads](http://img.shields.io/npm/dm/shrinkpack.svg?style=flat-square)](https://www.npmjs.com/package/shrinkpack)
+[![Dependency Status](http://img.shields.io/david/JamieMason/shrinkpack.svg?style=flat-square)](https://david-dm.org/JamieMason/shrinkpack)
+[![Join the chat at https://gitter.im/JamieMason/shrinkpack](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JamieMason/shrinkpack)
 
-Shrinkpack complements the [npm shrinkwrap](https://docs.npmjs.com/cli/shrinkwrap) command by maintaining a `node_shrinkwrap` directory in your project, containing the exact same tarballs that `npm install` downloads from [https://registry.npmjs.org](https://registry.npmjs.org).
+Shrinkpack complements the [npm shrinkwrap](https://docs.npmjs.com/cli/shrinkwrap) command by
+maintaining a `node_shrinkwrap` directory in your project, containing the exact same tarballs that
+`npm install` downloads from [https://registry.npmjs.org](https://registry.npmjs.org).
 
-The rest of the `npm install` process is exactly the same. The only difference is that no network activity is necessary when installing and building your project. The `node_shrinkwrap` directory can be ignored in your editor (much like is done with the `node_modules` directory) but is instead checked into source control.
+The rest of the `npm install` process is exactly the same. The only difference is that no network
+activity is necessary when installing and building your project. The `node_shrinkwrap` directory can
+be ignored in your editor (much like is done with the `node_modules` directory) but is instead
+checked into source control.
+
+> For context, please see the [target problem](#target-problem) and [justification](#justification) 
+> sections of this README.
 
 ## Contents
 
-+ [Example](#example)
-+ [Installation](#installation)
-+ [Usage](#usage)
-+ [Target Problem](#target-problem)
-+ [Justification](#justification)
-  + [npm shrinkwrap](#npm-shrinkwrap)
-  + [shrinkpack](#shrinkpack-1)
-+ [Workflow Example](#workflow-example)
-  + [Standard Flow](#standard-flow)
-  + [Changing and removing dependencies](#changing-and-removing-dependencies)
-
-## Example
-
-[![asciicast](https://asciinema.org/a/etx4eyz37jn03kcmkh10am44c.png)](https://asciinema.org/a/etx4eyz37jn03kcmkh10am44c)
+* [Installation](#installation)
+* [Target Problem](#target-problem)
+* [Justification](#justification)
+  * [npm shrinkwrap](#npm-shrinkwrap)
+  * [shrinkpack](#shrinkpack-1)
+* [Usage](#usage)
+  1. [Create a new project](#create-a-new-project)
+  1. [Set some sensible npm defaults](#set-some-sensible-npm-defaults)
+  1. [Install dependencies](#install-dependencies)
+  1. [Shrinkwrap dependencies](#shrinkwrap-dependencies)
+  1. [Create a project-specific cache (optional)](#create-a-project-specific-cache-optional)
+  1. [Shrinkpack dependencies](#shrinkpack-dependencies)
+  1. [Check into Git](#check-into-git)
+  1. [Clean install](#clean-install)
 
 ## Installation
 
@@ -29,50 +40,60 @@ The rest of the `npm install` process is exactly the same. The only difference i
 npm install --global shrinkpack
 ```
 
-## Usage
-
-> For context, please see the [target problem](#target-problem) and [justification](#justification) sections of this README.
-
-Whenever we add, remove, or update an npm dependency — we should test our application for regressions before locking down our dependencies to avoid them mutating over time.
-
-Managing an `npm-shrinkwrap.json` file can be done as follows:
-
-```shell
-# generate an up-to-date npm-shrinkwrap.json (--dev includes devDependencies)
-npm shrinkwrap --dev
-
-# update node_shrinkwrap and localise npm-shrinkwrap.json
-shrinkpack
-```
-
-You can also optionally choose to run `npm prune` and `npm dedupe` beforehand, to ensure `node_modules` is optimised.
+> **Note:** npm had a [regression affecting shrinkwrap](https://github.com/npm/npm/pull/13214) in 
+> versions 3.8.8 to 3.10.3.<br>
+> Please ensure your version of `npm` is 3.10.4 or newer, or 3.8.7 or older.
 
 ## Target Problem
 
-On most projects I've worked on we've had a [Jenkins](http://jenkins-ci.org/) (or similiar) continuous integration environment, where we would run tests, analyse code, gather metrics, and create deployment packages.
+On most projects I've worked on we've had a [Jenkins](http://jenkins-ci.org/) (or similiar)
+continuous integration environment, where we would run tests, analyse code, gather metrics, and
+create deployment packages.
 
-Each time code was pushed to our `develop` and `master` branches, a repeatable process was carried out where a clean workspace is created, the latest version of the project is installed and configured, before testing and code analysis take place.
+Each time code was pushed to our `develop` and `master` branches, a repeatable process was carried
+out where a clean workspace was created, the latest version of the project was installed and
+configured, then testing and code analysis took place.
 
-We were all very happy with this process and the convenience of npm in particular, but the phase of our builds where `npm install` listed a huge amount of network traffic would always raise the same concerns;
+We were all very happy with this process and the convenience of npm in particular, but the phase of
+our builds where `npm install` listed a huge amount of network traffic would always raise the same
+concerns;
 
 + This seems slow, wasteful, and inefficient.
 + We _really_ depend on registry.npmjs.org, what do we do if it goes down?
 
-The first suggestion was always to check in our dependencies, but the idea of some large and chatty commits whenever we chose to upgrade or change them would put us off. 
+The first suggestion was always to check in our dependencies, but the idea of some large and chatty
+commits whenever we chose to upgrade or change them would put us off.
 
-Some teams went a little further and decided that pain was acceptable and decided to proceed, only to find that some packages such as [phantomjs](https://www.npmjs.com/package/phantomjs) helpfully install the appropriate binary for you depending on what system you're running. 
+Some teams went a little further and decided that pain was acceptable and decided to proceed, only
+to find that some packages such as [phantomjs](https://www.npmjs.com/package/phantomjs) and 
+[node-sass](https://github.com/sass/node-sass) helpfully install the appropriate binary for you 
+depending on what system you're running.
 
-This meant that if Chris added phantomjs to the project on his Mac and checked it into the repository, Helen wouldn't be able to use it on her Windows Machine. The remaining alternatives were proxies, mirrors, and caches-of-sorts. 
+This meant that if Chris added `phantomjs` or `node-sass` to the project on his Mac and checked it
+into the repository, Helen wouldn't be able to use it on her  Windows Machine.
 
-None of these approaches appealed to us and, grudgingly, we continued as we were (<abbr title="Your Mileage May Vary">YMMV</abbr>).
+The remaining alternatives were proxies, mirrors, and caches-of-sorts. None of which appealed to us
+and, grudgingly, we continued as we were (<abbr title="Your Mileage May Vary">YMMV</abbr>).
 
 ## Justification
 
+Whenever we add, remove, or update an npm dependency — we should test our application for
+regressions before locking down our dependencies to avoid them mutating over time.
+
++ You can't be sure of this without `npm shrinkwrap`.
++ Checking in `node_modules` is horrible (and doesn't work in many cases anyway).
++ You can be reasonably sure of this with `npm shrinkwrap`.
++ You can be completely sure of this with `npm shrinkwrap` and `shrinkpack`.
+
 ### npm shrinkwrap
 
-`npm shrinkwrap` is something I would recommend you use anyway, even if you don't decide to use `shrinkpack`. It brings certainty and confidence over exactly what versions of every nested dependency you've tested against and approved.
+`npm shrinkwrap` is something I would recommend you use anyway, even if you don't decide to use
+`shrinkpack`. It brings certainty and confidence over exactly what versions of every nested
+dependency you've tested against and approved.
 
-A tagged release should be a locked-down, fixed point in time which has been tested sufficiently enough that it is approved and trusted. When fed into a repeatable, automated deployment process it should always result in the same output.
+A tagged release should be a locked-down, fixed point in time which has been tested sufficiently
+enough that it is approved and trusted. When fed into a repeatable, automated deployment process it
+should always result in the same output.
 
 Without `npm shrinkwrap` that's not guaranteed. 
 
@@ -80,239 +101,172 @@ Consider this snippet from the `package.json` of a nested dependency in your pro
 
 ```json
 "dependencies": {
-    "lolwut": ">=0.1.0"
+  "lolwut": ">=0.1.0"
 }
 ```
 
-If `lolwut@0.2.4` contains a regression and you're not using `npm shrinkwrap` then [congratulations](http://m.memegen.com/8ky0s4.jpg), your project now contains a regression.
+If `lolwut@0.2.4` contains a regression and you're not using `npm shrinkwrap` then congratulations,
+your project now contains a regression.
 
 ### shrinkpack
 
-With you hopefully convinced of the merits of `npm shrinkwrap`, `shrinkpack` will hopefully be seen as a small and complementary addition.
+With you hopefully convinced of the merits of `npm shrinkwrap`, `shrinkpack` will hopefully be seen
+as a small and complementary addition.
 
-`shrinkpack` hopes to take `npm shrinkwrap` a little further by taking the .tgz tarballs of that specific, shrinkwrapped dependency graph saved by `npm shrinkwrap` and  stores them within your project.
+`shrinkpack` takes the .tgz tarballs of that specific, shrinkwrapped dependency graph saved by `npm
+shrinkwrap` and stores them within your project.
 
 This means;
 
 + No need for repeated requests to registry.npmjs.org.
-+ Each package/version pair can be checked in as a single tarball, avoiding commits with all kinds of noisy diffs.
-+ Packages can be checked in, while still installed by members of the team on different operating systems.
++ Each package/version pair can be checked in as a single tarball, avoiding commits with all kinds 
+  of noisy diffs.
++ Packages can be checked in, while still installed by members of the team on different operating 
+  systems.
 + Complements the typical `npm shrinkwrap` workflow.
 
-## Workflow Example
+## Usage
 
-### Standard Flow
+### Create a new project
 
-Carina has a project called my-project with the following `package.json`.
+Here we create a straightforward project which will use Git and npm.
+
+```
+mkdir shrinkpack-demo
+cd shrinkpack-demo
+git init
+echo node_modules >> .gitignore
+echo npm-debug.log >> .gitignore
+npm init --yes
+```
+
+<a href="https://asciinema.org/a/1fii3czijny4sw3gl78u3punk" target="_blank"><img src="https://asciinema.org/a/1fii3czijny4sw3gl78u3punk.png" alt="asciicast"></a>
+
+### Set some sensible npm defaults
+
+The default behaviour when installing in npm is to 1) not update package.json and 2) include
+wildcards such as `^`, `~`, or `*` in the version numbers stored in package.json if using the
+`--save` option when installing.
+
+We want each version of our project to be identical every time it is built, so we can have complete
+confidence when the time comes to ship it. Therefore, we want a package.json which is always up to
+date and that contains the exact version numbers we have developed and tested against.
+
+```
+echo save=true >> .npmrc
+echo save-exact=true >> .npmrc
+```
+
+### Install dependencies
+
+For the sake of an example, let's install the following packages. I've chosen an older version of
+commander so that we can go through how to update a shrinkpacked project later.
+
+```
+npm install async commander@2.7.1 express lodash request
+```
+
+<a href="https://asciinema.org/a/2x3gdi905de2vvwp7msjjwalf" target="_blank"><img src="https://asciinema.org/a/2x3gdi905de2vvwp7msjjwalf.png" alt="asciicast"></a>
+
+This is typical behaviour, npm downloads the packages from the registry and installs them, leaving
+the following directory structure;
+
+```
+├── .gitignore
+├── node_modules
+│   ├── (lots of files and folders)
+└── package.json
+```
+
+### Shrinkwrap dependencies
+
+The `--dev` option tells npm to also include `devDependencies` when creating an 
+`npm-shrinkwrap.json` for your project.
+
+```
+npm shrinkwrap --dev
+```
+
+<a href="https://asciinema.org/a/dej8ryid37tjq78cb3uym171y" target="_blank"><img src="https://asciinema.org/a/dej8ryid37tjq78cb3uym171y.png" alt="asciicast"></a>
+
+### Create a project-specific cache (optional)
+
+When using `shrinkpack`, the local file path to dependencies will be added to the `npm` client's
+[local cache](https://docs.npmjs.com/cli/cache). This can be  problematic when working on several
+projects on a single machine  ([#31](https://github.com/JamieMason/shrinkpack/issues/31)).
+
+This step prevents npm from using this project as a registry should you install the same
+package/version pair on another project on your machine.
+
+```
+echo cache=node_cache >> .npmrc
+echo /node_cache >> .gitignore
+```
+
+### Shrinkpack dependencies
+
+Whenever you run `npm install`, npm downloads a .tgz file from http://registry.npmjs.org containing
+the installation for each package. Shrinkpack saves these files in a `node_shrinkwrap` directory in
+your project, before updating each record in `npm-shrinkwrap.json` to point at those instead of the
+public registry.
+
+```
+shrinkpack .
+```
+
+Each entry will look something like this
 
 ```json
-{
-  "name": "my-project",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "ISC",
-  "dependencies": {
-    "chalk": "0.5.1",
-    "lodash": "3.2.0"
-  }
+"lodash": {
+  "version": "4.0.0",
+  "from": "lodash@4.0.0",
+  "resolved": "./node_shrinkwrap/lodash-4.0.0.tgz"
 }
 ```
 
-and the following `.gitignore`.
+<a href="https://asciinema.org/a/etx4eyz37jn03kcmkh10am44c" target="_blank"><img src="https://asciinema.org/a/etx4eyz37jn03kcmkh10am44c.png" alt="asciicast"></a>
+
+### Check into Git
+
+By this point, `git status` should list the following untracked files;
 
 ```
-npm-debug.log
-node_modules
+.gitignore
+.npmrc
+node_shrinkwrap/
+npm-shrinkwrap.json
+package.json
 ```
 
-Having just cloned this repository, she runs `npm install --loglevel=http`.
+Let's check them in.
 
 ```
-npm http request GET https://registry.npmjs.org/chalk
-npm http request GET https://registry.npmjs.org/lodash
-npm http 304 https://registry.npmjs.org/chalk
-npm http 304 https://registry.npmjs.org/lodash
-npm http request GET https://registry.npmjs.org/has-ansi
-npm http request GET https://registry.npmjs.org/escape-string-regexp
-npm http request GET https://registry.npmjs.org/ansi-styles
-npm http request GET https://registry.npmjs.org/strip-ansi
-npm http request GET https://registry.npmjs.org/supports-color
-npm http 304 https://registry.npmjs.org/has-ansi
-npm http 304 https://registry.npmjs.org/escape-string-regexp
-npm http 304 https://registry.npmjs.org/ansi-styles
-npm http 304 https://registry.npmjs.org/strip-ansi
-npm http 304 https://registry.npmjs.org/supports-color
-npm http request GET https://registry.npmjs.org/ansi-regex
-npm http 304 https://registry.npmjs.org/ansi-regex
-chalk@0.5.1 node_modules/chalk
-├── escape-string-regexp@1.0.2
-├── ansi-styles@1.1.0
-├── supports-color@0.2.0
-├── has-ansi@0.1.0 (ansi-regex@0.2.1)
-└── strip-ansi@0.3.0 (ansi-regex@0.2.1)
-
-lodash@3.2.0 node_modules/lodash
+git add .
+git commit -m 'chore(project): initial commit'
 ```
 
-This is typical behaviour, npm downloads the packages from the registry and installs them, leaving the following directory structure;
+<a href="https://asciinema.org/a/b2znt0jyy028pop794p8ekx3f" target="_blank"><img src="https://asciinema.org/a/b2znt0jyy028pop794p8ekx3f.png" alt="asciicast"></a>
+
+### Clean install
+
+We check this code into Git and tell a co-worker that it's ready for them to contribute to.
+
+Once they have cloned the project, our co-worker runs;
 
 ```
-├── .gitignore
-├── node_modules
-│   ├── (lots of files and folders)
-└── package.json
+npm install --loglevel http
 ```
 
-Next Carina runs `npm shrinkwrap --dev` from the my-project directory.
+This is new behaviour, npm didn't hit the network at all. Instead it read the packages from the
+`node_shrinkwrap` directory directly and installed them straight away. Shrinkpack has allowed us to
+install our project without any network activity whatsoever – and in a fraction of the time.
 
-```
-$ npm shrinkwrap --dev
-wrote npm-shrinkwrap.json
-```
+If everything went to plan, the only output will be these expected warnings because we didn't choose
+to add a `description` or `repository` to our `package.json`.
 
-Then she runs `shrinkpack`.
+> ```
+> npm WARN shrinkpack-demo@1.0.0 No description
+> npm WARN shrinkpack-demo@1.0.0 No repository field.
+> ```
 
-```
-$ shrinkpack
-+ chalk@0.5.1
-+ ansi-styles@1.1.0
-+ escape-string-regexp@1.0.3
-+ ansi-regex@0.2.1
-+ lodash@3.2.0
-+ has-ansi@0.1.0
-+ supports-color@0.2.0
-+ strip-ansi@0.3.0
-shrinkpack +8 -0
-```
-
-Leaving the following directory structure.
-
-```
-├── .gitignore
-├── node_modules
-│   ├── (lots of files and folders)
-├── node_shrinkwrap
-│   ├── ansi-regex-0.2.1.tgz
-│   ├── ansi-styles-1.1.0.tgz
-│   ├── chalk-0.5.1.tgz
-│   ├── escape-string-regexp-1.0.2.tgz
-│   ├── has-ansi-0.1.0.tgz
-│   ├── lodash-3.2.0.tgz
-│   ├── strip-ansi-0.3.0.tgz
-│   └── supports-color-0.2.0.tgz
-├── npm-shrinkwrap.json
-└── package.json
-```
-
-`npm-shrinkwrap.json` has also been updated so that each `resolved` property points to the checked-in packages in the `node_shrinkwrap` directory.
-
-```json
-{
-  "name": "my-project",
-  "version": "1.0.0",
-  "dependencies": {
-    "chalk": {
-      "version": "0.5.1",
-      "from": "chalk@>=0.5.1 <0.6.0",
-      "resolved": "node_shrinkwrap/chalk-0.5.1.tgz",
-      "dependencies": {
-        "ansi-styles": {
-          "version": "1.1.0",
-          "from": "ansi-styles@>=1.1.0 <2.0.0",
-          "resolved": "node_shrinkwrap/ansi-styles-1.1.0.tgz"
-        },
-        "escape-string-regexp": {
-          "version": "1.0.2",
-          "from": "escape-string-regexp@>=1.0.0 <2.0.0",
-          "resolved": "node_shrinkwrap/escape-string-regexp-1.0.2.tgz"
-        },
-        "has-ansi": {
-          "version": "0.1.0",
-          "from": "has-ansi@>=0.1.0 <0.2.0",
-          "resolved": "node_shrinkwrap/has-ansi-0.1.0.tgz",
-          "dependencies": {
-            "ansi-regex": {
-              "version": "0.2.1",
-              "from": "ansi-regex@>=0.2.0 <0.3.0",
-              "resolved": "node_shrinkwrap/ansi-regex-0.2.1.tgz"
-            }
-          }
-        },
-        "strip-ansi": {
-          "version": "0.3.0",
-          "from": "strip-ansi@>=0.3.0 <0.4.0",
-          "resolved": "node_shrinkwrap/strip-ansi-0.3.0.tgz",
-          "dependencies": {
-            "ansi-regex": {
-              "version": "0.2.1",
-              "from": "ansi-regex@>=0.2.0 <0.3.0",
-              "resolved": "node_shrinkwrap/ansi-regex-0.2.1.tgz"
-            }
-          }
-        },
-        "supports-color": {
-          "version": "0.2.0",
-          "from": "supports-color@>=0.2.0 <0.3.0",
-          "resolved": "node_shrinkwrap/supports-color-0.2.0.tgz"
-        }
-      }
-    },
-    "lodash": {
-      "version": "3.2.0",
-      "from": "lodash@>=3.2.0 <4.0.0",
-      "resolved": "node_shrinkwrap/lodash-3.2.0.tgz"
-    }
-  }
-}
-```
-
-Carina checks this code into Git and tells her co-worker Clive that it's ready for him to contribute to.
-
-Having just cloned this repository, he runs `npm install --loglevel=http`.
-
-```
-chalk@0.5.1 node_modules/chalk
-├── escape-string-regexp@1.0.2
-├── ansi-styles@1.1.0
-├── supports-color@0.2.0
-├── strip-ansi@0.3.0 (ansi-regex@0.2.1)
-└── has-ansi@0.1.0 (ansi-regex@0.2.1)
-
-lodash@3.2.0 node_modules/lodash
-```
-
-This is new behaviour, npm didn't hit the network at all. Instead it read the packages from the `node_shrinkwrap` directory directly and installed them straight away.
-
-```
-├── .gitignore
-├── node_modules
-│   ├── (lots of files and folders)
-├── node_shrinkwrap
-│   ├── ansi-regex-0.2.1.tgz
-│   ├── ansi-styles-1.1.0.tgz
-│   ├── chalk-0.5.1.tgz
-│   ├── escape-string-regexp-1.0.2.tgz
-│   ├── has-ansi-0.1.0.tgz
-│   ├── lodash-3.2.0.tgz
-│   ├── strip-ansi-0.3.0.tgz
-│   └── supports-color-0.2.0.tgz
-├── npm-shrinkwrap.json
-└── package.json
-```
-
-### Changing and removing dependencies
-
-Simply edit your `package.json` and re-run `npm shrinkwrap` followed by `shrinkpack`.
-
-## Known Issues
-
-When using `shrinkpack`, the local file path to dependencies will be added to the `npm` client's [local cache](https://docs.npmjs.com/cli/cache). [This can be problematic when working on several projects on a single machine](https://github.com/JamieMason/shrinkpack/issues/31).
-
-The solution to this problem is to setup a [`.npmrc`](https://docs.npmjs.com/files/npmrc) file in the root of your project that instructs the `npm` client to use a cache local to your project, rather than the global module cache.
-
-### .npmrc file in the root of your project
-```shell
-cache=npm_cache
-```
-
-Make sure to add an entry to your VCS's ignore file to ensure you don't check the cache in. If you're using `Git`, this will be the `.gitignore` file in the root of the repository.
+<a href="https://asciinema.org/a/0rrtvle18vmoyt7c7ondyms82" target="_blank"><img src="https://asciinema.org/a/0rrtvle18vmoyt7c7ondyms82.png" alt="asciicast"></a>
