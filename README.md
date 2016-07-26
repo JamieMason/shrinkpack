@@ -303,3 +303,16 @@ This is new behaviour, npm didn't hit the network at all. Instead it read the pa
 ### Changing and removing dependencies
 
 Simply edit your `package.json` and re-run `npm shrinkwrap` followed by `shrinkpack`.
+
+## Known Issues
+
+When using `shrinkpack`, the local file path to dependencies will be added to the `npm` client's [local cache](https://docs.npmjs.com/cli/cache). [This can be problematic when working on several projects on a single machine](https://github.com/JamieMason/shrinkpack/issues/31).
+
+The solution to this problem is to setup a [`.npmrc`](https://docs.npmjs.com/files/npmrc) file in the root of your project that instructs the `npm` client to use a cache local to your project, rather than the global module cache.
+
+### .npmrc file in the root of your project
+```shell
+cache=npm_cache
+```
+
+Make sure to add an entry to your VCS's ignore file to ensure you don't check the cache in. If you're using `Git`, this will be the `.gitignore` file in the root of the repository.
