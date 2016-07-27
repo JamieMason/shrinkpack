@@ -19,12 +19,16 @@
     }
   },
   "contributors": [
+    "Andrew Levine (https://github.com/DrewML)",
     "Chris Wheatley (https://github.com/swirlycheetah)",
     "David Cook (https://github.com/divergentdave)",
+    "Dmytro Tolstyi (https://github.com/GitAngel)",
     "Dylan Piercey (https://github.com/DylanPiercey)",
+    "Emil Sågfors (https://github.com/lime)",
     "Jason Hewison (https://github.com/ChunkySamurai)",
     "Kirill Fomichev (https://github.com/fanatid)",
-    "Mark Erikson (https://github.com/markerikson)"
+    "Mark Erikson (https://github.com/markerikson)",
+    "Scott Sidwell (https://github.com/5id)"
   ],
   "dependencies": {
     "chalk": "1.1.3",
