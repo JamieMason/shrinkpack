@@ -42,6 +42,7 @@
     "commit-release": "0.6.1",
     "cz-conventional-changelog": "1.1.6",
     "ghooks": "1.2.4",
+    "lodash.assign": "http://registry.npmjs.org/lodash.assign/-/lodash.assign-3.2.0.tgz",
     "semistandard": "8.0.0",
     "validate-commit-msg": "2.6.1"
   },

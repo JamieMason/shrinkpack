@@ -1,91 +1,58 @@
 // 3rd party modules
-var chalk = require('chalk');
-var childProcess = require('child_process');
-var fs = require('graceful-fs');
-var path = require('path');
+var assign = require('lodash.assign');
+var when = require('when');
 
 // modules
-var getDiff = require('./getDiff');
-var readGraph = require('./readGraph');
+var createBundleDirectory = require('./createBundleDirectory');
+var getDeps = require('./getDeps');
+var getGraph = require('./getGraph');
+var getPaths = require('./getPaths');
+var readNpmCache = require('./readNpmCache');
 
 // public
 module.exports = init;
 
 // implementation
-function init (pwd) {
-  var graphPath = path.join(pwd, 'npm-shrinkwrap.json');
-  var graph = getGraph(graphPath);
-  var pathToBundle = createDirectory(pwd);
-  var npmCachePath = getNpmCachePath();
-  var npmCache = readNpmCache();
-  var deps = readGraph(graph, pathToBundle, npmCachePath);
-  var diff = getDiff(pathToBundle, deps, npmCache);
-  var unresolved = deps.filter(isUnresolved);
+function init (directory) {
+  return when({ startTime: new Date() })
+    .then(getConfigWithPath)
+    .then(getConfigWithGraph)
+    .then(ensureBundleExists)
+    .then(getConfigWithNpmCache)
+    .then(getConfigWithDeps);
 
-  return {
-    deps: {
-      all: deps,
-      missingAndUnresolved: unresolved.filter(needsResolving),
-      missingFromBundle: diff.missingFromBundle,
-      missingFromCache: diff.missingFromCache,
-      removeFromBundle: diff.removeFromBundle,
-      unresolved: unresolved
-    },
-    graph: graph,
-    npmCache: npmCache,
-    path: {
-      graph: graphPath,
-      npmCache: npmCachePath,
-      project: pwd,
-      shrinkpack: pathToBundle
-    },
-    startTime: new Date()
-  };
-
-  function needsResolving (dep) {
-    return diff.missingFromBundle.indexOf(dep) !== -1 && diff.missingFromCache.indexOf(dep) !== -1;
+  function getConfigWithPath (config) {
+    return getPaths(directory)
+      .then(function (paths) {
+        return assign(config, { path: paths });
+      });
   }
-}
 
-function getGraph (graphPath) {
-  if (!fs.existsSync(graphPath)) {
-    console.error(chalk.red('! npm-shrinkwrap.json is missing, create it using `npm shrinkwrap --dev` then try again'));
-    process.exit(1);
+  function getConfigWithGraph (config) {
+    return getGraph(config.path.graph)
+      .then(function (graph) {
+        return assign(config, { graph: graph });
+      });
   }
-  return JSON.parse(fs.readFileSync(graphPath, 'utf8'));
-}
 
-function createDirectory (pwd) {
-  var pathToBundle = path.join(pwd, 'node_shrinkwrap');
-  if (!fs.existsSync(pathToBundle)) {
-    fs.mkdirSync(pathToBundle);
+  function ensureBundleExists (config) {
+    return createBundleDirectory(config.path.shrinkpack)
+      .then(function () {
+        return config;
+      });
   }
-  return pathToBundle;
-}
 
-function isUnresolved (dep) {
-  return !dep.shrinkwrap.resolved;
-}
+  function getConfigWithNpmCache (config) {
+    return readNpmCache(config.path.npmCache)
+      .then(function (npmCache) {
+        return assign(config, { npmCache: npmCache });
+      });
+  }
 
-function getNpmCachePath () {
-  return childProcess.execSync('npm config get cache', {
-    encoding: 'utf8'
-  }).trim();
-}
-
-function readNpmCache () {
-  // example: ~/.npm/when/3.7.7/package.tgz
-  return childProcess.execSync('npm cache ls', { encoding: 'utf8' })
-    .trim()
-    .split('\n')
-    .filter(function (record) {
-      return record.indexOf('package.tgz') !== -1;
-    })
-    .reduce(function (index, record) {
-      var parts = record.split(path.sep);
-      var name = parts[parts.length - 3];
-      var version = parts[parts.length - 2];
-      index[name + '@' + version] = path.resolve(record);
-      return index;
-    }, {});
+  function getConfigWithDeps (config) {
+    return getDeps(config)
+      .then(function (deps) {
+        return assign(config, { deps: deps });
+      });
+  }
 }
