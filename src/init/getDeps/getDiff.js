@@ -1,6 +1,8 @@
+// node modules
+var path = require('path');
+
 // 3rd party modules
 var fs = require('graceful-fs');
-var path = require('path');
 var uniq = require('lodash.uniq');
 
 // public
