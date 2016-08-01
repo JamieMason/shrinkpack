@@ -73,6 +73,6 @@
     "build-tests": "docker build -t tests .",
     "commit-release": "commit-release",
     "lint": "semistandard --format",
-    "test": "docker-compose run --rm -e NPM_VERSION=3.10.4 tests"
+    "test": "docker-compose run --rm -e NPM_VERSION=3.10.5 tests"
   }
 }
