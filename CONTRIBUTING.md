@@ -4,7 +4,7 @@
 
 1. Download `node` at [nodejs.org](http://nodejs.org) and install it, if you haven't already.
 1. Clone the repo.
-  
+
   ```sh
   git clone https://github.com/JamieMason/shrinkpack.git
   cd shrinkpack
@@ -20,12 +20,12 @@
 1. Download `docker` at [docker.com](https://docs.docker.com) and install it, if you haven't already.
 1. Start a Terminal Session with `docker` running.
 1. Build the tests
-  
+
   ```sh
   npm run build-tests
   ```
 1. Run the tests
-  
+
   ```sh
   npm test
   ```
@@ -45,7 +45,7 @@ If an issue with a known npm package is found or a particular type of package co
 
 ## Coding Style
 
-This project uses [JavaScript Semi-Standard Style](https://github.com/Flet/semistandard) and can be linted and formatted by running;
+This project uses [xo: Happiness JavaScript linter](https://github.com/sindresorhus/xo) and can be linted and formatted by running;
 
 ```sh
 npm run lint
