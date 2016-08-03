@@ -1,8 +1,8 @@
 // public
-module.exports = recurse;
+module.exports = forEachNestedDependency;
 
 // implementation
-function recurse (value, handler, key) {
+function forEachNestedDependency(value, handler, key) {
   if (isObject(value)) {
     if (isRootNode(value, key)) {
       stepInto(value.dependencies, handler);
@@ -15,24 +15,24 @@ function recurse (value, handler, key) {
   }
 }
 
-function isRootNode (value, key) {
+function isRootNode(value, key) {
   return !key;
 }
 
-function isPackage (value, key) {
+function isPackage(value, key) {
   return key !== 'dependencies';
 }
 
-function isDependencyMap (value, key) {
+function isDependencyMap(value, key) {
   return key === 'dependencies';
 }
 
-function stepInto (value, handler) {
+function stepInto(value, handler) {
   for (var key in value) {
-    recurse(value[key], handler, key);
+    forEachNestedDependency(value[key], handler, key);
   }
 }
 
-function isObject (value) {
-  return !!value && (value.constructor === Object);
+function isObject(value) {
+  return Boolean(value) && (value.constructor === Object);
 }

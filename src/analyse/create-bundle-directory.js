@@ -1,20 +1,19 @@
-// 3rd party modules
-var fs = require('graceful-fs');
-var whenNode = require('when/node');
+// modules
+var fs = require('../lib/fs');
 
 // public
 module.exports = createBundleDirectory;
 
 // implementation
-function createBundleDirectory (location) {
-  return whenNode.call(fs.mkdir, location)
+function createBundleDirectory(location) {
+  return fs.mkdir(location)
     .then(onSuccess, onError);
 
-  function onSuccess () {
+  function onSuccess() {
     return location;
   }
 
-  function onError (err) {
+  function onError(err) {
     if (err.code !== 'EEXIST') {
       throw new Error('! failed to create node_shrinkwrap directory');
     }

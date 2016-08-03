@@ -1,17 +1,18 @@
-// 3rd party modules
-var childProcess = require('child_process');
+// node modules
 var path = require('path');
-var whenNode = require('when/node');
+
+// modules
+var childProcess = require('../lib/child-process');
 
 // public
 module.exports = getPaths;
 
 // implementation
-function getPaths (directory) {
-  return whenNode.call(childProcess.exec, 'npm config get cache', { encoding: 'utf8' })
+function getPaths(directory) {
+  return childProcess.exec('npm config get cache', {encoding: 'utf8'})
     .then(onSuccess, onError);
 
-  function onSuccess (npmCachePath) {
+  function onSuccess(npmCachePath) {
     return {
       graph: path.join(directory, 'npm-shrinkwrap.json'),
       npmCache: npmCachePath.join('').trim(),
@@ -20,7 +21,7 @@ function getPaths (directory) {
     };
   }
 
-  function onError () {
+  function onError() {
     throw new Error('! failed to locate the npm cache');
   }
 }
