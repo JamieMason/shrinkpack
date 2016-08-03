@@ -28,7 +28,7 @@ function isDependencyMap(value, key) {
 }
 
 function stepInto(value, handler) {
-  for (var key in value) {
+  for (var key in value) { // eslint-disable-line guard-for-in
     forEachNestedDependency(value[key], handler, key);
   }
 }

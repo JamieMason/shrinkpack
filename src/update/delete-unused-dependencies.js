@@ -11,7 +11,7 @@ module.exports = deleteUnusedDependencies;
 // implementation
 function deleteUnusedDependencies(config) {
   var deletions = [];
-  for (var location in config.unusedDependencies) {
+  for (var location in config.unusedDependencies) { // eslint-disable-line guard-for-in
     deletions.push(performDeletion(location));
   }
   return when.all(deletions);
