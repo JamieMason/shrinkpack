@@ -11,5 +11,5 @@ function displayFailure(err) {
     chalk.underline('https://github.com/JamieMason/shrinkpack/issues'),
     String(err.stack).replace(/^/gm, '    ')
   );
-  process.exit(1);
+  process.exit(1); // eslint-disable-line xo/no-process-exit
 }
