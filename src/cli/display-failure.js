@@ -5,7 +5,7 @@ var chalk = require('chalk');
 module.exports = displayFailure;
 
 // implementation
-function displayFailure (err) {
+function displayFailure(err) {
   console.error(
     chalk.red('! Please raise an issue at %s\n\n%s'),
     chalk.underline('https://github.com/JamieMason/shrinkpack/issues'),
