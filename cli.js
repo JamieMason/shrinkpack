@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 
-// 3rd party modules
+// node modules
 var path = require('path');
+
+// 3rd party modules
+var chalk = require('chalk');
 var program = require('commander');
 
 // modules
@@ -18,10 +21,29 @@ program
     directoryValue = directory;
   });
 
+program.on('--help', onHelp);
+
 program.parse(process.argv);
 
 if (directoryValue) {
   cli.run(path.resolve(directoryValue));
 } else {
   cli.run(process.cwd());
+}
+
+function onHelp() {
+  console.log('  Icons:');
+  console.log('');
+  logIcon(chalk.green, '+', 'Added');
+  logIcon(chalk.yellow, '↓', 'Downloaded');
+  logIcon(chalk.magenta, '→', 'Imported from Cache');
+  logIcon(chalk.blue, 'i', 'Information');
+  logIcon(chalk.red, '-', 'Removed');
+  logIcon(chalk.green, '✓', 'Resolved');
+  logIcon(chalk.grey, '12:34', 'Time Taken');
+  console.log('');
+
+  function logIcon(colour, icon, label) {
+    console.log('    ' + colour(icon) + ' ' + label);
+  }
 }
