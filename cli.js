@@ -16,20 +16,19 @@ var directoryValue;
 
 program
   .version(version)
+  .option('-c, --compress', 'use compressed .tgz tarballs instead of .tar')
   .arguments('[directory]')
   .action(function (directory) {
-    directoryValue = directory;
+    directoryValue = directory ? path.resolve(directory) : process.cwd();
   });
 
 program.on('--help', onHelp);
-
 program.parse(process.argv);
 
-if (directoryValue) {
-  cli.run(path.resolve(directoryValue));
-} else {
-  cli.run(process.cwd());
-}
+cli.run({
+  compress: program.compress === true,
+  directory: directoryValue
+});
 
 function onHelp() {
   console.log('  Icons:');
@@ -42,6 +41,13 @@ function onHelp() {
   logIcon(chalk.green, '✓', 'Resolved');
   logIcon(chalk.grey, '12:34', 'Time Taken');
   console.log('');
+  console.log('  Compression:');
+  console.log('');
+  console.log('    Although compressed .tgz files have lower filesizes, storing binary files in');
+  console.log('    Git can result in a gradual increase in the time it takes to push to your');
+  console.log('    repository. Shrinkpack uses uncompressed, plain text .tar files by default,');
+  console.log('    which are handled optimally by Git in the same way that .md, .js, and .css');
+  console.log('    files are for example.');
 
   function logIcon(colour, icon, label) {
     console.log('    ' + colour(icon) + ' ' + label);
