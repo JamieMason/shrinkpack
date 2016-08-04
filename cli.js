@@ -17,6 +17,7 @@ var directoryValue = process.cwd();
 program
   .version(version)
   .option('-c, --compress', 'use compressed .tgz tarballs instead of .tar')
+  .option('-o, --keep-optional', 'do not exclude optional dependencies')
   .arguments('[directory]')
   .action(function (directory) {
     directoryValue = path.resolve(directory);
@@ -27,7 +28,8 @@ program.parse(process.argv);
 
 cli.run({
   compress: program.compress === true,
-  directory: directoryValue
+  directory: directoryValue,
+  keepOptional: program.keepOptional === true
 });
 
 function onHelp() {

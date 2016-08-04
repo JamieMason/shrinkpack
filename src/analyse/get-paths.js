@@ -15,6 +15,7 @@ function getPaths(directory) {
   function onSuccess(npmCachePath) {
     return {
       graph: path.join(directory, 'npm-shrinkwrap.json'),
+      manifest: path.join(directory, 'package.json'),
       npmCache: npmCachePath.join('').trim(),
       project: directory,
       shrinkpack: path.join(directory, 'node_shrinkwrap')
