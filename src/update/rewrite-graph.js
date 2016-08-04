@@ -9,12 +9,12 @@ module.exports = getGraph;
 
 // implementation
 function getGraph(config) {
-  chalk.blue('i rewriting ' + config.path.shrinkwrap);
-  return fs.writeFile(config.path.shrinkwrap, JSON.stringify(config.graph, null, 2), {encoding: 'utf8'})
+  console.log(chalk.blue('i rewriting ' + config.path.graph));
+  return fs.writeFile(config.path.graph, JSON.stringify(config.graph, null, 2), {encoding: 'utf8'})
     .then(onSuccess, onError);
 
   function onSuccess() {
-    return config.path.shrinkwrap;
+    return config.path.graph;
   }
 
   function onError() {
