@@ -10,8 +10,8 @@ module.exports = {
 };
 
 // implementation
-function runCli(directory) {
-  return analyse(directory)
+function runCli(options) {
+  return analyse(options)
     .then(update, onFail)
     .then(displaySummary, onFail)
     .catch(onFail);

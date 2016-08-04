@@ -29,7 +29,7 @@ Dependency.prototype = {
   bundle: function () {
     if (!this.isBundled()) {
       return bundle(this).then(function (dependency) {
-        console.info(chalk.green('+ %s'), dependency.getId());
+        console.info(chalk.green('+ %s'), dependency.getBundleName());
         return dependency;
       });
     }
@@ -45,14 +45,18 @@ Dependency.prototype = {
     return when(this);
   },
   config: null,
+  getBundleName: function () {
+    var extension = this.config.options.compress ? '.tgz' : '.tar';
+    var name = this.name.replace(/\//g, '-');
+    var version = this.graph.version;
+    return name + '-' + version + extension;
+  },
   getId: function () {
     return this.name + '@' + this.graph.version;
   },
   getPathToBundle: function () {
     var directory = this.config.path.shrinkpack;
-    var name = this.name.replace(/\//g, '-');
-    var version = this.graph.version;
-    return path.join(directory, name + '-' + version + '.tgz');
+    return path.join(directory, this.getBundleName());
   },
   getPathToNpmCache: function () {
     return path.join(this.config.path.npmCache, this.name, this.graph.version, 'package.tgz');

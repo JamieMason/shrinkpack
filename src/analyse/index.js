@@ -16,8 +16,8 @@ var readNpmCache = require('./read-npm-cache');
 module.exports = init;
 
 // implementation
-function init(directory) {
-  return when({startTime: new Date()})
+function init(options) {
+  return when({options: options, startTime: new Date()})
     .then(getConfigWithPaths)
     .then(getConfigWithGraph)
     .then(ensureBundleExists)
@@ -28,7 +28,7 @@ function init(directory) {
     .then(getConfigWithStats);
 
   function getConfigWithPaths(config) {
-    return getPaths(directory)
+    return getPaths(config.options.directory)
       .then(function (paths) {
         return assign(config, {path: paths});
       });
