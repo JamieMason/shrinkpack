@@ -9,6 +9,7 @@ var getGraph = require('./get-graph');
 var getPaths = require('./get-paths');
 var getStats = require('./get-stats');
 var getUnusedDependencies = require('./get-unused-dependencies');
+var pruneOptionalDependencies = require('./prune-optional-dependencies');
 var readBundle = require('./read-bundle');
 var readNpmCache = require('./read-npm-cache');
 
@@ -20,6 +21,7 @@ function init(options) {
   return when({options: options, startTime: new Date()})
     .then(getConfigWithPaths)
     .then(getConfigWithGraph)
+    .then(handleOptionalDependencies)
     .then(ensureBundleExists)
     .then(getConfigWithNpmCacheContents)
     .then(getConfigWithBundleContents)
@@ -36,6 +38,13 @@ function init(options) {
 
   function getConfigWithGraph(config) {
     return getGraph(config.path.graph)
+      .then(function (graph) {
+        return assign(config, {graph: graph});
+      });
+  }
+
+  function handleOptionalDependencies(config) {
+    return pruneOptionalDependencies(config)
       .then(function (graph) {
         return assign(config, {graph: graph});
       });
