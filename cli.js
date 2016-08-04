@@ -12,14 +12,14 @@ var cli = require('./src/cli');
 var version = require('./package.json').version;
 
 // implementation
-var directoryValue;
+var directoryValue = process.cwd();
 
 program
   .version(version)
   .option('-c, --compress', 'use compressed .tgz tarballs instead of .tar')
   .arguments('[directory]')
   .action(function (directory) {
-    directoryValue = directory ? path.resolve(directory) : process.cwd();
+    directoryValue = path.resolve(directory);
   });
 
 program.on('--help', onHelp);
