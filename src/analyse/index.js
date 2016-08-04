@@ -6,7 +6,6 @@ var when = require('when');
 var createBundleDirectory = require('./create-bundle-directory');
 var getDependencies = require('./get-dependencies');
 var getGraph = require('./get-graph');
-var getNpmVersion = require('./get-npm-version');
 var getPaths = require('./get-paths');
 var getStats = require('./get-stats');
 var getUnusedDependencies = require('./get-unused-dependencies');
@@ -19,7 +18,6 @@ module.exports = init;
 // implementation
 function init(directory) {
   return when({startTime: new Date()})
-    .then(getConfigWithNpmVersion)
     .then(getConfigWithPaths)
     .then(getConfigWithGraph)
     .then(ensureBundleExists)
@@ -28,13 +26,6 @@ function init(directory) {
     .then(getConfigWithDependencies)
     .then(getConfigWithUnusedDependencies)
     .then(getConfigWithStats);
-
-  function getConfigWithNpmVersion(config) {
-    return getNpmVersion()
-      .then(function (npmVersion) {
-        return assign(config, {npmVersion: npmVersion});
-      });
-  }
 
   function getConfigWithPaths(config) {
     return getPaths(directory)
