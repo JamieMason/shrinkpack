@@ -1,3 +1,6 @@
 *.log
+*.log.*
 node_modules
-test/sinopia/storage
+testing/sinopia/storage
+shrinkpacked-app
+control-app

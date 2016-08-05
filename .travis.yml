@@ -1,0 +1,7 @@
+language: node_js
+node_js:
+  - '6'
+  - '5'
+script:
+  - NPM_VERSION=3.10.5 npm test
+  - NPM_VERSION=3.8.7 npm test

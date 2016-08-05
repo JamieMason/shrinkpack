@@ -37,10 +37,14 @@
     "when": "3.7.7"
   },
   "devDependencies": {
+    "ava": "^0.15.2",
     "commit-release": "0.6.2",
     "cz-conventional-changelog": "1.1.6",
+    "execa": "^0.4.0",
     "ghooks": "1.3.2",
     "lodash.assign": "4.1.0",
+    "rimraf": "^2.5.4",
+    "sinopia": "^1.4.0",
     "validate-commit-msg": "2.6.1",
     "xo": "0.16.0"
   },
@@ -71,7 +75,7 @@
     "build-tests": "docker build -t tests .",
     "commit-release": "commit-release",
     "lint": "xo --fix",
-    "test": "docker-compose run --rm -e NPM_VERSION=3.10.5 tests"
+    "test": "ava"
   },
   "xo": {
     "envs": [
