@@ -2,12 +2,12 @@
   "name": "mock-project",
   "version": "1.0.0",
   "dependencies": {
+    "@telerik/eslint-config": "1.1.0",
     "ava": "0.15.1",
     "express": "git+https://git@github.com/visionmedia/express.git",
     "finch": "1.3.11",
     "os-locale": "sindresorhus/os-locale",
-    "wowsuch": "github:swirlycheetah/wowsuch",
-    "@telerik/eslint-config": "1.1.0"
+    "wowsuch": "github:swirlycheetah/wowsuch"
   },
   "private": true
 }
