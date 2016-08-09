@@ -45,7 +45,7 @@ function readNpmCache() {
   }
 
   function toArray(stdout) {
-    return stdout.trim().split('\n');
+    return stdout.split(os.EOL);
   }
 
   function getPackages(cacheContents) {
