@@ -12,11 +12,11 @@ function getPaths(directory) {
   return childProcess.exec('npm config get cache', {encoding: 'utf8'})
     .then(onSuccess, onError);
 
-  function onSuccess(npmCachePath) {
+  function onSuccess(result) {
     return {
       graph: path.join(directory, 'npm-shrinkwrap.json'),
       manifest: path.join(directory, 'package.json'),
-      npmCache: npmCachePath.join('').trim(),
+      npmCache: result.stdout,
       project: directory,
       shrinkpack: path.join(directory, 'node_shrinkwrap')
     };

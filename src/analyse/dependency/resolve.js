@@ -9,8 +9,8 @@ function resolve(dependency) {
   return childProcess.exec('npm view ' + dependency.getId() + ' --json', {encoding: 'utf8'})
     .then(onSuccess, onError);
 
-  function onSuccess(res) {
-    var json = JSON.parse(res.join(''));
+  function onSuccess(result) {
+    var json = JSON.parse(result.stdout);
     if (json && json.dist && json.dist.tarball) {
       dependency.graph.resolved = json.dist.tarball;
       return dependency;
