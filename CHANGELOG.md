@@ -1,35 +1,36 @@
-<a name="0.13.1"></a>
-## [0.13.1](https://github.com/JamieMason/shrinkpack/compare/0.12.3...v0.13.1) (2016-07-01)
+<a name="0.16.1"></a>
+## [0.16.1](https://github.com/JamieMason/shrinkpack/compare/0.13.1...v0.16.1) (2016-08-09)
 
 
 ### Bug Fixes
 
+* **cli:** default to cwd if no directory is provided ([708e745](https://github.com/JamieMason/shrinkpack/commit/708e745))
+* **npm:** move lodash.assign out of devDependencies ([ef50a10](https://github.com/JamieMason/shrinkpack/commit/ef50a10))
+* **shrinkwrap:** rewrite npm-shrinkwrap.json on update ([2ebcf92](https://github.com/JamieMason/shrinkpack/commit/2ebcf92))
+
+
+### Features
+
+* **help:** display explanation of icons used ([2762942](https://github.com/JamieMason/shrinkpack/commit/2762942))
+* **shrinkpack:** decompress by default, provide --compress option ([7b2f341](https://github.com/JamieMason/shrinkpack/commit/7b2f341)), closes [#40](https://github.com/JamieMason/shrinkpack/issues/40)
+* **shrinkpack:** ignore optionalDependencies by default, provide --keep-optional ([75265ac](https://github.com/JamieMason/shrinkpack/commit/75265ac)), closes [#17](https://github.com/JamieMason/shrinkpack/issues/17)
+
+
+
+<a name="0.13.1"></a>
+## [0.13.1](https://github.com/JamieMason/shrinkpack/compare/0.12.3...0.13.1) (2016-07-01)
+
+
+### Bug Fixes
+
+* **npm:** regression appeared in npm 3.8.8, not 3.8.9 ([0056417](https://github.com/JamieMason/shrinkpack/commit/0056417))
 * **npm:** regression fixed in npm 3.10.4 ([cb87a87](https://github.com/JamieMason/shrinkpack/commit/cb87a87)), closes [#45](https://github.com/JamieMason/shrinkpack/issues/45)
+* **npm:** warn of regression in npm 3.8.9 ([c17c90a](https://github.com/JamieMason/shrinkpack/commit/c17c90a))
 
 
 ### Features
 
 * **shrinkwrap:** support private/scoped packages ([2707067](https://github.com/JamieMason/shrinkpack/commit/2707067)), closes [#50](https://github.com/JamieMason/shrinkpack/issues/50)
-
-
-
-<a name="0.12.5"></a>
-## [0.12.5](https://github.com/JamieMason/shrinkpack/compare/0.12.4...v0.12.5) (2016-05-30)
-
-
-### Bug Fixes
-
-* **npm:** regression appeared in npm 3.8.8, not 3.8.9 ([3b55ab2](https://github.com/JamieMason/shrinkpack/commit/3b55ab2))
-
-
-
-<a name="0.12.4"></a>
-## [0.12.4](https://github.com/JamieMason/shrinkpack/compare/0.12.3...0.12.4) (2016-05-28)
-
-
-### Bug Fixes
-
-* **npm:** warn of regression in npm 3.8.9 ([b49d36f](https://github.com/JamieMason/shrinkpack/commit/b49d36f))
 
 
 
