@@ -2,6 +2,7 @@
 
 [![NPM version](http://img.shields.io/npm/v/shrinkpack.svg?style=flat-square)](https://www.npmjs.com/package/shrinkpack)
 [![NPM downloads](http://img.shields.io/npm/dm/shrinkpack.svg?style=flat-square)](https://www.npmjs.com/package/shrinkpack)
+[![Build Status](http://img.shields.io/travis/JamieMason/shrinkpack/master.svg?style=flat-square)](https://travis-ci.org/JamieMason/shrinkpack)
 [![Dependency Status](http://img.shields.io/david/JamieMason/shrinkpack.svg?style=flat-square)](https://david-dm.org/JamieMason/shrinkpack)
 [![Join the chat at https://gitter.im/JamieMason/shrinkpack](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JamieMason/shrinkpack)
 
@@ -14,7 +15,7 @@ activity is necessary when installing and building your project. The `node_shrin
 be ignored in your editor (much like is done with the `node_modules` directory) but is instead
 checked into source control.
 
-> For context, please see the [target problem](#target-problem) and [justification](#justification) 
+> For context, please see the [target problem](#target-problem) and [justification](#justification)
 > sections of this README.
 
 ## Contents
@@ -33,6 +34,7 @@ checked into source control.
   1. [Shrinkpack dependencies](#shrinkpack-dependencies)
   1. [Check into Git](#check-into-git)
   1. [Clean install](#clean-install)
+* [CLI Options](#cli-options)
 
 ## Installation
 
@@ -40,7 +42,7 @@ checked into source control.
 npm install --global shrinkpack
 ```
 
-> **Note:** npm had a [regression affecting shrinkwrap](https://github.com/npm/npm/pull/13214) in 
+> **Note:** npm had a [regression affecting shrinkwrap](https://github.com/npm/npm/pull/13214) in
 > versions 3.8.8 to 3.10.3.<br>
 > Please ensure your version of `npm` is 3.10.4 or newer, or 3.8.7 or older.
 
@@ -65,8 +67,8 @@ The first suggestion was always to check in our dependencies, but the idea of so
 commits whenever we chose to upgrade or change them would put us off.
 
 Some teams went a little further and decided that pain was acceptable and decided to proceed, only
-to find that some packages such as [phantomjs](https://www.npmjs.com/package/phantomjs) and 
-[node-sass](https://github.com/sass/node-sass) helpfully install the appropriate binary for you 
+to find that some packages such as [phantomjs](https://www.npmjs.com/package/phantomjs) and
+[node-sass](https://github.com/sass/node-sass) helpfully install the appropriate binary for you
 depending on what system you're running.
 
 This meant that if Chris added `phantomjs` or `node-sass` to the project on his Mac and checked it
@@ -95,7 +97,7 @@ A tagged release should be a locked-down, fixed point in time which has been tes
 enough that it is approved and trusted. When fed into a repeatable, automated deployment process it
 should always result in the same output.
 
-Without `npm shrinkwrap` that's not guaranteed. 
+Without `npm shrinkwrap` that's not guaranteed.
 
 Consider this snippet from the `package.json` of a nested dependency in your project as an example;
 
@@ -119,9 +121,9 @@ shrinkwrap` and stores them within your project.
 This means;
 
 + No need for repeated requests to registry.npmjs.org.
-+ Each package/version pair can be checked in as a single tarball, avoiding commits with all kinds 
++ Each package/version pair can be checked in as a single tarball, avoiding commits with all kinds
   of noisy diffs.
-+ Packages can be checked in, while still installed by members of the team on different operating 
++ Packages can be checked in, while still installed by members of the team on different operating
   systems.
 + Complements the typical `npm shrinkwrap` workflow.
 
@@ -180,7 +182,7 @@ the following directory structure;
 
 ### Shrinkwrap dependencies
 
-The `--dev` option tells npm to also include `devDependencies` when creating an 
+The `--dev` option tells npm to also include `devDependencies` when creating an
 `npm-shrinkwrap.json` for your project.
 
 ```
@@ -270,3 +272,36 @@ to add a `description` or `repository` to our `package.json`.
 > ```
 
 <a href="https://asciinema.org/a/0rrtvle18vmoyt7c7ondyms82" target="_blank"><img src="https://asciinema.org/a/0rrtvle18vmoyt7c7ondyms82.png" alt="asciicast"></a>
+
+## CLI Options
+
+`shrinkpack --help` produces the following output.
+
+```
+Usage: shrinkpack [options] [directory]
+
+Options:
+
+  -h, --help           output usage information
+  -V, --version        output the version number
+  -c, --compress       use compressed .tgz tarballs instead of .tar
+  -o, --keep-optional  do not exclude optional dependencies
+
+Icons:
+
+  + Added
+  ↓ Downloaded
+  → Imported from Cache
+  i Information
+  - Removed
+  ✓ Resolved
+  12:34 Time Taken
+
+Compression:
+
+  Although compressed .tgz files have lower filesizes, storing binary files in
+  Git can result in a gradual increase in the time it takes to push to your
+  repository. Shrinkpack uses uncompressed, plain text .tar files by default,
+  which are handled optimally by Git in the same way that .md, .js, and .css
+  files are for example.
+```
