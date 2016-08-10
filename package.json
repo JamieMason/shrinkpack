@@ -1,7 +1,7 @@
 {
   "name": "shrinkpack",
   "description": "Fast, resilient, reproducible builds with npm install.",
-  "version": "0.16.1",
+  "version": "0.16.2",
   "author": "Jamie Mason (https://github.com/JamieMason)",
   "ava": {
     "files": [
