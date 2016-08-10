@@ -1,9 +1,7 @@
-// node modules
-var zlib = require('zlib');
-
 // 3rd party modules
 var chalk = require('chalk');
 var fs = require('graceful-fs');
+var gunzipMaybe = require('gunzip-maybe');
 var when = require('when');
 
 // modules
@@ -15,6 +13,7 @@ module.exports = rateLimit(copyFile);
 // implementation
 function copyFile(source, target) {
   return when.promise(function (resolve, reject) {
+    var gunzip$;
     var read$ = fs.createReadStream(source);
     var write$ = fs.createWriteStream(target);
 
@@ -25,11 +24,18 @@ function copyFile(source, target) {
     if (isCompressed()) {
       read$.pipe(write$);
     } else {
-      read$.pipe(zlib.createGunzip()).pipe(write$);
+      gunzip$ = gunzipMaybe();
+      gunzip$.on('error', onGunzipError);
+      read$.pipe(gunzip$).pipe(write$);
     }
 
     function onReadError(err) {
       console.error(chalk.red('! failed to read file %s'), source);
+      reject(err);
+    }
+
+    function onGunzipError(err) {
+      console.error(chalk.red('! failed to decompress file %s'), source);
       reject(err);
     }
 
