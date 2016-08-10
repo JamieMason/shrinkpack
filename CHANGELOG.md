@@ -1,5 +1,15 @@
+<a name="0.16.2"></a>
+## [0.16.2](https://github.com/JamieMason/shrinkpack/compare/0.16.1...v0.16.2) (2016-08-10)
+
+
+### Bug Fixes
+
+* **shrinkpack:** apply a rate-limit to file copying ([6b71a36](https://github.com/JamieMason/shrinkpack/commit/6b71a36))
+
+
+
 <a name="0.16.1"></a>
-## [0.16.1](https://github.com/JamieMason/shrinkpack/compare/0.13.1...v0.16.1) (2016-08-09)
+## [0.16.1](https://github.com/JamieMason/shrinkpack/compare/0.13.1...0.16.1) (2016-08-09)
 
 
 ### Bug Fixes
