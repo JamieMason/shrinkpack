@@ -1,6 +1,5 @@
 // 3rd party modules
 var fs = require('graceful-fs');
-var guard = require('when/guard');
 var whenNode = require('when/node');
 
 // modules
@@ -18,5 +17,5 @@ module.exports = {
 };
 
 function wrap(fn) {
-  return guard(rateLimit, whenNode.lift(fn));
+  return rateLimit(whenNode.lift(fn));
 }
