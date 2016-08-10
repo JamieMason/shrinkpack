@@ -54,6 +54,11 @@
   "engines": {
     "npm": "<3.8.8 >=3.10.4"
   },
+  "files": [
+    "cli.js",
+    "index.js",
+    "src"
+  ],
   "homepage": "https://github.com/JamieMason/shrinkpack",
   "keywords": [
     "bundle",
