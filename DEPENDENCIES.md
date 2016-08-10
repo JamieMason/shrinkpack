@@ -24,6 +24,7 @@ npm test
 - [commander](https://github.com/tj/commander.js): the complete solution for node.js command-line programs
 - [execa](https://github.com/sindresorhus/execa): A better `child_process`
 - [graceful-fs](https://github.com/isaacs/node-graceful-fs): A drop-in replacement for fs, making various improvements.
+- [gunzip-maybe](https://github.com/mafintosh/gunzip-maybe): Transform stream that gunzips its input if it is gzipped and just echoes it if not
 - [lodash.assign](https://github.com/lodash/lodash): The lodash method `_.assign` exported as a module.
 - [when](https://github.com/cujojs/when): A lightweight Promises/A+ and when() implementation, plus other async goodies.
 

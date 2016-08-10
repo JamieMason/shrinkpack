@@ -1,5 +1,15 @@
+<a name="0.16.3"></a>
+## [0.16.3](https://github.com/JamieMason/shrinkpack/compare/0.16.2...v0.16.3) (2016-08-10)
+
+
+### Bug Fixes
+
+* **shell:** handle seemingly uncompressed tgz files ([8d3836e](https://github.com/JamieMason/shrinkpack/commit/8d3836e))
+
+
+
 <a name="0.16.2"></a>
-## [0.16.2](https://github.com/JamieMason/shrinkpack/compare/0.16.1...v0.16.2) (2016-08-10)
+## [0.16.2](https://github.com/JamieMason/shrinkpack/compare/0.16.1...0.16.2) (2016-08-10)
 
 
 ### Bug Fixes
