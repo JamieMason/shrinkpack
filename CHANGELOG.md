@@ -1,5 +1,15 @@
+<a name="0.17.0"></a>
+# [0.17.0](https://github.com/JamieMason/shrinkpack/compare/0.16.3...v0.17.0) (2016-08-25)
+
+
+### Features
+
+* **api:** expose cli runner through node.js api ([d7ccf2a](https://github.com/JamieMason/shrinkpack/commit/d7ccf2a)), closes [#67](https://github.com/JamieMason/shrinkpack/issues/67)
+
+
+
 <a name="0.16.3"></a>
-## [0.16.3](https://github.com/JamieMason/shrinkpack/compare/0.16.2...v0.16.3) (2016-08-10)
+## [0.16.3](https://github.com/JamieMason/shrinkpack/compare/0.16.2...0.16.3) (2016-08-10)
 
 
 ### Bug Fixes
