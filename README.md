@@ -21,20 +21,26 @@ checked into source control.
 ## Contents
 
 * [Installation](#installation)
+* [Usage](#usage)
+  * [Command Line](#command-line)
+  * [Node.js](#nodejs)
 * [Target Problem](#target-problem)
 * [Justification](#justification)
   * [npm shrinkwrap](#npm-shrinkwrap)
   * [shrinkpack](#shrinkpack-1)
-* [Usage](#usage)
-  1. [Create a new project](#create-a-new-project)
-  1. [Set some sensible npm defaults](#set-some-sensible-npm-defaults)
-  1. [Install dependencies](#install-dependencies)
-  1. [Shrinkwrap dependencies](#shrinkwrap-dependencies)
-  1. [Create a project-specific cache (optional)](#create-a-project-specific-cache-optional)
-  1. [Shrinkpack dependencies](#shrinkpack-dependencies)
-  1. [Check into Git](#check-into-git)
-  1. [Clean install](#clean-install)
-* [CLI Options](#cli-options)
+* [Suitability to your project](#suitability-to-your-project)
+* [Tutorial](#tutorial)
+  * [Create a new project](#create-a-new-project)
+  * [Set some sensible npm defaults](#set-some-sensible-npm-defaults)
+  * [Install dependencies](#install-dependencies)
+  * [Shrinkwrap dependencies](#shrinkwrap-dependencies)
+  * [Create a project-specific cache (optional)](#create-a-project-specific-cache-optional)
+  * [Shrinkpack dependencies](#shrinkpack-dependencies)
+  * [Check into Git](#check-into-git)
+  * [Clean install](#clean-install)
+  * [Update Dependencies](#update-dependencies)
+  * [Toggle Compression](#toggle-compression)
+  * [Remove Optional Dependencies](#remove-optional-dependencies)
 
 ## Installation
 
@@ -45,6 +51,62 @@ npm install --global shrinkpack
 > **Note:** npm had a [regression affecting shrinkwrap](https://github.com/npm/npm/pull/13214) in
 > versions 3.8.8 to 3.10.3.<br>
 > Please ensure your version of `npm` is 3.10.4 or newer, or 3.8.7 or older.
+
+## Usage
+
+### Command Line
+
+```
+Usage: shrinkpack [options] [directory]
+
+Options:
+
+  -h, --help           output usage information
+  -V, --version        output the version number
+  -c, --compress       use compressed .tgz tarballs instead of .tar
+  -o, --keep-optional  do not exclude optional dependencies
+
+Icons:
+
+  + Added
+  ↓ Downloaded
+  → Imported from Cache
+  i Information
+  - Removed
+  ✓ Resolved
+  12:34 Time Taken
+
+Compression:
+
+  Although compressed .tgz files have lower filesizes, storing binary files in
+  Git can result in a gradual increase in the time it takes to push to your
+  repository. Shrinkpack uses uncompressed, plain text .tar files by default,
+  which are handled optimally by Git in the same way that .md, .js, and .css
+  files are for example.
+```
+
+### Node.js
+
+Shrinkpack works in 2 phases;
+
+1. Analyse the project and gather all the diffing information between the file system and the shrinkwrap.
+2. Use the diffing information to bring the file system in sync with the shrinkwrap.
+
+```js
+var shrinkpack = require('shrinkpack');
+
+shrinkpack.analyse({ compress: false, directory: process.cwd(), keepOptional: false })
+  .then(data => shrinkpack.update(data));
+```
+
+Or to run `shrinkpack` in full, including all the additional logging that you see when using the CLI.
+
+```js
+var cli = require('shrinkpack');
+
+shrinkpack.run({ compress: false, directory: process.cwd(), keepOptional: false })
+  .then(() => {});
+```
 
 ## Target Problem
 
@@ -107,8 +169,8 @@ Consider this snippet from the `package.json` of a nested dependency in your pro
 }
 ```
 
-If `lolwut@0.2.4` contains a regression and you're not using `npm shrinkwrap` then congratulations,
-your project now contains a regression.
+If `lolwut@0.2.4` contains a regression and you're not using `npm shrinkwrap`, your project now
+contains a regression.
 
 ### shrinkpack
 
@@ -127,7 +189,23 @@ This means;
   systems.
 + Complements the typical `npm shrinkwrap` workflow.
 
-## Usage
+## Suitability to your project
+
+`shrinkpack` is intended for Developers of Apps, Blogs, and Websites – any project which is the root
+consumer of dependencies and not a dependency itself. If your project is intended to be installed as
+a dependency of another project using `npm install`, let those downstream projects make their own
+decisions on bundling.
+
+That said, if you're developing an npm package and want to use `shrinkpack` to speed up and
+harden your development and CI environments, adding `npm-shrinkwrap.json` and `node_shrinkwrap` to
+your `.npmignore` file will allow you to do that, without publishing your shrinkpacked dependencies
+to the registry.
+
+It's not recommended to publish a project with bundled or shrinkpacked dependencies to the registry.
+If that approach were to gain traction, it is likely that the registry would become bloated due to
+the build up of duplicate copies of packages, bundled amongst various other ones.
+
+## Tutorial
 
 ### Create a new project
 
@@ -142,7 +220,7 @@ echo npm-debug.log >> .gitignore
 npm init --yes
 ```
 
-<a href="https://asciinema.org/a/1fii3czijny4sw3gl78u3punk" target="_blank"><img src="https://asciinema.org/a/1fii3czijny4sw3gl78u3punk.png" alt="asciicast"></a>
+<a href="https://asciinema.org/a/83790" target="_blank"><img src="https://asciinema.org/a/83790.png" alt="asciicast"></a>
 
 ### Set some sensible npm defaults
 
@@ -168,7 +246,7 @@ commander so that we can go through how to update a shrinkpacked project later.
 npm install async commander@2.7.1 express lodash request
 ```
 
-<a href="https://asciinema.org/a/2x3gdi905de2vvwp7msjjwalf" target="_blank"><img src="https://asciinema.org/a/2x3gdi905de2vvwp7msjjwalf.png" alt="asciicast"></a>
+<a href="https://asciinema.org/a/83792" target="_blank"><img src="https://asciinema.org/a/83792.png" alt="asciicast"></a>
 
 This is typical behaviour, npm downloads the packages from the registry and installs them, leaving
 the following directory structure;
@@ -189,7 +267,7 @@ The `--dev` option tells npm to also include `devDependencies` when creating an
 npm shrinkwrap --dev
 ```
 
-<a href="https://asciinema.org/a/dej8ryid37tjq78cb3uym171y" target="_blank"><img src="https://asciinema.org/a/dej8ryid37tjq78cb3uym171y.png" alt="asciicast"></a>
+<a href="https://asciinema.org/a/83795" target="_blank"><img src="https://asciinema.org/a/83795.png" alt="asciicast"></a>
 
 ### Create a project-specific cache (optional)
 
@@ -226,7 +304,7 @@ Each entry will look something like this
 }
 ```
 
-<a href="https://asciinema.org/a/etx4eyz37jn03kcmkh10am44c" target="_blank"><img src="https://asciinema.org/a/etx4eyz37jn03kcmkh10am44c.png" alt="asciicast"></a>
+<a href="https://asciinema.org/a/83796" target="_blank"><img src="https://asciinema.org/a/83796.png" alt="asciicast"></a>
 
 ### Check into Git
 
@@ -247,7 +325,7 @@ git add .
 git commit -m 'chore(project): initial commit'
 ```
 
-<a href="https://asciinema.org/a/b2znt0jyy028pop794p8ekx3f" target="_blank"><img src="https://asciinema.org/a/b2znt0jyy028pop794p8ekx3f.png" alt="asciicast"></a>
+<a href="https://asciinema.org/a/83797" target="_blank"><img src="https://asciinema.org/a/83797.png" alt="asciicast"></a>
 
 ### Clean install
 
@@ -271,37 +349,43 @@ to add a `description` or `repository` to our `package.json`.
 > npm WARN shrinkpack-demo@1.0.0 No repository field.
 > ```
 
-<a href="https://asciinema.org/a/0rrtvle18vmoyt7c7ondyms82" target="_blank"><img src="https://asciinema.org/a/0rrtvle18vmoyt7c7ondyms82.png" alt="asciicast"></a>
+<a href="https://asciinema.org/a/83799" target="_blank"><img src="https://asciinema.org/a/83799.png" alt="asciicast"></a>
 
-## CLI Options
+### Update Dependencies
 
-`shrinkpack --help` produces the following output.
+Later, we may choose to add, update, or remove some dependencies;
 
 ```
-Usage: shrinkpack [options] [directory]
-
-Options:
-
-  -h, --help           output usage information
-  -V, --version        output the version number
-  -c, --compress       use compressed .tgz tarballs instead of .tar
-  -o, --keep-optional  do not exclude optional dependencies
-
-Icons:
-
-  + Added
-  ↓ Downloaded
-  → Imported from Cache
-  i Information
-  - Removed
-  ✓ Resolved
-  12:34 Time Taken
-
-Compression:
-
-  Although compressed .tgz files have lower filesizes, storing binary files in
-  Git can result in a gradual increase in the time it takes to push to your
-  repository. Shrinkpack uses uncompressed, plain text .tar files by default,
-  which are handled optimally by Git in the same way that .md, .js, and .css
-  files are for example.
+npm install commander@2.9.0
+npm install react
+npm uninstall express
 ```
+
+With our local `node_modules` now up to date, we now need to update our `npm-shrinkwrap.json` file
+and get our `node_shrinkwrap` directory back in sync with the new changes.
+
+```
+npm shrinkwrap --dev
+shrinkpack
+```
+
+<a href="https://asciinema.org/a/83806" target="_blank"><img src="https://asciinema.org/a/83806.png" alt="asciicast"></a>
+
+### Toggle Compression
+
+The tarballs in the npm registry are gzipped for optimal network performance, but storing binary
+files in Git repositories is not optimal. Git is decentralized, so every developer has the full
+change history on their computer. Changes in large binary files cause Git repositories to grow by
+the size of the file in question every time the file is changed and committed, this growth directly
+affects the amount of data end users need to retrieve when they need to clone the repository.
+
+You can toggle between compressed and uncompressed tarballs with `shrinkpack --compress`.
+
+<a href="https://asciinema.org/a/83810" target="_blank"><img src="https://asciinema.org/a/83810.png" alt="asciicast"></a>
+
+### Remove Optional Dependencies
+
+`optionalDependencies` are removed by default, to avoid issues when trying to `npm shrinkwrap` your
+project on platforms where that optional dependency was not installed. More detail is available in
+this [issue comment](https://github.com/JamieMason/shrinkpack/issues/17#issuecomment-202340196) and
+this behaviour can be overriden by using `shrinkpack --keep-optional`.
