@@ -11,9 +11,7 @@
   "bin": {
     "shrinkpack": "cli.js"
   },
-  "bugs": {
-    "url": "https://github.com/JamieMason/shrinkpack/issues"
-  },
+  "bugs": "https://github.com/JamieMason/shrinkpack/issues",
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
@@ -72,10 +70,7 @@
   ],
   "license": "MIT",
   "main": "shrinkpack",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/JamieMason/shrinkpack.git"
-  },
+  "repository": "JamieMason/shrinkpack",
   "scripts": {
     "build-tests": "docker build -t tests .",
     "commit-release": "commit-release",
