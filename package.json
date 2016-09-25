@@ -31,7 +31,8 @@
     "Jason Hewison (https://github.com/ChunkySamurai)",
     "Kirill Fomichev (https://github.com/fanatid)",
     "Mark Erikson (https://github.com/markerikson)",
-    "Scott Sidwell (https://github.com/5id)"
+    "Scott Sidwell (https://github.com/5id)",
+    "Zlatan Vasović (https://github.com/zdroid)"
   ],
   "dependencies": {
     "chalk": "1.1.3",
