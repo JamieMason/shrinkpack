@@ -3,8 +3,10 @@ node_js:
   - '6'
   - '5'
   - '4'
+env:
+  - NPM_VERSION=3.10.7
+  - NPM_VERSION=3.10.6
+  - NPM_VERSION=3.10.5
+  - NPM_VERSION=3.10.4
 script:
-  - NPM_VERSION=3.10.7 npm test
-  - NPM_VERSION=3.10.6 npm test
-  - NPM_VERSION=3.10.5 npm test
-  - NPM_VERSION=3.10.4 npm test
+  - NPM_VERSION=$NPM_VERSION npm test
