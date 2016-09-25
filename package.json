@@ -78,7 +78,6 @@
   "main": "shrinkpack",
   "repository": "JamieMason/shrinkpack",
   "scripts": {
-    "build-tests": "docker build -t tests .",
     "commit-release": "commit-release",
     "lint": "xo --fix",
     "test": "ava"
