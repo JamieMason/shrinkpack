@@ -5,6 +5,7 @@
 [![Build Status](http://img.shields.io/travis/JamieMason/shrinkpack/master.svg?style=flat-square)](https://travis-ci.org/JamieMason/shrinkpack)
 [![Dependency Status](http://img.shields.io/david/JamieMason/shrinkpack.svg?style=flat-square)](https://david-dm.org/JamieMason/shrinkpack)
 [![Join the chat at https://gitter.im/JamieMason/shrinkpack](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JamieMason/shrinkpack)
+[![Analytics](https://ga-beacon.appspot.com/UA-45466560-5/shrinkpack?flat&useReferer)](https://github.com/igrigorik/ga-beacon)
 
 Shrinkpack complements the [npm shrinkwrap](https://docs.npmjs.com/cli/shrinkwrap) command by
 maintaining a `node_shrinkwrap` directory in your project, containing the exact same tarballs that
