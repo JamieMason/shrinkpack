@@ -12,7 +12,7 @@ const projectRoot = process.cwd();
 const controlApp = path.join(projectRoot, 'control-app');
 const shrinkpackApp = path.join(projectRoot, 'shrinkpacked-app');
 const nonShrinkpackApp = path.join(projectRoot, 'non-shrinkpacked-app');
-const testPackageJson = path.join(projectRoot, 'test-package.json');
+const testPackageJson = path.join(__dirname, 'test-package.json');
 
 let startingNpmVersion;
 
