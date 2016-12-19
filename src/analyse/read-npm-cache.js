@@ -49,9 +49,11 @@ function readNpmCache() {
   }
 
   function getPackages(cacheContents) {
-    return cacheContents.filter(function isPackage(location) {
-      return location.indexOf('package.tgz') !== -1;
-    });
+    return cacheContents.filter(isPackage);
+  }
+
+  function isPackage(location) {
+    return location.indexOf('package.tgz') !== -1;
   }
 
   function indexByPath(packages) {
