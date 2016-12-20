@@ -2,37 +2,37 @@
 module.exports = forEachNestedDependency;
 
 // implementation
-function forEachNestedDependency(value, handler, key) {
-  if (isObject(value)) {
-    if (isRootNode(value, key)) {
-      stepInto(value.dependencies, handler);
-    } else if (isPackage(value, key)) {
-      handler(key, value);
-      stepInto(value, handler);
-    } else if (isDependencyMap(value, key)) {
-      stepInto(value, handler);
+function forEachNestedDependency(node, handler, key, parentNode) {
+  if (isObject(node)) {
+    if (isRootNode(node, key)) {
+      stepInto(node.dependencies, handler);
+    } else if (isPackage(node, key)) {
+      handler(key, node, parentNode);
+      stepInto(node, handler);
+    } else if (isDependencyMap(node, key)) {
+      stepInto(node, handler);
     }
   }
 }
 
-function isRootNode(value, key) {
+function isRootNode(node, key) {
   return !key;
 }
 
-function isPackage(value, key) {
+function isPackage(node, key) {
   return key !== 'dependencies';
 }
 
-function isDependencyMap(value, key) {
+function isDependencyMap(node, key) {
   return key === 'dependencies';
 }
 
-function stepInto(value, handler) {
-  for (var key in value) { // eslint-disable-line guard-for-in
-    forEachNestedDependency(value[key], handler, key);
+function stepInto(parentNode, handler) {
+  for (var key in parentNode) { // eslint-disable-line guard-for-in
+    forEachNestedDependency(parentNode[key], handler, key, parentNode);
   }
 }
 
-function isObject(value) {
-  return Boolean(value) && (value.constructor === Object);
+function isObject(node) {
+  return Boolean(node) && (node.constructor === Object);
 }
