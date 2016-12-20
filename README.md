@@ -103,9 +103,9 @@ shrinkpack.analyse({ compress: false, directory: process.cwd(), keepOptional: fa
 Or to run `shrinkpack` in full, including all the additional logging that you see when using the CLI.
 
 ```js
-var cli = require('shrinkpack');
+var shrinkpack = require('shrinkpack');
 
-shrinkpack.run({ compress: false, directory: process.cwd(), keepOptional: false })
+shrinkpack.cli({ compress: false, directory: process.cwd(), keepOptional: false })
   .then(() => {});
 ```
 
