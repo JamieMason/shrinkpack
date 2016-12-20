@@ -12,8 +12,19 @@ module.exports = getDependencies;
 function getDependencies(config) {
   Dependency.setConfig(config);
   var dependencies = [];
-  forEachNestedDependency(config.graph, function (name, graph) {
-    dependencies.push(new Dependency(name, graph));
-  });
+  var handler = config.options.keepOptional ? addDependency : addIfMandatory;
+  forEachNestedDependency(config.graph, handler);
   return when(dependencies);
+
+  function addDependency(key, node) {
+    dependencies.push(new Dependency(key, node));
+  }
+
+  function addIfMandatory(key, node, parentNode) {
+    if (node.optional === true) {
+      delete parentNode[key];
+    } else {
+      addDependency(key, node);
+    }
+  }
 }
