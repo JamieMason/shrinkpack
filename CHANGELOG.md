@@ -1,5 +1,20 @@
+<a name="0.18.1"></a>
+## [0.18.1](https://github.com/jamiemason/shrinkpack/compare/0.17.1...v0.18.1) (2016-12-21)
+
+
+### Bug Fixes
+
+* **shell:** migrate from deprecated execa.spawn ([2dc7919](https://github.com/jamiemason/shrinkpack/commit/2dc7919))
+
+
+### Features
+
+* **shrinkpack:** remove nested optional dependencies in npm >= 3.10.8 ([3e8969a](https://github.com/jamiemason/shrinkpack/commit/3e8969a)), closes [#75](https://github.com/jamiemason/shrinkpack/issues/75)
+
+
+
 <a name="0.17.1"></a>
-## [0.17.1](https://github.com/jamiemason/shrinkpack/compare/0.17.0...v0.17.1) (2016-10-17)
+## [0.17.1](https://github.com/jamiemason/shrinkpack/compare/0.17.0...0.17.1) (2016-10-17)
 
 
 ### Bug Fixes
