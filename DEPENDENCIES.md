@@ -33,7 +33,7 @@ npm test
 - [ava](https://github.com/avajs/ava): Futuristic test runner 🚀
 - [commit-release](https://github.com/JamieMason/commit-release): Commit and tag a release for a conventional changelog project.
 - [cz-conventional-changelog](https://github.com/commitizen/cz-conventional-changelog): Commitizen adapter following the conventional-changelog format.
-- [ghooks](https://github.com/gtramontina/ghooks): Simple git hooks
+- [husky](https://github.com/typicode/husky): Prevents bad commit or push (git hooks, pre-commit/precommit, pre-push/prepush, post-merge/postmerge and all that stuff...)
 - [rimraf](https://github.com/isaacs/rimraf): A deep deletion module for node (like `rm -rf`)
 - [validate-commit-msg](https://github.com/kentcdodds/validate-commit-msg): Script to validate a commit message follows the conventional changelog standard
 - [xo](https://github.com/sindresorhus/xo): JavaScript happiness style linter ❤️
