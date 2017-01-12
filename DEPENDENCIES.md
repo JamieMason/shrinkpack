@@ -15,6 +15,7 @@ npm install shrinkpack --save
 
 ```sh
 npm install
+npm run build-tests
 npm test
 ```
 
