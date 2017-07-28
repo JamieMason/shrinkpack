@@ -1,25 +1,20 @@
 #!/usr/bin/env node
 
-// node modules
-var path = require('path');
+import 'babel-polyfill';
+import path from 'path';
+import chalk from 'chalk';
+import program from 'commander';
+import { version } from '../package.json';
+import cli from './cli';
 
-// 3rd party modules
-var chalk = require('chalk');
-var program = require('commander');
-
-// modules
-var cli = require('./src/cli');
-var version = require('./package.json').version;
-
-// implementation
-var directoryValue = process.cwd();
+let directoryValue = process.cwd();
 
 program
   .version(version)
   .option('-c, --compress', 'use compressed .tgz tarballs instead of .tar')
   .option('-o, --keep-optional', 'do not exclude optional dependencies')
   .arguments('[directory]')
-  .action(function (directory) {
+  .action(directory => {
     directoryValue = path.resolve(directory);
   });
 
@@ -52,6 +47,6 @@ function onHelp() {
   console.log('    files are for example.');
 
   function logIcon(colour, icon, label) {
-    console.log('    ' + colour(icon) + ' ' + label);
+    console.log(`    ${colour(icon)} ${label}`);
   }
 }

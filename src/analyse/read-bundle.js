@@ -1,19 +1,13 @@
-// node modules
-var path = require('path');
+import path from 'path';
+import fs from '../lib/fs';
 
-// modules
-var fs = require('../lib/fs');
+export default readBundle;
 
-// public
-module.exports = readBundle;
-
-// implementation
 function readBundle(pathToBundle) {
-  return fs.readdir(pathToBundle)
-    .then(indexByPath, onError);
+  return fs.readdir(pathToBundle).then(indexByPath, onError);
 
   function indexByPath(filenames) {
-    return filenames.reduce(function (memo, filename) {
+    return filenames.reduce((memo, filename) => {
       memo[getAbsolutePath(filename)] = true;
       return memo;
     }, {});

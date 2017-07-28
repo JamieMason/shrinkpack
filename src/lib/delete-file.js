@@ -1,19 +1,15 @@
-// modules
-var fs = require('./fs');
+import fs from './fs';
 
-// public
-module.exports = deleteFile;
+export default deleteFile;
 
-// implementation
 function deleteFile(location) {
-  return fs.unlink(location)
-    .then(onSuccess, onError);
+  return fs.unlink(location).then(onSuccess, onError);
 
   function onSuccess() {
     return location;
   }
 
   function onError() {
-    throw new Error('! failed to delete ' + location);
+    throw new Error(`! failed to delete ${location}`);
   }
 }

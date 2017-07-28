@@ -1,24 +1,18 @@
-// 3rd party modules
-var chalk = require('chalk');
-var when = require('when');
+import chalk from 'chalk';
+import when from 'when';
+import deleteFile from '../lib/delete-file';
 
-// modules
-var deleteFile = require('../lib/delete-file');
+export default deleteUnusedDependencies;
 
-// public
-module.exports = deleteUnusedDependencies;
-
-// implementation
 function deleteUnusedDependencies(config) {
-  var deletions = [];
-  for (var location in config.unusedDependencies) { // eslint-disable-line guard-for-in
+  const deletions = [];
+  for (const location in config.unusedDependencies) {
     deletions.push(performDeletion(location));
   }
   return when.all(deletions);
 
   function performDeletion(location) {
-    return deleteFile(location)
-      .then(onSuccess);
+    return deleteFile(location).then(onSuccess);
   }
 
   function onSuccess(location) {

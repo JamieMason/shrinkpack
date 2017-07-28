@@ -9,7 +9,7 @@
     ]
   },
   "bin": {
-    "shrinkpack": "cli.js"
+    "shrinkpack": "dist/bin.js"
   },
   "bugs": "https://github.com/JamieMason/shrinkpack/issues",
   "config": {
@@ -41,6 +41,8 @@
   },
   "devDependencies": {
     "ava": "0.17.0",
+    "babel-cli": "6.24.1",
+    "babel-preset-env": "1.6.0",
     "commit-release": "0.6.2",
     "cz-conventional-changelog": "1.2.0",
     "husky": "0.12.0",
@@ -53,9 +55,7 @@
     "npm": "<3.8.8 || >3.10.3"
   },
   "files": [
-    "cli.js",
-    "index.js",
-    "src"
+    "dist"
   ],
   "homepage": "https://github.com/JamieMason/shrinkpack",
   "keywords": [
@@ -75,17 +75,25 @@
   "main": "shrinkpack",
   "repository": "JamieMason/shrinkpack",
   "scripts": {
+    "build": "babel --out-dir ./dist --ignore node_modules --source-maps inline ./src",
     "commit-release": "commit-release",
     "commitmsg": "validate-commit-msg",
-    "lint": "xo --fix",
+    "lint": "xo",
+    "prebuild": "rimraf dist",
     "precommit": "npm run lint",
+    "prepack": "npm run build",
     "test": "ava"
   },
   "xo": {
     "envs": [
       "node"
     ],
-    "esnext": false,
+    "esnext": true,
+    "rules": {
+      "import/extensions": 0,
+      "guard-for-in": 0,
+      "object-curly-spacing": 0
+    },
     "space": 2
   }
 }

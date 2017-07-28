@@ -1,22 +1,13 @@
-// 3rd party modules
-var when = require('when');
+import when from 'when';
+import addUsedDependencies from './add-used-dependencies';
+import deleteUnusedDependencies from './delete-unused-dependencies';
+import rewriteGraph from './rewrite-graph';
 
-// modules
-var addUsedDependencies = require('./add-used-dependencies');
-var deleteUnusedDependencies = require('./delete-unused-dependencies');
-var rewriteGraph = require('./rewrite-graph');
+export default update;
 
-// public
-module.exports = update;
-
-// implementation
 function update(config) {
-  return when.join(
-    addUsedDependencies(config),
-    deleteUnusedDependencies(config)
-  ).then(function () {
-    return rewriteGraph(config);
-  }).then(function () {
-    return config;
-  });
+  return when
+    .join(addUsedDependencies(config), deleteUnusedDependencies(config))
+    .then(() => rewriteGraph(config))
+    .then(() => config);
 }

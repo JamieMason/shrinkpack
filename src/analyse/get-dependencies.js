@@ -1,18 +1,13 @@
-// 3rd party modules
-var when = require('when');
+import when from 'when';
+import forEachNestedDependency from '../lib/for-each-nested-dependency';
+import Dependency from './dependency';
 
-// modules
-var forEachNestedDependency = require('../lib/for-each-nested-dependency');
-var Dependency = require('./dependency');
+export default getDependencies;
 
-// public
-module.exports = getDependencies;
-
-// implementation
 function getDependencies(config) {
   Dependency.setConfig(config);
-  var dependencies = [];
-  var handler = config.options.keepOptional ? addDependency : addIfMandatory;
+  const dependencies = [];
+  const handler = config.options.keepOptional ? addDependency : addIfMandatory;
   forEachNestedDependency(config.graph, handler);
   return when(dependencies);
 

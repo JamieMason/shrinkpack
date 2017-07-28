@@ -1,7 +1,6 @@
 // public
-module.exports = forEachNestedDependency;
+export default forEachNestedDependency;
 
-// implementation
 function forEachNestedDependency(node, handler, key, parentNode) {
   if (isObject(node)) {
     if (isRootNode(node, key)) {
@@ -28,11 +27,11 @@ function isDependencyMap(node, key) {
 }
 
 function stepInto(parentNode, handler) {
-  for (var key in parentNode) { // eslint-disable-line guard-for-in
+  for (const key in parentNode) {
     forEachNestedDependency(parentNode[key], handler, key, parentNode);
   }
 }
 
 function isObject(node) {
-  return Boolean(node) && (node.constructor === Object);
+  return Boolean(node) && node.constructor === Object;
 }

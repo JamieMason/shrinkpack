@@ -1,13 +1,9 @@
-// modules
-var fs = require('../lib/fs');
+import fs from '../lib/fs';
 
-// public
-module.exports = createBundleDirectory;
+export default createBundleDirectory;
 
-// implementation
 function createBundleDirectory(location) {
-  return fs.mkdir(location)
-    .then(onSuccess, onError);
+  return fs.mkdir(location).then(onSuccess, onError);
 
   function onSuccess() {
     return location;

@@ -1,29 +1,19 @@
-// node modules
-var os = require('os');
-var path = require('path');
+import os from 'os';
+import path from 'path';
+import when from 'when';
+import childProcess from '../lib/child-process';
 
-// 3rd party modules
-var when = require('when');
+export default readNpmCache;
 
-// modules
-var childProcess = require('../lib/child-process');
-
-// public
-module.exports = readNpmCache;
-
-// implementation
 function readNpmCache() {
-  var home = os.homedir();
+  const home = os.homedir();
 
-  return getCacheContents()
-    .then(toArray)
-    .then(getPackages)
-    .then(indexByPath);
+  return getCacheContents().then(toArray).then(getPackages).then(indexByPath);
 
   function getCacheContents() {
-    var allData = '';
-    var deferred = when.defer();
-    var npmCache = childProcess.spawn('npm', ['cache', 'ls']);
+    let allData = '';
+    const deferred = when.defer();
+    const npmCache = childProcess.spawn('npm', ['cache', 'ls']);
 
     npmCache.stdout.setEncoding('utf8');
     npmCache.stdout.on('data', onData);
@@ -57,7 +47,7 @@ function readNpmCache() {
   }
 
   function indexByPath(packages) {
-    return packages.reduce(function (memo, location) {
+    return packages.reduce((memo, location) => {
       memo[path.resolve(expandTilde(location))] = true;
       return memo;
     }, {});
@@ -65,7 +55,7 @@ function readNpmCache() {
 
   function expandTilde(location) {
     if (home) {
-      return location.replace(/^~($|\/|\\)/, home + '$1');
+      return location.replace(/^~($|\/|\\)/, `${home}$1`);
     }
     return location;
   }
