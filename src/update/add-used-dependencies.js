@@ -1,14 +1,7 @@
-// 3rd party modules
-var when = require('when');
+import when from 'when';
 
-// public
-module.exports = addUsedDependencies;
+export default addUsedDependencies;
 
-// implementation
 function addUsedDependencies(config) {
-  return when.all(
-    config.deps.map(function (dependency) {
-      return dependency.synchronise();
-    })
-  );
+  return when.all(config.deps.map(dependency => dependency.synchronise()));
 }

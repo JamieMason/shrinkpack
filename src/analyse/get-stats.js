@@ -1,17 +1,14 @@
-// 3rd party modules
-var when = require('when');
+import when from 'when';
 
-// public
-module.exports = getStats;
+export default getStats;
 
-// implementation
 function getStats(config) {
-  var bundled = Object.keys(config.bundle);
-  var unused = Object.keys(config.unusedDependencies);
-  var unbundled = config.deps.filter(isNotBundled);
-  var uncached = unbundled.filter(isNotCached);
-  var unresolved = unbundled.filter(isNotResolved);
-  var cached = unbundled.length - uncached.length;
+  const bundled = Object.keys(config.bundle);
+  const unused = Object.keys(config.unusedDependencies);
+  const unbundled = config.deps.filter(isNotBundled);
+  const uncached = unbundled.filter(isNotCached);
+  const unresolved = unbundled.filter(isNotResolved);
+  const cached = unbundled.length - uncached.length;
 
   return when({
     bundled: {
@@ -20,7 +17,7 @@ function getStats(config) {
     },
     total: config.deps.length,
     unbundled: {
-      cached: cached,
+      cached,
       total: unbundled.length,
       uncached: uncached.length,
       unresolved: unresolved.length

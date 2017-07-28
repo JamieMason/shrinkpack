@@ -1,11 +1,7 @@
-// 3rd party modules
-var execa = require('execa');
+import execa from 'execa';
+import rateLimit from './rate-limit';
 
-// modules
-var rateLimit = require('./rate-limit');
-
-// public
-module.exports = {
+export default {
   exec: rateLimit(execa.shell),
   spawn: execa
 };

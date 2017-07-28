@@ -1,12 +1,8 @@
-// 3rd party modules
-var fs = require('graceful-fs');
-var whenNode = require('when/node');
+import fs from 'graceful-fs';
+import whenNode from 'when/node';
+import rateLimit from './rate-limit';
 
-// modules
-var rateLimit = require('./rate-limit');
-
-// public
-module.exports = {
+export default {
   createReadStream: fs.createReadStream,
   createWriteStream: fs.createWriteStream,
   mkdir: wrap(fs.mkdir),

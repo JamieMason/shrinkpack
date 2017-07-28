@@ -1,12 +1,14 @@
-// modules
-var childProcess = require('../../lib/child-process');
+import childProcess from '../../lib/child-process';
 
-// public
-module.exports = cache;
+export default cache;
 
-// implementation
 function cache(dependency) {
-  return childProcess.exec('npm cache --scope=' + dependency.getScope() + ' add ' + dependency.graph.resolved, {encoding: 'utf8'})
+  return childProcess
+    .exec(
+      `npm cache --scope=${dependency.getScope()} add ${dependency.graph
+        .resolved}`,
+      { encoding: 'utf8' }
+    )
     .then(onSuccess, onError);
 
   function onSuccess() {
@@ -14,6 +16,6 @@ function cache(dependency) {
   }
 
   function onError() {
-    throw new Error('! failed to download ' + dependency.getId());
+    throw new Error(`! failed to download ${dependency.getId()}`);
   }
 }

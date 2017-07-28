@@ -1,5 +1,6 @@
 *.log
 *.log.*
 control-app
+dist
 node_modules
 shrinkpacked-app

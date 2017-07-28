@@ -1,21 +1,16 @@
-// 3rd party modules
-var chalk = require('chalk');
-var fs = require('graceful-fs');
-var gunzipMaybe = require('gunzip-maybe');
-var when = require('when');
+import chalk from 'chalk';
+import fs from 'graceful-fs';
+import gunzipMaybe from 'gunzip-maybe';
+import when from 'when';
+import rateLimit from './rate-limit';
 
-// modules
-var rateLimit = require('./rate-limit');
+export default rateLimit(copyFile);
 
-// public
-module.exports = rateLimit(copyFile);
-
-// implementation
 function copyFile(source, target) {
-  return when.promise(function (resolve, reject) {
-    var gunzip$;
-    var read$ = fs.createReadStream(source);
-    var write$ = fs.createWriteStream(target);
+  return when.promise((resolve, reject) => {
+    let gunzip$;
+    const read$ = fs.createReadStream(source);
+    const write$ = fs.createWriteStream(target);
 
     read$.on('error', onReadError);
     write$.on('error', onWriteError);

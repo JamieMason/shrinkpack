@@ -1,16 +1,14 @@
-// 3rd party modules
-var chalk = require('chalk');
+import chalk from 'chalk';
+import fs from '../lib/fs';
 
-// modules
-var fs = require('../lib/fs');
+export default getGraph;
 
-// public
-module.exports = getGraph;
-
-// implementation
 function getGraph(config) {
-  console.log(chalk.blue('i rewriting ' + config.path.graph));
-  return fs.writeFile(config.path.graph, JSON.stringify(config.graph, null, 2), {encoding: 'utf8'})
+  console.log(chalk.blue(`i rewriting ${config.path.graph}`));
+  return fs
+    .writeFile(config.path.graph, JSON.stringify(config.graph, null, 2), {
+      encoding: 'utf8'
+    })
     .then(onSuccess, onError);
 
   function onSuccess() {

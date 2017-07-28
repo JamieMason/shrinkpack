@@ -1,11 +1,8 @@
-// 3rd party modules
-var guard = require('when/guard');
+import guard from 'when/guard';
 
-// public
-module.exports = rateLimit;
+export default rateLimit;
 
-// implementation
-var condition = guard.n(10);
+const condition = guard.n(10);
 
 function rateLimit(fn) {
   return guard(condition, fn);

@@ -1,15 +1,12 @@
-// 3rd party modules
-var when = require('when');
+import when from 'when';
 
-// public
-module.exports = getUnusedDependencies;
+export default getUnusedDependencies;
 
-// implementation
 function getUnusedDependencies(config) {
   return when(config.deps.reduce(updateIndex, clone(config.bundle)));
 
   function updateIndex(unused, dependency) {
-    var location = dependency.getPathToBundle();
+    const location = dependency.getPathToBundle();
     if (location in unused) {
       delete unused[location];
     }

@@ -1,24 +1,19 @@
-// 3rd party modules
-var assign = require('lodash.assign');
-var when = require('when');
+import assign from 'lodash.assign';
+import when from 'when';
+import createBundleDirectory from './create-bundle-directory';
+import getDependencies from './get-dependencies';
+import getGraph from './get-graph';
+import getPaths from './get-paths';
+import getStats from './get-stats';
+import getUnusedDependencies from './get-unused-dependencies';
+import pruneOptionalDependencies from './prune-optional-dependencies';
+import readBundle from './read-bundle';
+import readNpmCache from './read-npm-cache';
 
-// modules
-var createBundleDirectory = require('./create-bundle-directory');
-var getDependencies = require('./get-dependencies');
-var getGraph = require('./get-graph');
-var getPaths = require('./get-paths');
-var getStats = require('./get-stats');
-var getUnusedDependencies = require('./get-unused-dependencies');
-var pruneOptionalDependencies = require('./prune-optional-dependencies');
-var readBundle = require('./read-bundle');
-var readNpmCache = require('./read-npm-cache');
+export default init;
 
-// public
-module.exports = init;
-
-// implementation
 function init(options) {
-  return when({options: options, startTime: new Date()})
+  return when({ options, startTime: new Date() })
     .then(getConfigWithPaths)
     .then(getConfigWithGraph)
     .then(handleOptionalDependencies)
@@ -30,65 +25,48 @@ function init(options) {
     .then(getConfigWithStats);
 
   function getConfigWithPaths(config) {
-    return getPaths(config.options.directory)
-      .then(function (paths) {
-        return assign(config, {path: paths});
-      });
+    return getPaths(config.options.directory).then(paths =>
+      assign(config, { path: paths })
+    );
   }
 
   function getConfigWithGraph(config) {
-    return getGraph(config.path.graph)
-      .then(function (graph) {
-        return assign(config, {graph: graph});
-      });
+    return getGraph(config.path.graph).then(graph => assign(config, { graph }));
   }
 
   function handleOptionalDependencies(config) {
-    return pruneOptionalDependencies(config)
-      .then(function (graph) {
-        return assign(config, {graph: graph});
-      });
+    return pruneOptionalDependencies(config).then(graph =>
+      assign(config, { graph })
+    );
   }
 
   function ensureBundleExists(config) {
-    return createBundleDirectory(config.path.shrinkpack)
-      .then(function () {
-        return config;
-      });
+    return createBundleDirectory(config.path.shrinkpack).then(() => config);
   }
 
   function getConfigWithNpmCacheContents(config) {
-    return readNpmCache(config.path.npmCache)
-      .then(function (npmCache) {
-        return assign(config, {npmCache: npmCache});
-      });
+    return readNpmCache(config.path.npmCache).then(npmCache =>
+      assign(config, { npmCache })
+    );
   }
 
   function getConfigWithBundleContents(config) {
-    return readBundle(config.path.shrinkpack)
-      .then(function (bundle) {
-        return assign(config, {bundle: bundle});
-      });
+    return readBundle(config.path.shrinkpack).then(bundle =>
+      assign(config, { bundle })
+    );
   }
 
   function getConfigWithDependencies(config) {
-    return getDependencies(config)
-      .then(function (deps) {
-        return assign(config, {deps: deps});
-      });
+    return getDependencies(config).then(deps => assign(config, { deps }));
   }
 
   function getConfigWithUnusedDependencies(config) {
-    return getUnusedDependencies(config)
-      .then(function (unusedDependencies) {
-        return assign(config, {unusedDependencies: unusedDependencies});
-      });
+    return getUnusedDependencies(config).then(unusedDependencies =>
+      assign(config, { unusedDependencies })
+    );
   }
 
   function getConfigWithStats(config) {
-    return getStats(config)
-      .then(function (stats) {
-        return assign(config, {stats: stats});
-      });
+    return getStats(config).then(stats => assign(config, { stats }));
   }
 }

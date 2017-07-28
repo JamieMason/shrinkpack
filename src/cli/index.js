@@ -1,15 +1,12 @@
-// modules
-var analyse = require('../analyse');
-var update = require('../update');
-var displayFailure = require('./display-failure');
-var displaySummary = require('./display-summary');
+import analyse from '../analyse';
+import update from '../update';
+import displayFailure from './display-failure';
+import displaySummary from './display-summary';
 
-// public
-module.exports = {
+export default {
   run: runCli
 };
 
-// implementation
 function runCli(options) {
   return analyse(options)
     .then(update, onFail)

@@ -1,13 +1,7 @@
-// node modules
 import path from 'path';
-
-// 3rd party modules
 import test from 'ava';
-
-// modules
 import testUtil from './test-util';
 
-// implementation
 const projectRoot = process.cwd();
 const controlApp = path.join(projectRoot, 'control-app');
 const shrinkpackApp = path.join(projectRoot, 'shrinkpacked-app');
@@ -48,46 +42,67 @@ test.serial('Running shrinkpack updates the shrinkwrap file', async t => {
   t.not(beforeShrinkpack, afterShrinkpack);
 });
 
-test.serial('All deps in shrinkpacked shrinkwrap have resolved prop and point to local file', async t => {
-  const afterShrinkpack = await testUtil.getShrinkwrapFile(shrinkpackApp);
-  const {dependencies} = JSON.parse(afterShrinkpack);
+test.serial(
+  'All deps in shrinkpacked shrinkwrap have resolved prop and point to local file',
+  async t => {
+    const afterShrinkpack = await testUtil.getShrinkwrapFile(shrinkpackApp);
+    const { dependencies } = JSON.parse(afterShrinkpack);
 
-  const assertAllResolves = deps => {
-    Object.keys(deps).forEach(depName => {
-      const dep = deps[depName];
-      t.true(dep.resolved.indexOf('./node_shrinkwrap/') > -1);
-      if (dep.dependencies) {
-        assertAllResolves(dep.dependencies);
-      }
-    });
-  };
+    const assertAllResolves = deps => {
+      Object.keys(deps).forEach(depName => {
+        const dep = deps[depName];
+        t.true(dep.resolved.indexOf('./node_shrinkwrap/') > -1);
+        if (dep.dependencies) {
+          assertAllResolves(dep.dependencies);
+        }
+      });
+    };
 
-  assertAllResolves(dependencies);
-});
+    assertAllResolves(dependencies);
+  }
+);
 
 test.serial('Running shrinkpack does not affect installation', async t => {
-  const controlModuleTree = await testUtil.getAllDirFiles(path.join(controlApp, 'node_modules'));
-  const shrinkpackModuleTree = await testUtil.getAllDirFiles(path.join(shrinkpackApp, 'node_modules'));
+  const controlModuleTree = await testUtil.getAllDirFiles(
+    path.join(controlApp, 'node_modules')
+  );
+  const shrinkpackModuleTree = await testUtil.getAllDirFiles(
+    path.join(shrinkpackApp, 'node_modules')
+  );
 
   t.deepEqual(shrinkpackModuleTree, controlModuleTree);
 });
 
-test.serial('Reinstalling from shrinkpack produces expected output', async t => {
-  await testUtil.rmDirs(path.join(shrinkpackApp, 'node_modules'));
-  await testUtil.npmInstall(shrinkpackApp);
-  const controlModuleTree = await testUtil.getAllDirFiles(path.join(controlApp, 'node_modules'));
-  const shrinkpackModuleTree = await testUtil.getAllDirFiles(path.join(shrinkpackApp, 'node_modules'));
+test.serial(
+  'Reinstalling from shrinkpack produces expected output',
+  async t => {
+    await testUtil.rmDirs(path.join(shrinkpackApp, 'node_modules'));
+    await testUtil.npmInstall(shrinkpackApp);
+    const controlModuleTree = await testUtil.getAllDirFiles(
+      path.join(controlApp, 'node_modules')
+    );
+    const shrinkpackModuleTree = await testUtil.getAllDirFiles(
+      path.join(shrinkpackApp, 'node_modules')
+    );
 
-  t.deepEqual(shrinkpackModuleTree, controlModuleTree);
-});
+    t.deepEqual(shrinkpackModuleTree, controlModuleTree);
+  }
+);
 
-test.serial('Installing a non-shrinkpacked project produces expected output', async t => {
-  await testUtil.createTestApp(nonShrinkpackApp, testPackageJson);
-  await testUtil.npmInstall(nonShrinkpackApp);
-  const controlModuleTree = await testUtil.getAllDirFiles(path.join(controlApp, 'node_modules'));
-  const nonShrinkpackModuleTree = await testUtil.getAllDirFiles(path.join(nonShrinkpackApp, 'node_modules'));
+test.serial(
+  'Installing a non-shrinkpacked project produces expected output',
+  async t => {
+    await testUtil.createTestApp(nonShrinkpackApp, testPackageJson);
+    await testUtil.npmInstall(nonShrinkpackApp);
+    const controlModuleTree = await testUtil.getAllDirFiles(
+      path.join(controlApp, 'node_modules')
+    );
+    const nonShrinkpackModuleTree = await testUtil.getAllDirFiles(
+      path.join(nonShrinkpackApp, 'node_modules')
+    );
 
-  t.deepEqual(nonShrinkpackModuleTree, controlModuleTree);
+    t.deepEqual(nonShrinkpackModuleTree, controlModuleTree);
 
-  await testUtil.rmDirs(nonShrinkpackApp);
-});
+    await testUtil.rmDirs(nonShrinkpackApp);
+  }
+);
