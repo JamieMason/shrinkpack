@@ -1,12 +1,10 @@
 {
-  "presets": [
+  "presets": ["es2015"],
+  "plugins": [
     [
-      "env",
+      "fast-async",
       {
-        "targets": {
-          "node": 4
-        },
-        "useBuiltIns": true
+        "useRuntimeModule": true
       }
     ]
   ]

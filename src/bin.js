@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 
-import 'babel-polyfill';
+import 'nodent-runtime';
 import path from 'path';
 import chalk from 'chalk';
 import program from 'commander';
 import { version } from '../package.json';
-import cli from './cli';
+import * as log from './lib/log';
+import shrinkpack from './index';
 
-let directoryValue = process.cwd();
+let directoryValue;
 
 program
   .version(version)
   .option('-c, --compress', 'use compressed .tgz tarballs instead of .tar')
-  .option('-o, --keep-optional', 'do not exclude optional dependencies')
   .arguments('[directory]')
   .action(directory => {
     directoryValue = path.resolve(directory);
@@ -21,21 +21,20 @@ program
 program.on('--help', onHelp);
 program.parse(process.argv);
 
-cli.run({
-  compress: program.compress === true,
-  directory: directoryValue,
-  keepOptional: program.keepOptional === true
+shrinkpack({
+  decompress: !program.compress,
+  projectPath: directoryValue
+}).catch(err => {
+  log.bug('uncaught error in shrinkpack', err);
+  process.exit(1);
 });
 
 function onHelp() {
   console.log('  Icons:');
   console.log('');
   logIcon(chalk.green, '+', 'Added');
-  logIcon(chalk.yellow, '↓', 'Downloaded');
-  logIcon(chalk.magenta, '→', 'Imported from Cache');
   logIcon(chalk.blue, 'i', 'Information');
   logIcon(chalk.red, '-', 'Removed');
-  logIcon(chalk.green, '✓', 'Resolved');
   logIcon(chalk.grey, '12:34', 'Time Taken');
   console.log('');
   console.log('  Compression:');
