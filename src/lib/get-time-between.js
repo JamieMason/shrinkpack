@@ -1,25 +1,7 @@
-// public
+const pad = integer => (integer < 10 ? `0${integer}` : integer);
+const msToMins = ms => Math.floor(ms ? ms / 1000 / 60 : 0);
+const msToSecs = ms => Math.floor(ms ? ms / 1000 % 60 : 0);
+const msToTime = ms => `${pad(msToMins(ms))}:${pad(msToSecs(ms))}`;
+const getTimeBetween = (dateFrom, dateTo) => msToTime(dateTo.getTime() - dateFrom.getTime());
+
 export default getTimeBetween;
-
-function getTimeBetween(dateFrom, dateTo) {
-  return msToTime(dateTo.getTime() - dateFrom.getTime());
-}
-
-function msToTime(ms) {
-  const mins = msToMins(ms);
-  const secs = msToSecs(ms);
-  return `${pad(mins)}:${pad(secs)}`;
-}
-
-function msToMins(ms) {
-  return Math.floor(ms ? ms / 1000 / 60 : 0);
-}
-
-function msToSecs(ms) {
-  return Math.floor(ms ? ms / 1000 % 60 : 0);
-}
-
-function pad(value) {
-  const whole = Math.floor(value);
-  return whole < 10 ? `0${whole}` : whole;
-}

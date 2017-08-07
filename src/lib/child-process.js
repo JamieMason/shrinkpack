@@ -1,7 +1,5 @@
 import execa from 'execa';
 import rateLimit from './rate-limit';
 
-export default {
-  exec: rateLimit(execa.shell),
-  spawn: execa
-};
+export const exec = rateLimit(execa.shell);
+export const spawn = rateLimit(execa);

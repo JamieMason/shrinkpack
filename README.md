@@ -74,11 +74,8 @@ Options:
 Icons:
 
   + Added
-  ↓ Downloaded
-  → Imported from Cache
   i Information
   - Removed
-  ✓ Resolved
   12:34 Time Taken
 
 Compression:

@@ -3,10 +3,10 @@ import * as log from './log';
 
 export default async location => {
   try {
-    await fs.unlink(location);
+    await fs.mkdir(location);
   } catch (err) {
-    if (err.code !== 'ENOENT') {
-      log.bug(`failed to delete ${location}`, err);
+    if (err.code !== 'EEXIST') {
+      log.bug(`failed to touch directory ${location}`, err);
       process.exit(1);
     }
   }

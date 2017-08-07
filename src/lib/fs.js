@@ -2,16 +2,12 @@ import fs from 'graceful-fs';
 import whenNode from 'when/node';
 import rateLimit from './rate-limit';
 
-export default {
-  createReadStream: fs.createReadStream,
-  createWriteStream: fs.createWriteStream,
-  mkdir: wrap(fs.mkdir),
-  readdir: wrap(fs.readdir),
-  readFile: wrap(fs.readFile),
-  unlink: wrap(fs.unlink),
-  writeFile: wrap(fs.writeFile)
-};
+const toThrottledPromise = fn => rateLimit(whenNode.lift(fn));
 
-function wrap(fn) {
-  return rateLimit(whenNode.lift(fn));
-}
+export const createReadStream = fs.createReadStream;
+export const createWriteStream = fs.createWriteStream;
+export const mkdir = toThrottledPromise(fs.mkdir);
+export const readdir = toThrottledPromise(fs.readdir);
+export const readFile = toThrottledPromise(fs.readFile);
+export const unlink = toThrottledPromise(fs.unlink);
+export const writeFile = toThrottledPromise(fs.writeFile);
