@@ -1,0 +1,155 @@
+{
+  "name": "temp",
+  "version": "0.0.0",
+  "lockfileVersion": 1,
+  "requires": true,
+  "dependencies": {
+    "angular": {
+      "version": "1.6.5",
+      "resolved": "file:node_shrinkwrap/angular-1.6.5.tgz",
+      "integrity": "sha1-N/eI7r7Fzi4/oCsXu8sqIxV2oNY="
+    },
+    "asap": {
+      "version": "2.0.6",
+      "resolved": "file:node_shrinkwrap/asap-2.0.6.tgz",
+      "integrity": "sha1-5QNHYR1+aQlDIIu9r+vLwvuGbUY="
+    },
+    "core-js": {
+      "version": "1.2.7",
+      "resolved": "file:node_shrinkwrap/core-js-1.2.7.tgz",
+      "integrity": "sha1-ZSKUwUZR2yj6k70tX/KYOk8IxjY="
+    },
+    "create-react-class": {
+      "version": "15.6.0",
+      "resolved": "file:node_shrinkwrap/create-react-class-15.6.0.tgz",
+      "integrity": "sha1-q0SEl8JlZuHilBPogyB9V8/nvtQ=",
+      "requires": {
+        "fbjs": "0.8.14",
+        "loose-envify": "1.3.1",
+        "object-assign": "4.1.1"
+      }
+    },
+    "encoding": {
+      "version": "0.1.12",
+      "resolved": "file:node_shrinkwrap/encoding-0.1.12.tgz",
+      "integrity": "sha1-U4tm8+5izRq1HsMjgp0flIDHS+s=",
+      "requires": {
+        "iconv-lite": "0.4.18"
+      }
+    },
+    "fbjs": {
+      "version": "0.8.14",
+      "resolved": "file:node_shrinkwrap/fbjs-0.8.14.tgz",
+      "integrity": "sha1-0dviviVMNakeCfMfnNUKQLKg7Rw=",
+      "requires": {
+        "core-js": "1.2.7",
+        "isomorphic-fetch": "2.2.1",
+        "loose-envify": "1.3.1",
+        "object-assign": "4.1.1",
+        "promise": "7.3.1",
+        "setimmediate": "1.0.5",
+        "ua-parser-js": "0.7.14"
+      }
+    },
+    "iconv-lite": {
+      "version": "0.4.18",
+      "resolved": "file:node_shrinkwrap/iconv-lite-0.4.18.tgz",
+      "integrity": "sha512-sr1ZQph3UwHTR0XftSbK85OvBbxe/abLGzEnPENCQwmHf7sck8Oyu4ob3LgBxWWxRoM+QszeUyl7jbqapu2TqA=="
+    },
+    "is-stream": {
+      "version": "1.1.0",
+      "resolved": "file:node_shrinkwrap/is-stream-1.1.0.tgz",
+      "integrity": "sha1-EtSj3U5o4Lec6428hBc66A2RykQ="
+    },
+    "isomorphic-fetch": {
+      "version": "2.2.1",
+      "resolved": "file:node_shrinkwrap/isomorphic-fetch-2.2.1.tgz",
+      "integrity": "sha1-YRrhrPFPXoH3KVB0coGf6XM1WKk=",
+      "requires": {
+        "node-fetch": "1.7.2",
+        "whatwg-fetch": "2.0.3"
+      }
+    },
+    "js-tokens": {
+      "version": "3.0.2",
+      "resolved": "file:node_shrinkwrap/js-tokens-3.0.2.tgz",
+      "integrity": "sha1-mGbfOVECEw449/mWvOtlRDIJwls="
+    },
+    "lodash": {
+      "version": "4.17.4",
+      "resolved": "file:node_shrinkwrap/lodash-4.17.4.tgz",
+      "integrity": "sha1-eCA6TRwyiuHYbcpkYONptX9AVa4="
+    },
+    "lodash.assign": {
+      "version": "4.2.0",
+      "resolved": "file:node_shrinkwrap/lodash.assign-4.2.0.tgz",
+      "integrity": "sha1-DZnzzNem0mHRm9rrkkUAXShYCOc="
+    },
+    "loose-envify": {
+      "version": "1.3.1",
+      "resolved": "file:node_shrinkwrap/loose-envify-1.3.1.tgz",
+      "integrity": "sha1-0aitM/qc4OcT1l/dCsi3SNR4yEg=",
+      "requires": {
+        "js-tokens": "3.0.2"
+      }
+    },
+    "node-fetch": {
+      "version": "1.7.2",
+      "resolved": "file:node_shrinkwrap/node-fetch-1.7.2.tgz",
+      "integrity": "sha512-xZZUq2yDhKMIn/UgG5q//IZSNLJIwW2QxS14CNH5spuiXkITM2pUitjdq58yLSaU7m4M0wBNaM2Gh/ggY4YJig==",
+      "requires": {
+        "encoding": "0.1.12",
+        "is-stream": "1.1.0"
+      }
+    },
+    "object-assign": {
+      "version": "4.1.1",
+      "resolved": "file:node_shrinkwrap/object-assign-4.1.1.tgz",
+      "integrity": "sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM="
+    },
+    "promise": {
+      "version": "7.3.1",
+      "resolved": "file:node_shrinkwrap/promise-7.3.1.tgz",
+      "integrity": "sha512-nolQXZ/4L+bP/UGlkfaIujX9BKxGwmQ9OT4mOt5yvy8iK1h3wqTEJCijzGANTCCl9nWjY41juyAn2K3Q1hLLTg==",
+      "requires": {
+        "asap": "2.0.6"
+      }
+    },
+    "prop-types": {
+      "version": "15.5.10",
+      "resolved": "file:node_shrinkwrap/prop-types-15.5.10.tgz",
+      "integrity": "sha1-J5ffwxJhguOpXj37suiT3ddFYVQ=",
+      "requires": {
+        "fbjs": "0.8.14",
+        "loose-envify": "1.3.1"
+      }
+    },
+    "react": {
+      "version": "15.6.1",
+      "resolved": "file:node_shrinkwrap/react-15.6.1.tgz",
+      "integrity": "sha1-uqhDTsZ4C96ZfNw4C3nNM7ljk98=",
+      "requires": {
+        "create-react-class": "15.6.0",
+        "fbjs": "0.8.14",
+        "loose-envify": "1.3.1",
+        "object-assign": "4.1.1",
+        "prop-types": "15.5.10"
+      }
+    },
+    "setimmediate": {
+      "version": "1.0.5",
+      "resolved": "file:node_shrinkwrap/setimmediate-1.0.5.tgz",
+      "integrity": "sha1-KQy7Iy4waULX1+qbg3Mqt4VvgoU="
+    },
+    "ua-parser-js": {
+      "version": "0.7.14",
+      "resolved": "file:node_shrinkwrap/ua-parser-js-0.7.14.tgz",
+      "integrity": "sha1-EQ1T+kw/MmwSEpK76skE0uAzh8o="
+    },
+    "whatwg-fetch": {
+      "version": "2.0.3",
+      "resolved": "file:node_shrinkwrap/whatwg-fetch-2.0.3.tgz",
+      "integrity": "sha1-nITsLc9oGH/wC8ZOEnS0QhduHIQ="
+    }
+  }
+}
