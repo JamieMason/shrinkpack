@@ -2,10 +2,14 @@
 
 [![NPM version](http://img.shields.io/npm/v/shrinkpack.svg?style=flat-square)](https://www.npmjs.com/package/shrinkpack)
 [![NPM downloads](http://img.shields.io/npm/dm/shrinkpack.svg?style=flat-square)](https://www.npmjs.com/package/shrinkpack)
-[![Build Status](http://img.shields.io/travis/JamieMason/shrinkpack/master.svg?style=flat-square)](https://travis-ci.org/JamieMason/shrinkpack)
 [![Dependency Status](http://img.shields.io/david/JamieMason/shrinkpack.svg?style=flat-square)](https://david-dm.org/JamieMason/shrinkpack)
-[![Join the chat at https://gitter.im/JamieMason/shrinkpack](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JamieMason/shrinkpack)
+[![Build Status](http://img.shields.io/travis/JamieMason/shrinkpack/master.svg?style=flat-square)](https://travis-ci.org/JamieMason/shrinkpack)
+[![Gitter Chat for shrinkpack](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JamieMason/shrinkpack)
+[![Donate via PayPal](https://img.shields.io/badge/donate-paypal-blue.svg)](https://www.paypal.me/foldleft)
+[![Donate via Gratipay](https://img.shields.io/gratipay/user/JamieMason.svg)](https://gratipay.com/~JamieMason/)
 [![Analytics](https://ga-beacon.appspot.com/UA-45466560-5/shrinkpack?flat&useReferer)](https://github.com/igrigorik/ga-beacon)
+[![Follow JamieMason on GitHub](https://img.shields.io/github/followers/JamieMason.svg?style=social&label=Follow)](https://github.com/JamieMason)
+[![Follow fold_left on Twitter](https://img.shields.io/twitter/follow/fold_left.svg?style=social&label=Follow)](https://twitter.com/fold_left)
 
 Shrinkpack complements the [npm shrinkwrap](https://docs.npmjs.com/cli/shrinkwrap) command by
 maintaining a `node_shrinkwrap` directory in your project, containing the exact same tarballs that
