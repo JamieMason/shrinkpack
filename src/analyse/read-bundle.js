@@ -9,21 +9,26 @@ module.exports = readBundle;
 
 // implementation
 function readBundle(pathToBundle) {
-  var extensionRegEx = /\.(tar|tgz)$/;
-  return fs.readdir(pathToBundle)
-    .then(indexByPath, onError);
+  return fs.readdir(pathToBundle).then(onSuccess, onError);
 
-  function indexByPath(filenames) {
-    return filenames.reduce(function (memo, filename) {
-      if (extensionRegEx.test(filename)) {
-        memo[getAbsolutePath(filename)] = true;
-      }
-      return memo;
-    }, {});
+  function onSuccess(filenames) {
+    return filenames
+      .map(getAbsolutePath)
+      .filter(isTarFile)
+      .reduce(indexByPath, {});
   }
 
   function getAbsolutePath(filename) {
     return path.join(pathToBundle, filename);
+  }
+
+  function isTarFile(filename) {
+    return /\.(tar|tgz)$/.test(filename);
+  }
+
+  function indexByPath(index, filename) {
+    index[filename] = true;
+    return index;
   }
 
   function onError() {
