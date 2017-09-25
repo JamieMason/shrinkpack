@@ -1,9 +1,6 @@
 // node modules
 import path from 'path';
 
-// 3rd party modules
-import test from 'ava';
-
 // modules
 import testUtil from './test-util';
 
@@ -16,7 +13,7 @@ const testPackageJson = path.join(__dirname, 'test-package.json');
 
 let startingNpmVersion;
 
-test.before(async () => {
+beforeAll(async () => {
   startingNpmVersion = await testUtil.getNpmVersion();
   await testUtil.setNpmVersion(process.env.NPM_VERSION);
   await Promise.all([
@@ -28,34 +25,34 @@ test.before(async () => {
   await testUtil.npmInstall(shrinkpackApp);
 });
 
-test.after.always(async () => {
+test(async () => {
   await testUtil.rmDirs(controlApp, shrinkpackApp);
   await testUtil.unlinkShrinkpack(projectRoot);
   await testUtil.setNpmVersion(startingNpmVersion);
 });
 
-test.serial('Correct npm version was installed', async t => {
+test('Correct npm version was installed', async () => {
   const actualNpmVersion = await testUtil.getNpmVersion();
-  t.is(actualNpmVersion, process.env.NPM_VERSION);
+  expect(actualNpmVersion).toBe(process.env.NPM_VERSION);
 });
 
-test.serial('Running shrinkpack updates the shrinkwrap file', async t => {
+test('Running shrinkpack updates the shrinkwrap file', async () => {
   await testUtil.shrinkwrap(shrinkpackApp);
   const beforeShrinkpack = await testUtil.getShrinkwrapFile(shrinkpackApp);
   await testUtil.shrinkpack(shrinkpackApp);
   const afterShrinkpack = await testUtil.getShrinkwrapFile(shrinkpackApp);
 
-  t.not(beforeShrinkpack, afterShrinkpack);
+  expect(beforeShrinkpack).not.toBe(afterShrinkpack);
 });
 
-test.serial('All deps in shrinkpacked shrinkwrap have resolved prop and point to local file', async t => {
+test('All deps in shrinkpacked shrinkwrap have resolved prop and point to local file', async () => {
   const afterShrinkpack = await testUtil.getShrinkwrapFile(shrinkpackApp);
   const {dependencies} = JSON.parse(afterShrinkpack);
 
   const assertAllResolves = deps => {
     Object.keys(deps).forEach(depName => {
       const dep = deps[depName];
-      t.true(dep.resolved.indexOf('./node_shrinkwrap/') > -1);
+      expect(dep.resolved.indexOf('./node_shrinkwrap/') > -1).toBe(true);
       if (dep.dependencies) {
         assertAllResolves(dep.dependencies);
       }
@@ -65,29 +62,29 @@ test.serial('All deps in shrinkpacked shrinkwrap have resolved prop and point to
   assertAllResolves(dependencies);
 });
 
-test.serial('Running shrinkpack does not affect installation', async t => {
+test('Running shrinkpack does not affect installation', async () => {
   const controlModuleTree = await testUtil.getAllDirFiles(path.join(controlApp, 'node_modules'));
   const shrinkpackModuleTree = await testUtil.getAllDirFiles(path.join(shrinkpackApp, 'node_modules'));
 
-  t.deepEqual(shrinkpackModuleTree, controlModuleTree);
+  expect(shrinkpackModuleTree).toEqual(controlModuleTree);
 });
 
-test.serial('Reinstalling from shrinkpack produces expected output', async t => {
+test('Reinstalling from shrinkpack produces expected output', async () => {
   await testUtil.rmDirs(path.join(shrinkpackApp, 'node_modules'));
   await testUtil.npmInstall(shrinkpackApp);
   const controlModuleTree = await testUtil.getAllDirFiles(path.join(controlApp, 'node_modules'));
   const shrinkpackModuleTree = await testUtil.getAllDirFiles(path.join(shrinkpackApp, 'node_modules'));
 
-  t.deepEqual(shrinkpackModuleTree, controlModuleTree);
+  expect(shrinkpackModuleTree).toEqual(controlModuleTree);
 });
 
-test.serial('Installing a non-shrinkpacked project produces expected output', async t => {
+test('Installing a non-shrinkpacked project produces expected output', async () => {
   await testUtil.createTestApp(nonShrinkpackApp, testPackageJson);
   await testUtil.npmInstall(nonShrinkpackApp);
   const controlModuleTree = await testUtil.getAllDirFiles(path.join(controlApp, 'node_modules'));
   const nonShrinkpackModuleTree = await testUtil.getAllDirFiles(path.join(nonShrinkpackApp, 'node_modules'));
 
-  t.deepEqual(nonShrinkpackModuleTree, controlModuleTree);
+  expect(nonShrinkpackModuleTree).toEqual(controlModuleTree);
 
   await testUtil.rmDirs(nonShrinkpackApp);
 });
