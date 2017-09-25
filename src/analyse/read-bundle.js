@@ -1,13 +1,13 @@
-// node modules
+// Node modules
 var path = require('path');
 
-// modules
+// Modules
 var fs = require('../lib/fs');
 
-// public
+// Public
 module.exports = readBundle;
 
-// implementation
+// Implementation
 function readBundle(pathToBundle) {
   return fs.readdir(pathToBundle).then(onSuccess, onError);
 

@@ -2,7 +2,7 @@
 var assign = require('lodash.assign');
 var when = require('when');
 
-// modules
+// Modules
 var createBundleDirectory = require('./create-bundle-directory');
 var getDependencies = require('./get-dependencies');
 var getGraph = require('./get-graph');
@@ -13,10 +13,10 @@ var pruneOptionalDependencies = require('./prune-optional-dependencies');
 var readBundle = require('./read-bundle');
 var readNpmCache = require('./read-npm-cache');
 
-// public
+// Public
 module.exports = init;
 
-// implementation
+// Implementation
 function init(options) {
   return when({options: options, startTime: new Date()})
     .then(getConfigWithPaths)

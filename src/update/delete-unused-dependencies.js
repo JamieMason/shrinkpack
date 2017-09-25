@@ -2,13 +2,13 @@
 var chalk = require('chalk');
 var when = require('when');
 
-// modules
+// Modules
 var deleteFile = require('../lib/delete-file');
 
-// public
+// Public
 module.exports = deleteUnusedDependencies;
 
-// implementation
+// Implementation
 function deleteUnusedDependencies(config) {
   var deletions = [];
   for (var location in config.unusedDependencies) { // eslint-disable-line guard-for-in

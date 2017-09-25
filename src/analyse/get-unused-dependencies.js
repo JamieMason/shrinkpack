@@ -1,10 +1,10 @@
 // 3rd party modules
 var when = require('when');
 
-// public
+// Public
 module.exports = getUnusedDependencies;
 
-// implementation
+// Implementation
 function getUnusedDependencies(config) {
   return when(config.deps.reduce(updateIndex, clone(config.bundle)));
 

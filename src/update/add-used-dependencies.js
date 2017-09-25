@@ -1,10 +1,10 @@
 // 3rd party modules
 var when = require('when');
 
-// public
+// Public
 module.exports = addUsedDependencies;
 
-// implementation
+// Implementation
 function addUsedDependencies(config) {
   return when.all(
     config.deps.map(function (dependency) {

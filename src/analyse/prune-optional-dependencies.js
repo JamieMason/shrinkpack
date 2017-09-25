@@ -1,13 +1,13 @@
 // 3rd party modules
 var when = require('when');
 
-// modules
+// Modules
 var fs = require('../lib/fs');
 
-// public
+// Public
 module.exports = pruneOptionalDependencies;
 
-// implementation
+// Implementation
 function pruneOptionalDependencies(config) {
   return config.options.keepOptional ? when(config.graph) : getPackageJson();
 

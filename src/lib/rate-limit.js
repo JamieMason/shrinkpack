@@ -1,10 +1,10 @@
 // 3rd party modules
 var guard = require('when/guard');
 
-// public
+// Public
 module.exports = rateLimit;
 
-// implementation
+// Implementation
 var condition = guard.n(10);
 
 function rateLimit(fn) {

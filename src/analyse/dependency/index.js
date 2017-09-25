@@ -1,30 +1,30 @@
-// node modules
+// Node modules
 var path = require('path');
 
 // 3rd party modules
 var chalk = require('chalk');
 var when = require('when');
 
-// modules
+// Modules
 var bundle = require('./bundle');
 var cache = require('./cache');
 var resolve = require('./resolve');
 
-// public
+// Public
 module.exports = Dependency;
 
-// implementation
+// Implementation
 function Dependency(name, graph) {
   this.graph = graph;
   this.name = name;
 }
 
-// statics
+// Statics
 Dependency.setConfig = function (config) {
   Dependency.prototype.config = config;
 };
 
-// shared
+// Shared
 Dependency.prototype = {
   bundle: function () {
     if (!this.isBundled()) {

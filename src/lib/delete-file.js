@@ -1,10 +1,10 @@
-// modules
+// Modules
 var fs = require('./fs');
 
-// public
+// Public
 module.exports = deleteFile;
 
-// implementation
+// Implementation
 function deleteFile(location) {
   return fs.unlink(location)
     .then(onSuccess, onError);

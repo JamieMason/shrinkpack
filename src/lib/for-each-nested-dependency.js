@@ -1,7 +1,7 @@
-// public
+// Public
 module.exports = forEachNestedDependency;
 
-// implementation
+// Implementation
 function forEachNestedDependency(node, handler, key, parentNode) {
   if (isObject(node)) {
     if (isRootNode(node, key)) {

@@ -1,4 +1,4 @@
-// node modules
+// Node modules
 var fs = require('fs');
 var os = require('os');
 var path = require('path');
@@ -16,7 +16,7 @@ var mkdir = whenNode.lift(fs.mkdir);
 var readFile = whenNode.lift(fs.readFile);
 var rimraf = whenNode.lift(require('rimraf'));
 
-// public
+// Public
 module.exports = {
   setNpmVersion: function (npmVersion) {
     return execa('npm', ['install', '-g', 'npm@' + npmVersion]);

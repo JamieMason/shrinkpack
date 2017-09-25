@@ -1,10 +1,10 @@
-// modules
+// Modules
 var fs = require('../lib/fs');
 
-// public
+// Public
 module.exports = getGraph;
 
-// implementation
+// Implementation
 function getGraph(location) {
   return fs.readFile(location, {encoding: 'utf8'})
     .then(onSuccess, onError);

@@ -1,15 +1,15 @@
 // 3rd party modules
 var when = require('when');
 
-// modules
+// Modules
 var addUsedDependencies = require('./add-used-dependencies');
 var deleteUnusedDependencies = require('./delete-unused-dependencies');
 var rewriteGraph = require('./rewrite-graph');
 
-// public
+// Public
 module.exports = update;
 
-// implementation
+// Implementation
 function update(config) {
   return when.join(
     addUsedDependencies(config),

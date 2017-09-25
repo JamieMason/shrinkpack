@@ -1,17 +1,17 @@
-// node modules
+// Node modules
 var os = require('os');
 var path = require('path');
 
 // 3rd party modules
 var when = require('when');
 
-// modules
+// Modules
 var childProcess = require('../lib/child-process');
 
-// public
+// Public
 module.exports = readNpmCache;
 
-// implementation
+// Implementation
 function readNpmCache() {
   var home = os.homedir();
 

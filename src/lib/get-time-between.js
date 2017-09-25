@@ -1,7 +1,7 @@
-// public
+// Public
 module.exports = getTimeBetween;
 
-// implementation
+// Implementation
 function getTimeBetween(dateFrom, dateTo) {
   return msToTime(dateTo.getTime() - dateFrom.getTime());
 }

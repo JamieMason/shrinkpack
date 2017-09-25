@@ -1,10 +1,10 @@
 // 3rd party modules
 var chalk = require('chalk');
 
-// public
+// Public
 module.exports = displayFailure;
 
-// implementation
+// Implementation
 function displayFailure(err) {
   console.error(
     chalk.red('! Please raise an issue at %s\n\n%s'),

@@ -2,10 +2,10 @@
 var fs = require('graceful-fs');
 var whenNode = require('when/node');
 
-// modules
+// Modules
 var rateLimit = require('./rate-limit');
 
-// public
+// Public
 module.exports = {
   createReadStream: fs.createReadStream,
   createWriteStream: fs.createWriteStream,

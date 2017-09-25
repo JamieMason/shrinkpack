@@ -1,10 +1,10 @@
-// modules
+// Modules
 var childProcess = require('../../lib/child-process');
 
-// public
+// Public
 module.exports = resolve;
 
-// implementation
+// Implementation
 function resolve(dependency) {
   return childProcess.exec('npm view ' + dependency.getId() + ' --json', {encoding: 'utf8'})
     .then(onSuccess, onError);

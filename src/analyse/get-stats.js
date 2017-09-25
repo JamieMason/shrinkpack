@@ -1,10 +1,10 @@
 // 3rd party modules
 var when = require('when');
 
-// public
+// Public
 module.exports = getStats;
 
-// implementation
+// Implementation
 function getStats(config) {
   var bundled = Object.keys(config.bundle);
   var unused = Object.keys(config.unusedDependencies);

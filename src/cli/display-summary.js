@@ -1,13 +1,13 @@
 // 3rd party modules
 var chalk = require('chalk');
 
-// modules
+// Modules
 var getTimeBetween = require('../lib/get-time-between');
 
-// public
+// Public
 module.exports = displaySummary;
 
-// implementation
+// Implementation
 function displaySummary(config) {
   console.info([
     'shrinkpack',

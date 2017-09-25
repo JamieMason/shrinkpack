@@ -1,14 +1,14 @@
 // 3rd party modules
 var when = require('when');
 
-// modules
+// Modules
 var forEachNestedDependency = require('../lib/for-each-nested-dependency');
 var Dependency = require('./dependency');
 
-// public
+// Public
 module.exports = getDependencies;
 
-// implementation
+// Implementation
 function getDependencies(config) {
   Dependency.setConfig(config);
   var dependencies = [];

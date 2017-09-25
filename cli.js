@@ -7,11 +7,11 @@ var path = require('path');
 var chalk = require('chalk');
 var program = require('commander');
 
-// modules
+// Modules
 var cli = require('./src/cli');
 var version = require('./package.json').version;
 
-// implementation
+// Implementation
 var directoryValue = process.cwd();
 
 program

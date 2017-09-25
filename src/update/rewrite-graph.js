@@ -1,13 +1,13 @@
 // 3rd party modules
 var chalk = require('chalk');
 
-// modules
+// Modules
 var fs = require('../lib/fs');
 
-// public
+// Public
 module.exports = getGraph;
 
-// implementation
+// Implementation
 function getGraph(config) {
   console.log(chalk.blue('i rewriting ' + config.path.graph));
   return fs.writeFile(config.path.graph, JSON.stringify(config.graph, null, 2), {encoding: 'utf8'})

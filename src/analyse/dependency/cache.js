@@ -1,10 +1,10 @@
-// modules
+// Modules
 var childProcess = require('../../lib/child-process');
 
-// public
+// Public
 module.exports = cache;
 
-// implementation
+// Implementation
 function cache(dependency) {
   return childProcess.exec('npm cache --scope=' + dependency.getScope() + ' add ' + dependency.graph.resolved, {encoding: 'utf8'})
     .then(onSuccess, onError);

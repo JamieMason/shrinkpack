@@ -1,13 +1,13 @@
-// node modules
+// Node modules
 var path = require('path');
 
-// modules
+// Modules
 var childProcess = require('../lib/child-process');
 
-// public
+// Public
 module.exports = getPaths;
 
-// implementation
+// Implementation
 function getPaths(directory) {
   return childProcess.exec('npm config get cache', {encoding: 'utf8'})
     .then(onSuccess, onError);

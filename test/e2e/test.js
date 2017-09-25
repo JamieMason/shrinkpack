@@ -1,10 +1,10 @@
-// node modules
+// Node modules
 import path from 'path';
 
-// modules
+// Modules
 import testUtil from './test-util';
 
-// implementation
+// Implementation
 const projectRoot = process.cwd();
 const controlApp = path.join(projectRoot, 'control-app');
 const shrinkpackApp = path.join(projectRoot, 'shrinkpacked-app');
