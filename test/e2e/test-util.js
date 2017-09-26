@@ -6,12 +6,9 @@ var path = require('path');
 // 3rd party modules
 var execa = require('execa');
 var when = require('when');
+var whenNode = require('when/node');
 
-var whenPath = require.resolve('when');
-var whenNodePath = path.resolve(whenPath, '../node');
-var whenNode = require(whenNodePath); // eslint-disable-line import/no-dynamic-require
-
-// implementation
+// Implementation
 var mkdir = whenNode.lift(fs.mkdir);
 var readFile = whenNode.lift(fs.readFile);
 var rimraf = whenNode.lift(require('rimraf'));

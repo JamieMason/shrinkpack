@@ -3,6 +3,11 @@
   "description": "Fast, resilient, reproducible builds with npm install.",
   "version": "0.18.1",
   "author": "Jamie Mason (https://github.com/JamieMason)",
+  "ava": {
+    "files": [
+      "test/e2e/test.js"
+    ]
+  },
   "bin": {
     "shrinkpack": "cli.js"
   },
@@ -30,12 +35,8 @@
     "when": "3.7.8"
   },
   "devDependencies": {
-    "babel-jest": "21.0.2",
-    "babel-preset-es2015": "6.24.1",
-    "fast-async": "6.3.0",
+    "ava": "0.22.0",
     "husky": "0.14.3",
-    "jest": "21.1.0",
-    "nodent-runtime": "3.0.4",
     "rimraf": "2.6.2",
     "xo": "0.18.2"
   },
@@ -68,11 +69,10 @@
   "scripts": {
     "lint": "xo --fix",
     "precommit": "npm run lint",
-    "test": "jest test/e2e/test.js"
+    "test": "ava"
   },
   "xo": {
     "envs": [
-      "jest",
       "node"
     ],
     "esnext": false,
