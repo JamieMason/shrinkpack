@@ -43,7 +43,6 @@ export default async ({ decompress = true, projectPath = process.cwd() }) => {
   const contains = (substr, str) => String(str).indexOf(substr) !== -1;
   const containsPattern = (regex, str) => String(str).search(regex) !== -1;
   const isRegistryUrl = str => contains('https://registry.npmjs.org', str);
-  const isShrinkpackPath = str => contains('node_shrinkwrap/', str);
   const isTarPath = str => containsPattern(/\.(tgz|tar)$/, str);
   const isUnusedFile = filePath => filePath in packagesByBundlePath === false;
 
@@ -93,17 +92,6 @@ export default async ({ decompress = true, projectPath = process.cwd() }) => {
     }
     pkg.node.integrity = decompress ? `${tgzIntegrity} ${pkg.tarIntegrity}` : tgzIntegrity;
     pkg.node.resolved = getResolvedPath(pkg);
-    if (pkg.node.requires) {
-      Object.keys(pkg.node.requires).forEach(key => {
-        const version = pkg.node.requires[key];
-        const mockPkg = { key, node: { version } };
-        if (semver.valid(version)) {
-          pkg.node.requires[key] = getResolvedPath(mockPkg);
-        } else if (isShrinkpackPath(version)) {
-          pkg.node.requires[key] = version.replace(/\.(tgz|tar)$/, decompress ? '.tar' : '.tgz');
-        }
-      });
-    }
   };
 
   const bundledFiles = await readDirectory(bundlePath);
