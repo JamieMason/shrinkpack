@@ -1,35 +1,38 @@
-const isDependencyMap = (node, key) => key === 'dependencies';
-const isObject = (node) => Boolean(node) && node.constructor === Object;
-const isPackage = (node, key) => key !== 'dependencies';
-const isRootNode = (node, key) => !key;
+import { IPackage, IShrinkwrap, ShrinkwrapReader } from '../typings';
 
-const stepInto = (parentNode, handler, next) => {
+const isRootNode = (key: string): boolean => !key;
+const isPackage = (key: string): boolean => key !== 'dependencies';
+const isDependencyMap = (key: string): boolean => key === 'dependencies';
+
+const stepInto = (parentNode: IShrinkwrap, handler: ShrinkwrapReader) => {
   for (const key in parentNode) {
     if (parentNode.hasOwnProperty(key)) {
-      next(parentNode[key], handler, key, parentNode);
+      forEach(parentNode[key], handler, key);
     }
   }
 };
 
-export const forEach = (node, handler, key?, parentNode?) => {
-  if (isObject(node)) {
-    if (isRootNode(node, key)) {
-      stepInto(node.dependencies, handler, forEach);
-    } else if (isPackage(node, key)) {
-      handler(key, node, parentNode);
-      stepInto(node, handler, forEach);
-    } else if (isDependencyMap(node, key)) {
-      stepInto(node, handler, forEach);
+const forEach = (node: any, handler: ShrinkwrapReader, key: string = '') => {
+  if (node instanceof Object) {
+    if (isRootNode(key)) {
+      stepInto(node.dependencies, handler);
+    } else if (isPackage(key)) {
+      handler(key, node);
+      stepInto(node, handler);
+    } else if (isDependencyMap(key)) {
+      stepInto(node, handler);
     }
   }
 };
 
-export const map = (lockfile, handler) => {
+export const toArray = (lockfile: IShrinkwrap): IPackage[] => {
   const nodes = [];
-  forEach(lockfile, (key, node) => {
-    nodes.push(handler(key, node));
-  });
+  forEach(lockfile, (key: string, node: IShrinkwrap) =>
+    nodes.push({
+      key,
+      node,
+      tarIntegrity: ''
+    })
+  );
   return nodes;
 };
-
-export const toArray = (lockfile) => map(lockfile, (key, node) => ({ key, node }));
