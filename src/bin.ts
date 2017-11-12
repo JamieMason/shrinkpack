@@ -3,17 +3,18 @@
 import chalk from 'chalk';
 import * as program from 'commander';
 import { resolve } from 'path';
-import shrinkpack from './index';
+import { shrinkpack } from './index';
 import * as log from './lib/log';
 
 const { version } = require('../package.json');
+
 let directoryValue;
 
 program
   .version(version)
   .option('-c, --compress', 'use compressed .tgz tarballs instead of .tar')
   .arguments('[directory]')
-  .action((directory) => {
+  .action((directory: string) => {
     directoryValue = resolve(directory);
   });
 
@@ -23,12 +24,13 @@ program.parse(process.argv);
 shrinkpack({
   decompress: !program.compress,
   projectPath: directoryValue
-}).catch((err) => {
+}).catch((err: Error) => {
   log.bug('uncaught error in shrinkpack', err);
   process.exit(1);
 });
 
 function onHelp() {
+  console.log('');
   console.log('  Icons:');
   console.log('');
   logIcon(chalk.green, '+', 'Added');
@@ -44,7 +46,7 @@ function onHelp() {
   console.log('    which are handled optimally by Git in the same way that .md, .js, and .css');
   console.log('    files are for example.');
 
-  function logIcon(colour, icon, label) {
+  function logIcon(colour: (icon: string) => string, icon: string, label: string) {
     console.log(`    ${colour(icon)} ${label}`);
   }
 }

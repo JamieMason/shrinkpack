@@ -1,7 +1,7 @@
 import * as fs from './fs';
 import * as log from './log';
 
-export default async (location) => {
+export default async (location: string) => {
   try {
     await fs.unlink(location);
   } catch (err) {

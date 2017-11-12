@@ -1,8 +1,10 @@
+import { IPackage, IShrinkwrap, Shrinkpack } from './typings';
+
 import { join, relative } from 'path';
 
-import bluebird from 'bluebird';
+import * as bluebird from 'bluebird';
 import chalk from 'chalk';
-import semver from 'semver';
+import * as semver from 'semver';
 
 import addToBundle from './lib/add-to-bundle';
 import addToCache from './lib/add-to-cache';
@@ -18,7 +20,7 @@ import readJson from './lib/read-json';
 import touchDirectory from './lib/touch-directory';
 import writeJson from './lib/write-json';
 
-export default async ({ decompress = true, projectPath = process.cwd() }) => {
+export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = process.cwd() }) => {
   const startTime = new Date();
   const packageLockPath = join(projectPath, 'package-lock.json');
   const bundlePath = join(projectPath, 'node_shrinkwrap');
@@ -28,41 +30,41 @@ export default async ({ decompress = true, projectPath = process.cwd() }) => {
     touchDirectory: touchDirectory(bundlePath)
   });
 
-  const isPackage = ({ node }) => 'integrity' in node;
-  const getName = (extension) => ({ key, node }) => `${key}-${node.version}.${extension}`;
+  const isPackage = ({ node }: IPackage): boolean => 'integrity' in node;
+  const getName = (extension: string) => ({ key, node }: IPackage): string => `${key}-${node.version}.${extension}`;
   const getTarName = getName('tar');
   const getTgzName = getName('tgz');
-  const getTarPath = (pkg) => join(bundlePath, getTarName(pkg));
-  const getTgzPath = (pkg) => join(bundlePath, getTgzName(pkg));
-  const getBundleName = (pkg) => (decompress ? getTarName(pkg) : getTgzName(pkg));
-  const getBundlePath = (pkg) => (decompress ? getTarPath(pkg) : getTgzPath(pkg));
-  const getResolvedPath = (pkg) => `file:node_shrinkwrap/${getBundleName(pkg)}`;
-  const getNamedVersion = (pkg) => `${pkg.key}@${pkg.node.version}`;
-  const getCacheKey = (pkg) => `shrinkpack|${getBundleName(pkg)}`;
+  const getTarPath = (pkg: IPackage): string => join(bundlePath, getTarName(pkg));
+  const getTgzPath = (pkg: IPackage): string => join(bundlePath, getTgzName(pkg));
+  const getBundleName = (pkg: IPackage): string => (decompress ? getTarName(pkg) : getTgzName(pkg));
+  const getBundlePath = (pkg: IPackage): string => (decompress ? getTarPath(pkg) : getTgzPath(pkg));
+  const getResolvedPath = (pkg: IPackage): string => `file:node_shrinkwrap/${getBundleName(pkg)}`;
+  const getNamedVersion = (pkg: IPackage): string => `${pkg.key}@${pkg.node.version}`;
+  const getCacheKey = (pkg: IPackage): string => `shrinkpack|${getBundleName(pkg)}`;
 
-  const contains = (substr, str) => String(str).indexOf(substr) !== -1;
-  const containsPattern = (regex, str) => String(str).search(regex) !== -1;
-  const isRegistryUrl = (str) => contains('https://registry.npmjs.org', str);
-  const isTarPath = (str) => containsPattern(/\.(tgz|tar)$/, str);
-  const isUnusedFile = (filePath) => filePath in packagesByBundlePath === false;
+  const contains = (substr: string, str: string) => String(str).indexOf(substr) !== -1;
+  const containsPattern = (regex: RegExp, str: string) => String(str).search(regex) !== -1;
+  const isRegistryUrl = (str: string): boolean => contains('https://registry.npmjs.org', str);
+  const isTarPath = (str: string): boolean => containsPattern(/\.(tgz|tar)$/, str);
+  const isUnusedFile = (filePath: string): boolean => filePath in packagesByBundlePath === false;
 
-  const hasVersionAsRegistryUrl = (pkg) => isRegistryUrl(pkg.node.version);
-  const hasVersionAsSemVer = (pkg) => semver.valid(pkg.node.version);
-  const isBundled = (pkg) => getBundlePath(pkg) in bundledFilesByBundlePath;
-  const isUnbundled = (pkg) => isBundled(pkg) === false;
+  const hasVersionAsRegistryUrl = (pkg: IPackage): boolean => isRegistryUrl(pkg.node.version);
+  const hasVersionAsSemVer = (pkg: IPackage): boolean => semver.valid(pkg.node.version);
+  const isBundled = (pkg: IPackage): boolean => getBundlePath(pkg) in bundledFilesByBundlePath;
+  const isUnbundled = (pkg: IPackage): boolean => isBundled(pkg) === false;
 
-  const bundleByResolvedPath = (pkg) => addToBundle(bundlePath, pkg.node.resolved);
-  const bundleByVersionAsRegistryUrl = (pkg) => addToBundle(bundlePath, pkg.node.version);
-  const bundleByVersionAsSemVer = (pkg) => addToBundle(bundlePath, getNamedVersion(pkg));
+  const bundleByResolvedPath = (pkg: IPackage) => addToBundle(bundlePath, pkg.node.resolved);
+  const bundleByVersionAsRegistryUrl = (pkg: IPackage) => addToBundle(bundlePath, pkg.node.version);
+  const bundleByVersionAsSemVer = (pkg: IPackage) => addToBundle(bundlePath, getNamedVersion(pkg));
 
-  const decompressPackage = async (pkg) => {
+  const decompressPackage = async (pkg: IPackage) => {
     log.verbose(`decompressing ${getBundleName(pkg)}`);
     await decompressTar(getTgzPath(pkg), getTarPath(pkg));
     log.verbose(`hashing ${getBundleName(pkg)}`);
     pkg.tarIntegrity = await addToCache(cachePath, getCacheKey(pkg), getBundlePath(pkg));
   };
 
-  const bundlePackage = async (pkg) => {
+  const bundlePackage = async (pkg: IPackage) => {
     log.verbose(`bundling ${getBundleName(pkg)}`);
     if (hasVersionAsSemVer(pkg)) {
       await bundleByVersionAsSemVer(pkg);
@@ -77,14 +79,14 @@ export default async ({ decompress = true, projectPath = process.cwd() }) => {
     log.addition(getBundleName(pkg));
   };
 
-  const unbundlePackage = async (tarPath) => {
+  const unbundlePackage = async (tarPath: string) => {
     const tarName = relative(bundlePath, tarPath);
     log.verbose(`unbundling ${tarName}`);
     await deleteFile(tarPath);
     log.removal(tarName);
   };
 
-  const rewritePackage = async (pkg) => {
+  const rewritePackage = async (pkg: IPackage) => {
     const [tgzIntegrity, tarIntegrity] = pkg.node.integrity.split(' ');
     if (decompress && !pkg.tarIntegrity && !tarIntegrity) {
       log.verbose(`rebundling ${pkg.key} because .tar integrity could not be found`);
@@ -95,9 +97,9 @@ export default async ({ decompress = true, projectPath = process.cwd() }) => {
   };
 
   const bundledFiles = await readDirectory(bundlePath);
-  const bundledFilesByBundlePath = groupBy((location) => location, bundledFiles);
+  const bundledFilesByBundlePath = groupBy<string>((location: string) => location, bundledFiles);
   const packages = lockfileUtils.toArray(lockfile).filter(isPackage);
-  const packagesByBundlePath = groupBy(getBundlePath, packages);
+  const packagesByBundlePath = groupBy<IPackage>(getBundlePath, packages);
   const packagesUnbundled = packages.filter(isUnbundled);
   const packagesNotNeeded = bundledFiles.filter(isTarPath).filter(isUnusedFile);
 
@@ -114,5 +116,6 @@ export default async ({ decompress = true, projectPath = process.cwd() }) => {
   const added = chalk.green(`+${packagesUnbundled.length}`);
   const removed = chalk.red(`-${packagesNotNeeded.length}`);
   const timeTaken = chalk.grey(getTimeBetween(startTime, new Date()));
+
   console.info('shrinkpack %s %s %s %s', added, removed, timeTaken);
 };

@@ -2,7 +2,7 @@ import cacache from 'cacache';
 import * as fs from './fs';
 import * as log from './log';
 
-export default async (cachePath, cacheKey, tarPath) => {
+export default async (cachePath: string, cacheKey: string, tarPath: string) => {
   try {
     const tarContents = await fs.readFile(tarPath);
     const integrityHash = await cacache.put(cachePath, cacheKey, tarContents);
