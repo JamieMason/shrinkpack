@@ -7,7 +7,7 @@
     "declaration": true,
     "forceConsistentCasingInFileNames": true,
     "lib": ["es6"],
-    "noEmitHelpers": true,
+    "noEmitHelpers": false,
     "noImplicitAny": false,
     "noImplicitReturns": true,
     "noUnusedLocals": false,

@@ -19,7 +19,6 @@ export interface IShrinkwrap {
 export interface IPackage {
   key: string;
   node: IShrinkwrap;
-  tarIntegrity: string;
 }
 
 export type ShrinkwrapReader = (key: string, node: IShrinkwrap) => void;

@@ -7,10 +7,9 @@ import chalk from 'chalk';
 import * as semver from 'semver';
 
 import addToBundle from './lib/add-to-bundle';
-import addToCache from './lib/add-to-cache';
 import decompressTar from './lib/decompress-tar';
 import deleteFile from './lib/delete-file';
-import getCachePath from './lib/get-cache-path';
+import getIntegrity from './lib/get-integrity';
 import getTimeBetween from './lib/get-time-between';
 import groupBy from './lib/group-by';
 import * as lockfileUtils from './lib/lockfile-utils';
@@ -24,8 +23,7 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const startTime = new Date();
   const packageLockPath = join(projectPath, 'package-lock.json');
   const bundlePath = join(projectPath, 'node_shrinkwrap');
-  const { cachePath, lockfile } = await bluebird.props({
-    cachePath: getCachePath(),
+  const { lockfile } = await bluebird.props({
     lockfile: readJson(packageLockPath),
     touchDirectory: touchDirectory(bundlePath)
   });
@@ -60,8 +58,6 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const decompressPackage = async (pkg: IPackage) => {
     log.verbose(`decompressing ${getBundleName(pkg)}`);
     await decompressTar(getTgzPath(pkg), getTarPath(pkg));
-    log.verbose(`hashing ${getBundleName(pkg)}`);
-    pkg.tarIntegrity = await addToCache(cachePath, getCacheKey(pkg), getBundlePath(pkg));
   };
 
   const bundlePackage = async (pkg: IPackage) => {
@@ -87,12 +83,11 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   };
 
   const rewritePackage = async (pkg: IPackage) => {
-    const [tgzIntegrity, tarIntegrity] = pkg.node.integrity.split(' ');
-    if (decompress && !pkg.tarIntegrity && !tarIntegrity) {
-      log.verbose(`rebundling ${pkg.key} because .tar integrity could not be found`);
-      await bundlePackage(pkg);
+    if (decompress) {
+      log.verbose(`hashing ${getBundleName(pkg)}`);
+      const tarIntegrity = await getIntegrity(getBundlePath(pkg));
+      pkg.node.integrity = `${pkg.node.integrity} ${tarIntegrity}`;
     }
-    pkg.node.integrity = decompress ? `${tgzIntegrity} ${pkg.tarIntegrity}` : tgzIntegrity;
     pkg.node.resolved = getResolvedPath(pkg);
   };
 
@@ -117,5 +112,5 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const removed = chalk.red(`-${packagesNotNeeded.length}`);
   const timeTaken = chalk.grey(getTimeBetween(startTime, new Date()));
 
-  console.info('shrinkpack %s %s %s %s', added, removed, timeTaken);
+  console.info('shrinkpack %s %s %s', added, removed, timeTaken);
 };
