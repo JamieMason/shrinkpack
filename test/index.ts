@@ -1,5 +1,6 @@
 import test from 'ava';
 import * as path from 'path';
+import addLogging from './add-logging';
 import testUtil from './test-util';
 
 const projectRoot = process.cwd();
@@ -9,6 +10,8 @@ const nonShrinkpackApp = path.join(projectRoot, 'non-shrinkpacked-app');
 const testPackageJson = path.join(projectRoot, './test/test-package.json');
 
 let startingNpmVersion;
+
+addLogging('testUtil', testUtil);
 
 test.before(async () => {
   startingNpmVersion = await testUtil.getNpmVersion();
