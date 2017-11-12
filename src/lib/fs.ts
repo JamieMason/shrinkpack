@@ -1,8 +1,8 @@
-import fs from 'graceful-fs';
-import whenNode from 'when/node';
+import * as fs from 'graceful-fs';
+import * as whenNode from 'when/node';
 import rateLimit from './rate-limit';
 
-const toThrottledPromise = fn => rateLimit(whenNode.lift(fn));
+const toThrottledPromise = (fn) => rateLimit(whenNode.lift(fn));
 
 export const createReadStream = fs.createReadStream;
 export const createWriteStream = fs.createWriteStream;

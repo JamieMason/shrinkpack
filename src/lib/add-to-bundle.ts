@@ -1,5 +1,5 @@
-import * as log from './log';
 import { spawn } from './child-process';
+import * as log from './log';
 
 export default async (bundlePath, identifier) => {
   try {

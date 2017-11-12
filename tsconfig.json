@@ -1,0 +1,21 @@
+{
+  "files": ["./src/bin.ts", "./src/index.ts"],
+  "*.json": {
+    "loader": "json"
+  },
+  "compilerOptions": {
+    "declaration": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["es6"],
+    "noEmitHelpers": true,
+    "noImplicitAny": false,
+    "noImplicitReturns": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "outDir": "./dist",
+    "removeComments": true,
+    "stripInternal": true,
+    "target": "es3",
+    "types": ["node"]
+  }
+}
