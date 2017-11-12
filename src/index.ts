@@ -56,8 +56,10 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const bundleByVersionAsSemVer = (pkg: IPackage) => addToBundle(bundlePath, getNamedVersion(pkg));
 
   const decompressPackage = async (pkg: IPackage) => {
-    log.verbose(`decompressing ${getBundleName(pkg)}`);
-    await decompressTar(getTgzPath(pkg), getTarPath(pkg));
+    if (decompress) {
+      log.verbose(`decompressing ${getBundleName(pkg)}`);
+      await decompressTar(getTgzPath(pkg), getTarPath(pkg));
+    }
   };
 
   const bundlePackage = async (pkg: IPackage) => {
@@ -68,9 +70,6 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
       await bundleByVersionAsRegistryUrl(pkg);
     } else {
       await bundleByResolvedPath(pkg);
-    }
-    if (decompress) {
-      await decompressPackage(pkg);
     }
     log.addition(getBundleName(pkg));
   };
@@ -99,6 +98,7 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const packagesNotNeeded = bundledFiles.filter(isTarPath).filter(isUnusedFile);
 
   await bluebird.all(packagesUnbundled.map(bundlePackage));
+  await bluebird.all(packagesUnbundled.map(decompressPackage));
   await bluebird.all(packagesNotNeeded.map(unbundlePackage));
 
   const tempFiles = (await readDirectory(bundlePath)).filter(isTarPath).filter(isUnusedFile);
