@@ -26,9 +26,9 @@
     "Zlatan Vasović (https://github.com/zdroid)"
   ],
   "dependencies": {
-    "bluebird": "3.5.0",
-    "cacache": "9.2.9",
-    "chalk": "2.1.0",
+    "bluebird": "3.5.1",
+    "cacache": "10.0.0",
+    "chalk": "2.3.0",
     "commander": "2.11.0",
     "execa": "0.8.0",
     "graceful-fs": "4.1.11",
@@ -38,8 +38,8 @@
   },
   "devDependencies": {
     "@types/node": "8.0.51",
-    "ava": "0.22.0",
-    "rimraf": "2.6.1",
+    "ava": "0.23.0",
+    "rimraf": "2.6.2",
     "tslint": "5.8.0",
     "typescript": "2.6.1"
   },
