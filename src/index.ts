@@ -2,9 +2,10 @@ import { IPackage, IShrinkwrap, Shrinkpack } from './typings';
 
 import { join, relative } from 'path';
 
-import * as bluebird from 'bluebird';
 import chalk from 'chalk';
 import * as semver from 'semver';
+import * as when from 'when';
+import * as keys from 'when/keys';
 
 import addToBundle from './lib/add-to-bundle';
 import decompressTar from './lib/decompress-tar';
@@ -23,7 +24,7 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const startTime = new Date();
   const packageLockPath = join(projectPath, 'package-lock.json');
   const bundlePath = join(projectPath, 'node_shrinkwrap');
-  const { lockfile } = await bluebird.props({
+  const { lockfile } = await keys.all({
     lockfile: readJson(packageLockPath),
     touchDirectory: touchDirectory(bundlePath)
   });
@@ -97,15 +98,15 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const packagesUnbundled = packages.filter(isUnbundled);
   const packagesNotNeeded = bundledFiles.filter(isTarPath).filter(isUnusedFile);
 
-  await bluebird.all(packagesUnbundled.map(bundlePackage));
-  await bluebird.all(packagesUnbundled.map(decompressPackage));
-  await bluebird.all(packagesNotNeeded.map(unbundlePackage));
+  await when.all(packagesUnbundled.map(bundlePackage));
+  await when.all(packagesUnbundled.map(decompressPackage));
+  await when.all(packagesNotNeeded.map(unbundlePackage));
 
   const tempFiles = (await readDirectory(bundlePath)).filter(isTarPath).filter(isUnusedFile);
-  await bluebird.all(tempFiles.map(deleteFile));
+  await when.all(tempFiles.map(deleteFile));
 
   log.info(`rewriting ${packageLockPath}`);
-  await bluebird.all(packages.map(rewritePackage));
+  await when.all(packages.map(rewritePackage));
   await writeJson(packageLockPath, lockfile);
 
   const added = chalk.green(`+${packagesUnbundled.length}`);

@@ -26,7 +26,6 @@
     "Zlatan Vasović (https://github.com/zdroid)"
   ],
   "dependencies": {
-    "bluebird": "3.5.1",
     "chalk": "2.3.0",
     "commander": "2.11.0",
     "execa": "0.8.0",
