@@ -30,8 +30,7 @@ export const toArray = (lockfile: IShrinkwrap): IPackage[] => {
   forEach(lockfile, (key: string, node: IShrinkwrap) =>
     nodes.push({
       key,
-      node,
-      tarIntegrity: ''
+      node
     })
   );
   return nodes;
