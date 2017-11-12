@@ -1,9 +1,9 @@
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
-import execa from 'execa';
-import when from 'when';
-import whenNode from 'when/node';
+import * as execa from 'execa';
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+import * as when from 'when';
+import * as whenNode from 'when/node';
 
 const mkdir = whenNode.lift(fs.mkdir);
 const readFile = whenNode.lift(fs.readFile);
@@ -49,13 +49,11 @@ export default {
       encoding: 'utf8'
     });
   },
-  rmDirs() {
-    const dirs = [].slice.call(arguments);
-    return when.all(dirs.map(dir => rimraf(dir)));
+  rmDirs(...args: string[]) {
+    const dirs = [].slice.call(args);
+    return when.all(dirs.map((dir: string) => rimraf(dir)));
   },
   getAllDirFiles(root) {
-    return execa
-      .shell('find . | sort', { cwd: root })
-      .then(output => output.stdout.split(os.EOL));
+    return execa.shell('find . | sort', { cwd: root }).then((output: any) => output.stdout.split(os.EOL));
   }
 };
