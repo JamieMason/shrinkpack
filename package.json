@@ -5,7 +5,7 @@
   "author": "Jamie Mason (https://github.com/JamieMason)",
   "ava": {
     "files": [
-      "test/e2e/test.js"
+      "test/dist/index.js"
     ]
   },
   "bin": {
@@ -67,10 +67,15 @@
   "main": "shrinkpack",
   "repository": "JamieMason/shrinkpack",
   "scripts": {
-    "build": "tsc --project .",
-    "lint": "tslint --fix --project ./tsconfig.json",
-    "prebuild": "rimraf dist",
+    "build": "npm run build:src && npm run build:test",
+    "build:src": "tsc --project .",
+    "build:test": "tsc --project ./test",
+    "lint": "npm run lint:src && npm run lint:test",
+    "lint:src": "tslint --fix --project ./tsconfig.json",
+    "lint:test": "tslint --fix --project ./test/tsconfig.json",
+    "prebuild": "rimraf dist ./test/dist",
     "prepack": "npm run build",
+    "pretest": "npm run build:test",
     "test": "ava"
   }
 }
