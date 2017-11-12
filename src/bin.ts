@@ -1,21 +1,20 @@
 #!/usr/bin/env node
 
-import 'nodent-runtime';
-import path from 'path';
 import chalk from 'chalk';
-import program from 'commander';
-import { version } from '../package.json';
-import * as log from './lib/log';
+import * as program from 'commander';
+import { resolve } from 'path';
 import shrinkpack from './index';
+import * as log from './lib/log';
 
+const { version } = require('../package.json');
 let directoryValue;
 
 program
   .version(version)
   .option('-c, --compress', 'use compressed .tgz tarballs instead of .tar')
   .arguments('[directory]')
-  .action(directory => {
-    directoryValue = path.resolve(directory);
+  .action((directory) => {
+    directoryValue = resolve(directory);
   });
 
 program.on('--help', onHelp);
@@ -24,7 +23,7 @@ program.parse(process.argv);
 shrinkpack({
   decompress: !program.compress,
   projectPath: directoryValue
-}).catch(err => {
+}).catch((err) => {
   log.bug('uncaught error in shrinkpack', err);
   process.exit(1);
 });

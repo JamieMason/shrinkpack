@@ -2,7 +2,7 @@ import * as fs from './fs';
 import * as log from './log';
 import parseJson from './parse-json';
 
-export default async location => {
+export default async (location) => {
   try {
     const json = await fs.readFile(location, { encoding: 'utf8' });
     return parseJson(json);

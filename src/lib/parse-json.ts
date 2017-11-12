@@ -1,6 +1,6 @@
 import * as log from './log';
 
-export default json => {
+export default (json) => {
   try {
     return JSON.parse(json);
   } catch (err) {
