@@ -1,15 +1,16 @@
 import { IPackage, IShrinkwrap, Shrinkpack } from './typings';
 
 import { join, relative } from 'path';
-import addToBundle from './lib/add-to-bundle';
-import decompressTar from './lib/decompress-tar';
+import { addToBundle } from './lib/add-to-bundle';
+import { decompressTar } from './lib/decompress-tar';
 import { mkDir, rmDir, rmFile } from './lib/fs';
-import getIntegrity from './lib/get-integrity';
-import getTimeBetween from './lib/get-time-between';
-import groupBy from './lib/group-by';
+import { getIntegrity } from './lib/get-integrity';
+import { getTimeBetween } from './lib/get-time-between';
+import { groupBy } from './lib/group-by';
 import { read, write } from './lib/json';
-import * as lockfileUtils from './lib/lockfile-utils';
-import * as log from './lib/log';
+import { toArray } from './lib/lockfile';
+import { addition, info, removal, verbose } from './lib/log';
+
 const chalk = require('chalk');
 const keys = require('when/keys');
 const semver = require('semver');
@@ -53,13 +54,13 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
 
   const decompressPackage = async (pkg: IPackage) => {
     if (decompress) {
-      log.verbose(`decompressing ${getBundleName(pkg)}`);
+      verbose(`decompressing ${getBundleName(pkg)}`);
       await decompressTar(getTgzPath(pkg), getTarPath(pkg));
     }
   };
 
   const bundlePackage = async (pkg: IPackage) => {
-    log.verbose(`bundling ${getBundleName(pkg)}`);
+    verbose(`bundling ${getBundleName(pkg)}`);
     if (hasVersionAsSemVer(pkg)) {
       await bundleByVersionAsSemVer(pkg);
     } else if (hasVersionAsRegistryUrl(pkg)) {
@@ -67,19 +68,19 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
     } else {
       await bundleByResolvedPath(pkg);
     }
-    log.addition(getBundleName(pkg));
+    addition(getBundleName(pkg));
   };
 
   const unbundlePackage = async (tarPath: string) => {
     const tarName = relative(bundlePath, tarPath);
-    log.verbose(`unbundling ${tarName}`);
+    verbose(`unbundling ${tarName}`);
     await rmFile(tarPath);
-    log.removal(tarName);
+    removal(tarName);
   };
 
   const rewritePackage = async (pkg: IPackage) => {
     if (decompress) {
-      log.verbose(`hashing ${getBundleName(pkg)}`);
+      verbose(`hashing ${getBundleName(pkg)}`);
       const tarIntegrity = await getIntegrity(getBundlePath(pkg));
       pkg.node.integrity = `${pkg.node.integrity} ${tarIntegrity}`;
     }
@@ -88,7 +89,7 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
 
   const bundledFiles = await rmDir(bundlePath);
   const bundledFilesByBundlePath = groupBy<string>((location: string) => location, bundledFiles);
-  const packages = lockfileUtils.toArray(lockfile).filter(isPackage);
+  const packages = toArray(lockfile).filter(isPackage);
   const packagesByBundlePath = groupBy<IPackage>(getBundlePath, packages);
   const packagesUnbundled = packages.filter(isUnbundled);
   const packagesNotNeeded = bundledFiles.filter(isTarPath).filter(isUnusedFile);
@@ -100,7 +101,7 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const tempFiles = (await rmDir(bundlePath)).filter(isTarPath).filter(isUnusedFile);
   await when.all(tempFiles.map(rmFile));
 
-  log.info(`rewriting ${packageLockPath}`);
+  info(`rewriting ${packageLockPath}`);
   await when.all(packages.map(rewritePackage));
   await write(packageLockPath, lockfile);
 
