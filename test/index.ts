@@ -11,7 +11,9 @@ const testPackageJson = path.join(projectRoot, './test/test-package.json');
 
 let startingNpmVersion;
 
-addLogging('testUtil', testUtil);
+if (process.env.NODE_ENV === 'development') {
+  addLogging('testUtil', testUtil);
+}
 
 test.before(async () => {
   startingNpmVersion = await testUtil.getNpmVersion();
