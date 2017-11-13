@@ -1,14 +1,14 @@
-import * as ssri from 'ssri';
-import * as fs from './fs';
-import * as log from './log';
+import { readFile } from './fs';
+import { bug } from './log';
+const ssri = require('ssri');
 
 export default async (tarPath: string): Promise<string> => {
   try {
-    const tarContents = await fs.readFile(tarPath);
+    const tarContents = await readFile(tarPath);
     const integrity = ssri.fromData(tarContents);
     return ssri.stringify(integrity);
   } catch (err) {
-    log.bug(`failed to get hash integrity of ${tarPath} from zkat/ssri`, err);
+    bug(`failed to get hash integrity of ${tarPath} from zkat/ssri`, err);
     return '';
   }
 };
