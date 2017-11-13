@@ -1,13 +1,50 @@
-import * as fs from 'graceful-fs';
-import * as whenNode from 'when/node';
+import { join } from 'path';
+import { bug } from './log';
 import rateLimit from './rate-limit';
 
-const toThrottledPromise = (fn) => rateLimit(whenNode.lift(fn));
+const fs = require('graceful-fs');
+const whenNode = require('when/node');
+
+const toThrottledPromise = (fn: (...args: any[]) => Promise<any>) => rateLimit(whenNode.lift(fn));
+const mkdir: (path: string) => Promise<void> = toThrottledPromise(fs.mkdir);
+const readdir: (path: string) => Promise<string[]> = toThrottledPromise(fs.readdir);
+const unlink: (path: string) => Promise<void> = toThrottledPromise(fs.unlink);
 
 export const createReadStream = fs.createReadStream;
 export const createWriteStream = fs.createWriteStream;
-export const mkdir = toThrottledPromise(fs.mkdir);
-export const readdir = toThrottledPromise(fs.readdir);
-export const readFile = toThrottledPromise(fs.readFile);
-export const unlink = toThrottledPromise(fs.unlink);
-export const writeFile = toThrottledPromise(fs.writeFile);
+
+export const mkDir = async (path: string): Promise<void> => {
+  try {
+    await mkdir(path);
+  } catch (err) {
+    if (err.code !== 'EEXIST') {
+      bug(`failed to touch directory ${path}`, err);
+    }
+  }
+};
+
+export const rmDir = async (path: string): Promise<string[]> => {
+  try {
+    const contents = await readdir(path);
+    return contents.map((filename: string) => join(path, filename));
+  } catch (err) {
+    bug(`failed to read contents of directory "${path}"`, err);
+    return [];
+  }
+};
+
+export const readFile: (path: string, options?: object) => Promise<string> = toThrottledPromise(fs.readFile);
+
+export const rmFile = async (path: string): Promise<void> => {
+  try {
+    await unlink(path);
+  } catch (err) {
+    if (err.code !== 'ENOENT') {
+      bug(`failed to delete ${path}`, err);
+    }
+  }
+};
+
+export const writeFile: (path: string, contents: string, options?: object) => Promise<void> = toThrottledPromise(
+  fs.writeFile
+);
