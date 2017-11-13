@@ -6,7 +6,6 @@ import rateLimit from './rate-limit';
 
 const onError = (message: string) => (err: Error) => {
   log.bug(message, err);
-  process.exit(1);
 };
 
 export default rateLimit((sourcePath: string, targetPath: string) =>

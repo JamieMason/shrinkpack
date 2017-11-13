@@ -7,7 +7,6 @@ export default async (location: string): Promise<string[]> => {
     return (await fs.readdir(location)).map((filename: string) => join(location, filename));
   } catch (err) {
     log.bug(`failed to read contents of directory "${location}"`, err);
-    process.exit(1);
     return [];
   }
 };

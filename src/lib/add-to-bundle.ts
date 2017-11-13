@@ -6,6 +6,5 @@ export default async (bundlePath: string, identifier: string) => {
     await spawn('npm', ['pack', identifier], { cwd: bundlePath });
   } catch (err) {
     log.bug(`failed to "npm pack ${identifier}"`, err);
-    process.exit(1);
   }
 };

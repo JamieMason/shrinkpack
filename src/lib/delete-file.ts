@@ -7,7 +7,6 @@ export default async (location: string) => {
   } catch (err) {
     if (err.code !== 'ENOENT') {
       log.bug(`failed to delete ${location}`, err);
-      process.exit(1);
     }
   }
 };
