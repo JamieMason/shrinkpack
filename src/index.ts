@@ -13,19 +13,18 @@ import deleteFile from './lib/delete-file';
 import getIntegrity from './lib/get-integrity';
 import getTimeBetween from './lib/get-time-between';
 import groupBy from './lib/group-by';
+import { read, write } from './lib/json';
 import * as lockfileUtils from './lib/lockfile-utils';
 import * as log from './lib/log';
 import readDirectory from './lib/read-directory';
-import readJson from './lib/read-json';
 import touchDirectory from './lib/touch-directory';
-import writeJson from './lib/write-json';
 
 export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = process.cwd() }) => {
   const startTime = new Date();
   const packageLockPath = join(projectPath, 'package-lock.json');
   const bundlePath = join(projectPath, 'node_shrinkwrap');
   const { lockfile } = await keys.all({
-    lockfile: readJson(packageLockPath),
+    lockfile: read(packageLockPath),
     touchDirectory: touchDirectory(bundlePath)
   });
 
@@ -107,7 +106,7 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
 
   log.info(`rewriting ${packageLockPath}`);
   await when.all(packages.map(rewritePackage));
-  await writeJson(packageLockPath, lockfile);
+  await write(packageLockPath, lockfile);
 
   const added = chalk.green(`+${packagesUnbundled.length}`);
   const removed = chalk.red(`-${packagesNotNeeded.length}`);
