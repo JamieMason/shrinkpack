@@ -1,14 +1,14 @@
 import { join } from 'path';
 import { bug } from './log';
-import rateLimit from './rate-limit';
+import { rateLimit } from './rate-limit';
 
 const fs = require('graceful-fs');
 const whenNode = require('when/node');
 
-const toThrottledPromise = (fn: (...args: any[]) => Promise<any>) => rateLimit(whenNode.lift(fn));
-const mkdir: (path: string) => Promise<void> = toThrottledPromise(fs.mkdir);
-const readdir: (path: string) => Promise<string[]> = toThrottledPromise(fs.readdir);
-const unlink: (path: string) => Promise<void> = toThrottledPromise(fs.unlink);
+const toThrottledPromise = <T>(fn: (...args: any[]) => Promise<T>) => rateLimit<T>(whenNode.lift(fn));
+const mkdir: (path: string) => Promise<void> = toThrottledPromise<void>(fs.mkdir);
+const readdir: (path: string) => Promise<string[]> = toThrottledPromise<string[]>(fs.readdir);
+const unlink: (path: string) => Promise<void> = toThrottledPromise<void>(fs.unlink);
 
 export const createReadStream = fs.createReadStream;
 export const createWriteStream = fs.createWriteStream;
