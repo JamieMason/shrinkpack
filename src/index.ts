@@ -7,23 +7,17 @@ import { mkDir, rmDir, rmFile } from './lib/fs';
 import { getIntegrity } from './lib/get-integrity';
 import { getTimeBetween } from './lib/get-time-between';
 import { groupBy } from './lib/group-by';
-import { read, write } from './lib/json';
-import { getPackages } from './lib/lockfile';
-import { addition, info, removal, verbose } from './lib/log';
+import { write } from './lib/json';
+import { getPackages, locate } from './lib/lockfile';
+import { addition, error, info, removal, verbose } from './lib/log';
 
 const chalk = require('chalk');
-const keys = require('when/keys');
 const semver = require('semver');
 const when = require('when');
 
 export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = process.cwd() }) => {
   const startTime = new Date();
-  const packageLockPath = join(projectPath, 'package-lock.json');
   const bundlePath = join(projectPath, 'node_shrinkwrap');
-  const { lockfile } = await keys.all({
-    lockfile: read(packageLockPath),
-    mkDir: mkDir(bundlePath)
-  });
 
   const getName = (extension: string) => (pkg: IPackage): string => `${pkg.key}-${pkg.node.version}.${extension}`;
   const getTarName = getName('tar');
@@ -85,9 +79,17 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
     pkg.node.resolved = getResolvedPath(pkg);
   };
 
+  await mkDir(bundlePath);
+  const lockfile = await locate(projectPath);
+
+  if (lockfile === null) {
+    error('unable to continue without an npm-shrinkwrap.json or package-lock.json');
+    process.exit(1);
+  }
+
   const bundledFiles = await rmDir(bundlePath);
   const bundledFilesByBundlePath = groupBy<string>((location: string) => location, bundledFiles);
-  const packages = getPackages(lockfile);
+  const packages = getPackages(lockfile.data);
   const packagesByBundlePath = groupBy<IPackage>(getBundlePath, packages);
   const packagesUnbundled = packages.filter(isUnbundled);
   const packagesNotNeeded = bundledFiles.filter(isTarPath).filter(isUnusedFile);
@@ -99,9 +101,9 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const tempFiles = (await rmDir(bundlePath)).filter(isTarPath).filter(isUnusedFile);
   await when.all(tempFiles.map(rmFile));
 
-  info(`rewriting ${packageLockPath}`);
+  info(`rewriting ${lockfile.location}`);
   await when.all(packages.map(rewritePackage));
-  await write(packageLockPath, lockfile);
+  await write(lockfile.location, lockfile.data);
 
   const added = chalk.green(`+${packagesUnbundled.length}`);
   const removed = chalk.red(`-${packagesNotNeeded.length}`);
