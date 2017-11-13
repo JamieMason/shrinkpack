@@ -25,7 +25,7 @@ const forEach = (node: any, handler: ShrinkwrapReader, key: string = '') => {
   }
 };
 
-export const toArray = (lockfile: IShrinkwrap): IPackage[] => {
+const toArray = (lockfile: IShrinkwrap): IPackage[] => {
   const nodes = [];
   forEach(lockfile, (key: string, node: IShrinkwrap) =>
     nodes.push({
@@ -35,3 +35,6 @@ export const toArray = (lockfile: IShrinkwrap): IPackage[] => {
   );
   return nodes;
 };
+
+export const getPackages = (lockfile: IShrinkwrap): IPackage[] =>
+  toArray(lockfile).filter((pkg: IPackage): boolean => 'integrity' in pkg.node);

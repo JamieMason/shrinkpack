@@ -8,7 +8,7 @@ import { getIntegrity } from './lib/get-integrity';
 import { getTimeBetween } from './lib/get-time-between';
 import { groupBy } from './lib/group-by';
 import { read, write } from './lib/json';
-import { toArray } from './lib/lockfile';
+import { getPackages } from './lib/lockfile';
 import { addition, info, removal, verbose } from './lib/log';
 
 const chalk = require('chalk');
@@ -25,8 +25,7 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
     mkDir: mkDir(bundlePath)
   });
 
-  const isPackage = ({ node }: IPackage): boolean => 'integrity' in node;
-  const getName = (extension: string) => ({ key, node }: IPackage): string => `${key}-${node.version}.${extension}`;
+  const getName = (extension: string) => (pkg: IPackage): string => `${pkg.key}-${pkg.node.version}.${extension}`;
   const getTarName = getName('tar');
   const getTgzName = getName('tgz');
   const getTarPath = (pkg: IPackage): string => join(bundlePath, getTarName(pkg));
@@ -88,7 +87,7 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
 
   const bundledFiles = await rmDir(bundlePath);
   const bundledFilesByBundlePath = groupBy<string>((location: string) => location, bundledFiles);
-  const packages = toArray(lockfile).filter(isPackage);
+  const packages = getPackages(lockfile);
   const packagesByBundlePath = groupBy<IPackage>(getBundlePath, packages);
   const packagesUnbundled = packages.filter(isUnbundled);
   const packagesNotNeeded = bundledFiles.filter(isTarPath).filter(isUnusedFile);
