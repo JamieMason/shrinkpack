@@ -26,7 +26,6 @@ shrinkpack({
   projectPath: directoryValue
 }).catch((err: Error) => {
   log.bug('uncaught error in shrinkpack', err);
-  process.exit(1);
 });
 
 function onHelp() {

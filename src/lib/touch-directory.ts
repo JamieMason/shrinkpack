@@ -7,7 +7,6 @@ export default async (location: string): Promise<void> => {
   } catch (err) {
     if (err.code !== 'EEXIST') {
       log.bug(`failed to touch directory ${location}`, err);
-      process.exit(1);
     }
   }
 };
