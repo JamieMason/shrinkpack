@@ -1,4 +1,4 @@
-import { IPackage, IShrinkwrap, Shrinkpack } from './typings';
+import { IPackage, Shrinkpack } from './typings';
 
 import { join, relative } from 'path';
 import { addToBundle } from './lib/add-to-bundle';
@@ -35,7 +35,6 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const getBundlePath = (pkg: IPackage): string => (decompress ? getTarPath(pkg) : getTgzPath(pkg));
   const getResolvedPath = (pkg: IPackage): string => `file:node_shrinkwrap/${getBundleName(pkg)}`;
   const getNamedVersion = (pkg: IPackage): string => `${pkg.key}@${pkg.node.version}`;
-  const getCacheKey = (pkg: IPackage): string => `shrinkpack|${getBundleName(pkg)}`;
 
   const contains = (substr: string, str: string) => String(str).indexOf(substr) !== -1;
   const containsPattern = (regex: RegExp, str: string) => String(str).search(regex) !== -1;

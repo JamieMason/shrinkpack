@@ -1,6 +1,6 @@
 import { Json } from '../typings';
 import { readFile, writeFile } from './fs';
-import { bug, error, verbose } from './log';
+import { bug, verbose } from './log';
 
 export const read = async (location: string): Promise<Json> => {
   try {
