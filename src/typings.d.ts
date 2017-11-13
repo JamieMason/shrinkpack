@@ -31,4 +31,9 @@ export interface IPackage {
   node: IShrinkwrap;
 }
 
+export interface ILockfilePointer {
+  data: IShrinkwrap;
+  location: string;
+}
+
 export type ShrinkwrapReader = (key: string, node: IShrinkwrap) => void;
