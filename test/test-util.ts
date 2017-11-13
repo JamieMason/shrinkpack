@@ -36,7 +36,7 @@ export default {
     return execa('npm', ['shrinkwrap', '--dev'], { cwd: project });
   },
   shrinkpack(project) {
-    return execa('shrinkpack', ['--keep-optional'], { cwd: project });
+    return execa('shrinkpack', [], { cwd: project });
   },
   linkShrinkpack(root) {
     return execa('npm', ['install'], { cwd: root })
