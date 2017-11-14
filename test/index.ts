@@ -54,7 +54,7 @@ test.serial('All deps in shrinkpacked shrinkwrap have resolved prop and point to
   const assertAllResolves = (deps) => {
     Object.keys(deps).forEach((depName) => {
       const dep = deps[depName];
-      t.true(dep.resolved.indexOf('./node_shrinkwrap/') > -1);
+      t.true(dep.resolved.indexOf('file:node_shrinkwrap/') > -1);
       if (dep.dependencies) {
         assertAllResolves(dep.dependencies);
       }
