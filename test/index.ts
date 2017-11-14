@@ -56,8 +56,8 @@ test.serial('All deps in shrinkpacked shrinkwrap have resolved prop and point to
       const dep = deps[depName];
       const substring = 'file:node_shrinkwrap/';
       t.true(
-        dep.resolved.indexOf(substring) > -1,
-        `"${dep.resolved}" of "${depName}" should contain "${substring}" in npm "${process.env.NPM_VERSION}"`
+        dep.bundled === true || String(dep.resolved).indexOf(substring) > -1,
+        `"${String(dep.resolved)}" of "${depName}" should contain "${substring}" in npm "${process.env.NPM_VERSION}"`
       );
       if (dep.dependencies) {
         assertAllResolves(dep.dependencies);
