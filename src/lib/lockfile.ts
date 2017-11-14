@@ -41,7 +41,7 @@ const toArray = (lockfile: IShrinkwrap): IPackage[] => {
 };
 
 export const getPackages = (lockfile: IShrinkwrap): IPackage[] =>
-  toArray(lockfile).filter((pkg: IPackage): boolean => 'integrity' in pkg.node);
+  toArray(lockfile).filter((pkg: IPackage): boolean => 'resolved' in pkg.node || 'version' in pkg.node);
 
 export const locate = async (projectPath: string): Promise<ILockfilePointer | null> => {
   const lockfiles = ['npm-shrinkwrap.json', 'package-lock.json'];
