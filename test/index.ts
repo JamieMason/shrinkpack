@@ -44,7 +44,7 @@ test.serial('Running shrinkpack updates the shrinkwrap file', async (t) => {
   await testUtil.shrinkpack(shrinkpackApp);
   const afterShrinkpack = await testUtil.getShrinkwrapFile(shrinkpackApp);
 
-  t.not(beforeShrinkpack, afterShrinkpack);
+  t.notDeepEqual(beforeShrinkpack, afterShrinkpack);
 });
 
 test.serial('All deps in shrinkpacked shrinkwrap have resolved prop and point to local file', async (t) => {
