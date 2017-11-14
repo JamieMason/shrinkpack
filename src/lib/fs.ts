@@ -23,7 +23,7 @@ export const mkDir = async (path: string): Promise<void> => {
   }
 };
 
-export const rmDir = async (path: string): Promise<string[]> => {
+export const readDir = async (path: string): Promise<string[]> => {
   try {
     const contents = await readdir(path);
     return contents.map((filename: string) => join(path, filename));

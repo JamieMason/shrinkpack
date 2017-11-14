@@ -1,15 +1,16 @@
-import { IPackage, Shrinkpack } from './typings';
+import { IExeca, IFragment, IPackage, Shrinkpack } from './typings';
 
 import { join, relative } from 'path';
 import { addToBundle } from './lib/add-to-bundle';
+import { spawn } from './lib/child-process';
 import { decompressTar } from './lib/decompress-tar';
-import { mkDir, rmDir, rmFile } from './lib/fs';
+import { mkDir, readDir, rmFile } from './lib/fs';
 import { getIntegrity } from './lib/get-integrity';
 import { getTimeBetween } from './lib/get-time-between';
 import { groupBy } from './lib/group-by';
 import { write } from './lib/json';
-import { getPackages, locate } from './lib/lockfile';
-import { addition, error, info, removal, verbose } from './lib/log';
+import { getFragments, getPackages, locate } from './lib/lockfile';
+import { addition, error, info, removal, resolve, verbose } from './lib/log';
 
 const chalk = require('chalk');
 const semver = require('semver');
@@ -28,31 +29,20 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const getBundleName = (pkg: IPackage): string => (decompress ? getTarName(pkg) : getTgzName(pkg));
   const getBundlePath = (pkg: IPackage): string => (decompress ? getTarPath(pkg) : getTgzPath(pkg));
   const getResolvedPath = (pkg: IPackage): string => `file:node_shrinkwrap/${getBundleName(pkg)}`;
-  const getNamedVersion = (pkg: IPackage): string => `${pkg.key}@${pkg.node.version}`;
 
-  const contains = (substr: string, str: string) => String(str).indexOf(substr) !== -1;
   const containsPattern = (regex: RegExp, str: string) => String(str).search(regex) !== -1;
-  const isRegistryUrl = (str: string): boolean => contains('https://registry.npmjs.org', str);
   const isTarPath = (str: string): boolean => containsPattern(/\.(tgz|tar)$/, str);
   const isUnusedFile = (filePath: string): boolean => filePath in packagesByBundlePath === false;
 
-  const hasVersionAsRegistryUrl = (pkg: IPackage): boolean => isRegistryUrl(pkg.node.version);
-  const hasVersionAsSemVer = (pkg: IPackage): boolean => semver.valid(pkg.node.version);
+  const hasSemVerVersion = (pkg: IPackage): boolean => semver.valid(pkg.node.version);
   const isBundled = (pkg: IPackage): boolean => getBundlePath(pkg) in bundledFilesByBundlePath;
   const isUnbundled = (pkg: IPackage): boolean => isBundled(pkg) === false;
-
-  const locateByResolvedPath = (pkg: IPackage) => pkg.node.resolved;
-  const locateByVersionAsRegistryUrl = (pkg: IPackage) => pkg.node.version;
-  const locateByVersionAsSemVer = (pkg: IPackage) => getNamedVersion(pkg);
-
-  const getBundleLocator = (pkg: IPackage): string =>
-    hasVersionAsSemVer(pkg)
-      ? locateByVersionAsSemVer(pkg)
-      : hasVersionAsRegistryUrl(pkg) ? locateByVersionAsRegistryUrl(pkg) : locateByResolvedPath(pkg);
+  const isUnresolved = (pkg: IPackage): boolean => !hasSemVerVersion(pkg);
+  const isPackage = (pkg: IPackage): boolean => 'resolved' in pkg.node || 'version' in pkg.node;
 
   const bundlePackage = async (pkg: IPackage) => {
     verbose(`bundling ${getBundleName(pkg)}`);
-    await addToBundle(bundlePath, getBundleLocator(pkg));
+    await addToBundle(bundlePath, pkg.node.resolved);
     addition(getBundleName(pkg));
   };
 
@@ -79,6 +69,19 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
     pkg.node.resolved = getResolvedPath(pkg);
   };
 
+  const resolvePackage = async (pkg: IPackage) => {
+    const res: IExeca = await spawn('npm', ['ls', '--json', pkg.key]);
+    const isSamePackage = (other: IFragment) => other.key === pkg.key;
+    const isSameVersion = (other: IFragment) => other.node.resolved === pkg.node.version;
+    const fragment: IFragment = getFragments(JSON.parse(res.stdout))
+      .filter(isSamePackage)
+      .filter(isSameVersion)[0];
+    pkg.node.version = fragment.node.version;
+    pkg.node.resolved = fragment.node.resolved;
+    resolve(`${pkg.key}@${pkg.node.version} (${pkg.node.resolved})`);
+    return pkg;
+  };
+
   await mkDir(bundlePath);
   const lockfile = await locate(projectPath);
 
@@ -87,25 +90,28 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
     process.exit(1);
   }
 
-  const bundledFiles = await rmDir(bundlePath);
+  const bundledFiles = await readDir(bundlePath);
   const bundledFilesByBundlePath = groupBy<string>((location: string) => location, bundledFiles);
-  const packages = getPackages(lockfile.data);
+  const packages = getPackages(lockfile.data).filter(isPackage);
+
+  await when.all(packages.filter(isUnresolved).map(resolvePackage));
+
   const packagesByBundlePath = groupBy<IPackage>(getBundlePath, packages);
-  const packagesUnbundled = packages.filter(isUnbundled);
+  const unbundledPackages = packages.filter(isUnbundled);
   const packagesNotNeeded = bundledFiles.filter(isTarPath).filter(isUnusedFile);
 
-  await when.all(packagesUnbundled.map(bundlePackage));
-  await when.all(packagesUnbundled.map(decompressPackage));
+  await when.all(unbundledPackages.map(bundlePackage));
+  await when.all(unbundledPackages.map(decompressPackage));
   await when.all(packagesNotNeeded.map(unbundlePackage));
 
-  const tempFiles = (await rmDir(bundlePath)).filter(isTarPath).filter(isUnusedFile);
+  const tempFiles = (await readDir(bundlePath)).filter(isTarPath).filter(isUnusedFile);
   await when.all(tempFiles.map(rmFile));
 
   info(`rewriting ${lockfile.location}`);
   await when.all(packages.map(rewritePackage));
   await write(lockfile.location, lockfile.data);
 
-  const added = chalk.green(`+${packagesUnbundled.length}`);
+  const added = chalk.green(`+${unbundledPackages.length}`);
   const removed = chalk.red(`-${packagesNotNeeded.length}`);
   const timeTaken = chalk.grey(getTimeBetween(startTime, new Date()));
 

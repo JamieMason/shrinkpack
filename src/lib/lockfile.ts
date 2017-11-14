@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { ILockfilePointer, IPackage, IShrinkwrap, ShrinkwrapReader } from '../typings';
+import { IFragment, ILockfilePointer, IPackage, IShrinkwrap, IShrinkwrapFragment } from '../typings';
 import { read } from './json';
 
 const when = require('when');
@@ -8,7 +8,7 @@ const isRootNode = (key: string): boolean => !key;
 const isPackage = (key: string): boolean => key !== 'dependencies';
 const isDependencyMap = (key: string): boolean => key === 'dependencies';
 
-const stepInto = (parentNode: IShrinkwrap, handler: ShrinkwrapReader) => {
+const stepInto = (parentNode: any, handler: any) => {
   for (const key in parentNode) {
     if (parentNode.hasOwnProperty(key)) {
       forEach(parentNode[key], handler, key);
@@ -16,7 +16,7 @@ const stepInto = (parentNode: IShrinkwrap, handler: ShrinkwrapReader) => {
   }
 };
 
-const forEach = (node: any, handler: ShrinkwrapReader, key: string = '') => {
+const forEach = (node: any, handler: any, key: string = '') => {
   if (node instanceof Object) {
     if (isRootNode(key)) {
       stepInto(node.dependencies, handler);
@@ -29,19 +29,16 @@ const forEach = (node: any, handler: ShrinkwrapReader, key: string = '') => {
   }
 };
 
-const toArray = (lockfile: IShrinkwrap): IPackage[] => {
+const toArray = <T, C>(lockfile: T): C[] => {
   const nodes = [];
-  forEach(lockfile, (key: string, node: IShrinkwrap) =>
-    nodes.push({
-      key,
-      node
-    })
-  );
+  forEach(lockfile, (key: string, node: T) => nodes.push({ key, node }));
   return nodes;
 };
 
-export const getPackages = (lockfile: IShrinkwrap): IPackage[] =>
-  toArray(lockfile).filter((pkg: IPackage): boolean => 'resolved' in pkg.node || 'version' in pkg.node);
+export const getFragments = (lockfile: IShrinkwrapFragment): IFragment[] =>
+  toArray<IShrinkwrapFragment, IFragment>(lockfile);
+
+export const getPackages = (lockfile: IShrinkwrap): IPackage[] => toArray<IShrinkwrap, IPackage>(lockfile);
 
 export const locate = async (projectPath: string): Promise<ILockfilePointer | null> => {
   const lockfiles = ['npm-shrinkwrap.json', 'package-lock.json'];
