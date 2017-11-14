@@ -41,26 +41,18 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const isBundled = (pkg: IPackage): boolean => getBundlePath(pkg) in bundledFilesByBundlePath;
   const isUnbundled = (pkg: IPackage): boolean => isBundled(pkg) === false;
 
-  const bundleByResolvedPath = (pkg: IPackage) => addToBundle(bundlePath, pkg.node.resolved);
-  const bundleByVersionAsRegistryUrl = (pkg: IPackage) => addToBundle(bundlePath, pkg.node.version);
-  const bundleByVersionAsSemVer = (pkg: IPackage) => addToBundle(bundlePath, getNamedVersion(pkg));
+  const locateByResolvedPath = (pkg: IPackage) => pkg.node.resolved;
+  const locateByVersionAsRegistryUrl = (pkg: IPackage) => pkg.node.version;
+  const locateByVersionAsSemVer = (pkg: IPackage) => getNamedVersion(pkg);
 
-  const decompressPackage = async (pkg: IPackage) => {
-    if (decompress) {
-      verbose(`decompressing ${getBundleName(pkg)}`);
-      await decompressTar(getTgzPath(pkg), getTarPath(pkg));
-    }
-  };
+  const getBundleLocator = (pkg: IPackage): string =>
+    hasVersionAsSemVer(pkg)
+      ? locateByVersionAsSemVer(pkg)
+      : hasVersionAsRegistryUrl(pkg) ? locateByVersionAsRegistryUrl(pkg) : locateByResolvedPath(pkg);
 
   const bundlePackage = async (pkg: IPackage) => {
     verbose(`bundling ${getBundleName(pkg)}`);
-    if (hasVersionAsSemVer(pkg)) {
-      await bundleByVersionAsSemVer(pkg);
-    } else if (hasVersionAsRegistryUrl(pkg)) {
-      await bundleByVersionAsRegistryUrl(pkg);
-    } else {
-      await bundleByResolvedPath(pkg);
-    }
+    await addToBundle(bundlePath, getBundleLocator(pkg));
     addition(getBundleName(pkg));
   };
 
@@ -69,6 +61,13 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
     verbose(`unbundling ${tarName}`);
     await rmFile(tarPath);
     removal(tarName);
+  };
+
+  const decompressPackage = async (pkg: IPackage) => {
+    if (decompress) {
+      verbose(`decompressing ${getBundleName(pkg)}`);
+      await decompressTar(getTgzPath(pkg), getTarPath(pkg));
+    }
   };
 
   const rewritePackage = async (pkg: IPackage) => {
