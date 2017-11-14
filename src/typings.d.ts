@@ -18,9 +18,11 @@ export interface IExeca {
 }
 
 export interface IShrinkwrap {
+  bundled: boolean;
   dependencies: IShrinkwrapIndex;
   dev: boolean;
   integrity: string;
+  optional: boolean;
   requires: { [name: string]: string };
   resolved: string;
   version: string;
