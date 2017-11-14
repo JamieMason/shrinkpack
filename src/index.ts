@@ -19,7 +19,8 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const startTime = new Date();
   const bundlePath = join(projectPath, 'node_shrinkwrap');
 
-  const getName = (extension: string) => (pkg: IPackage): string => `${pkg.key}-${pkg.node.version}.${extension}`;
+  const getKey = (pkg: IPackage) => pkg.key.replace(/@/g, '').replace(/\//g, '-');
+  const getName = (extension: string) => (pkg: IPackage): string => `${getKey(pkg)}-${pkg.node.version}.${extension}`;
   const getTarName = getName('tar');
   const getTgzName = getName('tgz');
   const getTarPath = (pkg: IPackage): string => join(bundlePath, getTarName(pkg));
