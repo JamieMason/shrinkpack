@@ -2,10 +2,6 @@ export type Shrinkpack = (options: { decompress: boolean; projectPath: string })
 
 export type Json = object | any[] | null;
 
-export interface IShrinkwrapIndex {
-  [name: string]: IShrinkwrap;
-}
-
 export interface IExeca {
   cmd: string;
   code: number;
@@ -15,6 +11,10 @@ export interface IExeca {
   stderr: string;
   stdout: string;
   timedOut: boolean;
+}
+
+export interface IShrinkwrapIndex {
+  [name: string]: IShrinkwrap;
 }
 
 export interface IShrinkwrap {
@@ -33,9 +33,24 @@ export interface IPackage {
   node: IShrinkwrap;
 }
 
+export interface IShrinkwrapFragmentIndex {
+  [name: string]: IShrinkwrapFragment;
+}
+
+export interface IShrinkwrapFragment {
+  dependencies: IShrinkwrapFragmentIndex;
+  from: string;
+  name: string;
+  resolved: string;
+  version: string;
+}
+
+export interface IFragment {
+  key: string;
+  node: IShrinkwrapFragment;
+}
+
 export interface ILockfilePointer {
   data: IShrinkwrap;
   location: string;
 }
-
-export type ShrinkwrapReader = (key: string, node: IShrinkwrap) => void;
