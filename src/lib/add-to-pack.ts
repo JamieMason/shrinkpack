@@ -1,9 +1,9 @@
 import { spawn } from './child-process';
 import { bug } from './log';
 
-export const addToBundle = async (bundlePath: string, identifier: string) => {
+export const addToPack = async (packPath: string, identifier: string) => {
   try {
-    await spawn('npm', ['pack', identifier], { cwd: bundlePath });
+    await spawn('npm', ['pack', identifier], { cwd: packPath });
   } catch (err) {
     bug(`failed to "npm pack ${identifier}"`, err);
   }
