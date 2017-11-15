@@ -64,8 +64,9 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const rewritePackage = async (pkg: IPackage) => {
     if (decompress) {
       verbose(`hashing ${getPackName(pkg)}`);
+      const tgzIntegrity = pkg.node.integrity;
       const tarIntegrity = await getIntegrity(getPackPath(pkg));
-      pkg.node.integrity = `${pkg.node.integrity} ${tarIntegrity}`;
+      pkg.node.integrity = tgzIntegrity ? `${tgzIntegrity} ${tarIntegrity}` : tarIntegrity;
     }
     pkg.node.resolved = getResolvedPath(pkg);
   };
