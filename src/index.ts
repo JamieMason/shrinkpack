@@ -35,10 +35,11 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const isUnusedFile = (filePath: string): boolean => filePath in packagesByPackPath === false;
 
   const hasSemVerVersion = (pkg: IPackage): boolean => semver.valid(pkg.node.version);
+  const isBundled = (pkg: IPackage): boolean => pkg.node.bundled === true;
+  const isPackage = (pkg: IPackage): boolean => 'resolved' in pkg.node || 'version' in pkg.node;
   const isPacked = (pkg: IPackage): boolean => getPackPath(pkg) in packedFilesByPackPath;
   const isUnpacked = (pkg: IPackage): boolean => isPacked(pkg) === false;
   const isUnresolved = (pkg: IPackage): boolean => !hasSemVerVersion(pkg);
-  const isPackage = (pkg: IPackage): boolean => 'resolved' in pkg.node || 'version' in pkg.node;
 
   const packPackage = async (pkg: IPackage) => {
     verbose(`packing ${getPackName(pkg)}`);
@@ -92,27 +93,29 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
 
   const packedFiles = await readDir(packPath);
   const packedFilesByPackPath = groupBy<string>((location: string) => location, packedFiles);
+
   const packages = getPackages(lockfile.data).filter(isPackage);
+  const unbundledPackages = packages.filter((pkg: IPackage) => !isBundled(pkg));
 
-  await when.all(packages.filter(isUnresolved).map(resolvePackage));
+  await when.all(unbundledPackages.filter(isUnresolved).map(resolvePackage));
 
-  const packagesByPackPath = groupBy<IPackage>(getPackPath, packages);
-  const unpackedPackages = packages.filter(isUnpacked);
-  const packagesNotNeeded = packedFiles.filter(isTarPath).filter(isUnusedFile);
+  const packagesByPackPath = groupBy<IPackage>(getPackPath, unbundledPackages);
+  const unpackedPackages = unbundledPackages.filter(isUnpacked);
+  const unusedPackages = packedFiles.filter(isTarPath).filter(isUnusedFile);
 
   await when.all(unpackedPackages.map(packPackage));
   await when.all(unpackedPackages.map(decompressPackage));
-  await when.all(packagesNotNeeded.map(unpackPackage));
+  await when.all(unusedPackages.map(unpackPackage));
 
   const tempFiles = (await readDir(packPath)).filter(isTarPath).filter(isUnusedFile);
   await when.all(tempFiles.map(rmFile));
 
   info(`rewriting ${lockfile.location}`);
-  await when.all(packages.map(rewritePackage));
+  await when.all(unbundledPackages.map(rewritePackage));
   await write(lockfile.location, lockfile.data);
 
   const added = chalk.green(`+${unpackedPackages.length}`);
-  const removed = chalk.red(`-${packagesNotNeeded.length}`);
+  const removed = chalk.red(`-${unusedPackages.length}`);
   const timeTaken = chalk.grey(getTimeBetween(startTime, new Date()));
 
   console.info('shrinkpack %s %s %s', added, removed, timeTaken);
