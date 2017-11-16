@@ -18,7 +18,7 @@ export const mkDir = async (path: string): Promise<void> => {
     await mkdir(path);
   } catch (err) {
     if (err.code !== 'EEXIST') {
-      bug(`failed to touch directory ${path}`, err);
+      bug(`failed to create directory ${path}`, err);
     }
   }
 };

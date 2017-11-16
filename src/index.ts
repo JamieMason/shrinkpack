@@ -92,7 +92,7 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const lockfile = await locate(projectPath);
 
   if (lockfile === null) {
-    error('unable to continue without an npm-shrinkwrap.json or package-lock.json');
+    error('npm-shrinkwrap.json is missing, create it using `npm shrinkwrap` then try again');
     process.exit(1);
   }
 
