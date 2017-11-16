@@ -20,6 +20,8 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const startTime = new Date();
   const packPath = join(projectPath, 'node_shrinkwrap');
 
+  const tarRequired = (): boolean => decompress;
+
   const getKey = (pkg: IPackage) => pkg.key.replace(/@/g, '').replace(/\//g, '-');
   const getName = (extension: string) => (pkg: IPackage): string => `${getKey(pkg)}-${pkg.node.version}.${extension}`;
   const getTarName = getName('tar');
@@ -54,24 +56,26 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
     removal(tarName);
   };
 
-  const decompressPackage = async (pkg: IPackage) => {
-    if (decompress) {
-      verbose(`decompressing ${getPackName(pkg)}`);
-      await decompressTar(getTgzPath(pkg), getTarPath(pkg));
-    }
+  const decompressPackage = async (pkg: IPackage): Promise<IPackage> => {
+    verbose(`decompressing ${getPackName(pkg)}`);
+    await decompressTar(getTgzPath(pkg), getTarPath(pkg));
+    return pkg;
   };
 
-  const rewritePackage = async (pkg: IPackage) => {
-    if (decompress) {
-      verbose(`hashing ${getPackName(pkg)}`);
-      const tgzIntegrity = pkg.node.integrity;
-      const tarIntegrity = await getIntegrity(getPackPath(pkg));
-      pkg.node.integrity = tgzIntegrity ? `${tgzIntegrity} ${tarIntegrity}` : tarIntegrity;
-    }
+  const rewriteIntegrity = async (pkg: IPackage): Promise<IPackage> => {
+    verbose(`hashing ${getPackName(pkg)}`);
+    const tgzIntegrity = pkg.node.integrity;
+    const tarIntegrity = await getIntegrity(getPackPath(pkg));
+    pkg.node.integrity = tgzIntegrity ? `${tgzIntegrity} ${tarIntegrity}` : tarIntegrity;
+    return pkg;
+  };
+
+  const rewriteResolved = (pkg: IPackage): IPackage => {
     pkg.node.resolved = getResolvedPath(pkg);
+    return pkg;
   };
 
-  const resolvePackage = async (pkg: IPackage) => {
+  const resolvePackage = async (pkg: IPackage): Promise<IPackage> => {
     const res: IExeca = await spawn('npm', ['ls', '--json', pkg.key]);
     const isSamePackage = (other: IFragment) => other.key === pkg.key;
     const isSameVersion = (other: IFragment) => other.node.resolved === pkg.node.version;
@@ -105,14 +109,15 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const unusedPackages = packedFiles.filter(isTarPath).filter(isUnusedFile);
 
   await when.all(unpackedPackages.map(packPackage));
-  await when.all(unpackedPackages.map(decompressPackage));
+  await when.all(unpackedPackages.filter(tarRequired).map(decompressPackage));
   await when.all(unusedPackages.map(unpackPackage));
 
   const tempFiles = (await readDir(packPath)).filter(isTarPath).filter(isUnusedFile);
   await when.all(tempFiles.map(rmFile));
 
   info(`rewriting ${lockfile.location}`);
-  await when.all(unbundledPackages.map(rewritePackage));
+  await when.all(unbundledPackages.filter(tarRequired).map(rewriteIntegrity));
+  await when.all(unbundledPackages.map(rewriteResolved));
   await write(lockfile.location, lockfile.data);
 
   const added = chalk.green(`+${unpackedPackages.length}`);
