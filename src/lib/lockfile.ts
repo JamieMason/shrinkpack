@@ -41,7 +41,7 @@ export const getFragments = (lockfile: IShrinkwrapFragment): IFragment[] =>
 export const getPackages = (lockfile: IShrinkwrap): IPackage[] => toArray<IShrinkwrap, IPackage>(lockfile);
 
 export const locate = async (projectPath: string): Promise<ILockfilePointer | null> => {
-  const lockfiles = ['npm-shrinkwrap.json', 'package-lock.json'];
+  const lockfiles = ['npm-shrinkwrap.json'];
   const getPath = (name: string) => join(projectPath, name);
   const getPointer = async (path: string) => ({ data: await read(path), location: path });
   const hasData = (pointer: ILockfilePointer) => pointer.data !== null;
