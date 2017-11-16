@@ -1,5 +1,4 @@
-export type Shrinkpack = (options: { decompress: boolean; projectPath: string }) => Promise<void>;
-
+export type VariadicBooleanFn = (...args: any[]) => boolean;
 export type Json = object | any[] | null;
 
 export interface IExeca {
@@ -12,6 +11,8 @@ export interface IExeca {
   stdout: string;
   timedOut: boolean;
 }
+
+export type Shrinkpack = (options: { decompress: boolean; projectPath: string }) => Promise<void>;
 
 export interface IShrinkwrapIndex {
   [name: string]: IShrinkwrap;

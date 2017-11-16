@@ -1,4 +1,4 @@
-import { IExeca, IFragment, IPackage, Shrinkpack } from './typings';
+import { IExeca, IFragment, IPackage, Shrinkpack, VariadicBooleanFn } from './typings';
 
 import { join, relative } from 'path';
 import { addToPack } from './lib/add-to-pack';
@@ -21,6 +21,7 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const packPath = join(projectPath, 'node_shrinkwrap');
 
   const tarRequired = (): boolean => decompress;
+  const not = (fn: VariadicBooleanFn): VariadicBooleanFn => (...args) => !fn(...args);
 
   const getKey = (pkg: IPackage) => pkg.key.replace(/@/g, '').replace(/\//g, '-');
   const getName = (extension: string) => (pkg: IPackage): string => `${getKey(pkg)}-${pkg.node.version}.${extension}`;
@@ -40,8 +41,6 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const isBundled = (pkg: IPackage): boolean => pkg.node.bundled === true;
   const isPackage = (pkg: IPackage): boolean => 'resolved' in pkg.node || 'version' in pkg.node;
   const isPacked = (pkg: IPackage): boolean => getPackPath(pkg) in packedFilesByPackPath;
-  const isUnpacked = (pkg: IPackage): boolean => isPacked(pkg) === false;
-  const isUnresolved = (pkg: IPackage): boolean => !hasSemVerVersion(pkg);
 
   const packPackage = async (pkg: IPackage) => {
     verbose(`packing ${getPackName(pkg)}`);
@@ -100,12 +99,12 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const packedFilesByPackPath = groupBy<string>((location: string) => location, packedFiles);
 
   const packages = getPackages(lockfile.data).filter(isPackage);
-  const unbundledPackages = packages.filter((pkg: IPackage) => !isBundled(pkg));
+  const unbundledPackages = packages.filter(not(isBundled));
 
-  await when.all(unbundledPackages.filter(isUnresolved).map(resolvePackage));
+  await when.all(unbundledPackages.filter(not(hasSemVerVersion)).map(resolvePackage));
 
   const packagesByPackPath = groupBy<IPackage>(getPackPath, unbundledPackages);
-  const unpackedPackages = unbundledPackages.filter(isUnpacked);
+  const unpackedPackages = unbundledPackages.filter(not(isPacked));
   const unusedPackages = packedFiles.filter(isTarPath).filter(isUnusedFile);
 
   await when.all(unpackedPackages.map(packPackage));
