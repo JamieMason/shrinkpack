@@ -118,7 +118,8 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
 
   const added = chalk.green(`+${uncachedPackages.length}`);
   const removed = chalk.red(`-${unneededArchives.length}`);
+  const resolved = chalk.yellow(`✓${unresolvedPackages.length}`);
   const timeTaken = chalk.grey(getTimeBetween(startTime, new Date()));
 
-  console.info('shrinkpack %s %s %s', added, removed, timeTaken);
+  console.info(`shrinkpack ${added} ${removed} ${resolved} ${timeTaken}`);
 };
