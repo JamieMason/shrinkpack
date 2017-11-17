@@ -30,7 +30,7 @@ export default {
     );
   },
   npmInstall(project) {
-    return execa('npm', ['install'], { cwd: project });
+    return execa('npm', ['install', '--loglevel', 'silly'], { cwd: project });
   },
   shrinkwrap(project) {
     return execa('npm', ['shrinkwrap', '--dev'], { cwd: project });
