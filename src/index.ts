@@ -39,7 +39,7 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const isCached = (pkg: IPackage): boolean => cachedArchives.indexOf(getArchivePath(pkg)) !== -1;
 
   const addToCache = async (pkg: IPackage) => {
-    verbose(`packing ${getArchiveName(pkg)}`);
+    verbose(`packing ${getArchiveName(pkg)} using "${pkg.node.resolved}"`);
     await npmPack(cachePath, pkg.node.resolved);
     addition(getArchiveName(pkg));
   };
@@ -95,6 +95,8 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const neededPackages = packages.filter(not(isBundled));
   const unresolvedPackages = neededPackages.filter(not(hasSemVerVersion));
 
+  await when.all(unresolvedPackages.map(mutateUnresolvedProps));
+
   const cachedArchives = (await readDir(cachePath)).filter(isArchivePath);
   const neededArchives = neededPackages.map(getArchivePath);
   const unneededArchives = cachedArchives.filter(not(isNeededArchive));
@@ -103,18 +105,17 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const uncachedPackages = neededPackages.filter(not(isCached));
   const uncachedTarPackages = uncachedPackages.filter(() => decompress);
 
-  await when.all(unresolvedPackages.map(mutateUnresolvedProps));
   await when.all(uncachedPackages.map(addToCache));
   await when.all(uncachedTarPackages.map(decompressPackage));
   await when.all(unneededArchives.map(removeFromCache));
-
-  const tempFiles = (await readDir(cachePath)).filter(isArchivePath).filter(not(isNeededArchive));
-  await when.all(tempFiles.map(rmFile));
 
   info(`rewriting ${lockfile.filePath}`);
   await when.all(tarPackages.map(mutateIntegrityProp));
   await when.all(neededPackages.map(mutateResolvedProp));
   await write(lockfile.filePath, lockfile.data);
+
+  const tempFiles = (await readDir(cachePath)).filter(isArchivePath).filter(not(isNeededArchive));
+  await when.all(tempFiles.map(rmFile));
 
   const added = chalk.green(`+${uncachedPackages.length}`);
   const removed = chalk.red(`-${unneededArchives.length}`);
