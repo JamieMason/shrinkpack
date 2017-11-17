@@ -7,7 +7,6 @@ import { decompressTar } from './lib/decompress-tar';
 import { mkDir, readDir, rmFile } from './lib/fs';
 import { getIntegrity } from './lib/get-integrity';
 import { getTimeBetween } from './lib/get-time-between';
-import { groupBy } from './lib/group-by';
 import { write } from './lib/json';
 import { getFragments, getPackages, locate } from './lib/lockfile';
 import { addition, error, info, removal, resolve, verbose } from './lib/log';
@@ -33,14 +32,13 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const getPackPath = (pkg: IPackage): string => (decompress ? getTarPath(pkg) : getTgzPath(pkg));
   const getResolvedPath = (pkg: IPackage): string => `file:node_shrinkwrap/${getPackName(pkg)}`;
 
-  const containsPattern = (regex: RegExp, str: string) => String(str).search(regex) !== -1;
-  const isTarPath = (str: string): boolean => containsPattern(/\.(tgz|tar)$/, str);
-  const isUnusedFile = (filePath: string): boolean => filePath in packagesByPackPath === false;
+  const isTarPath = (str: string): boolean => String(str).search(/\.(tgz|tar)$/) !== -1;
+  const isUnusedFile = (filePath: string): boolean => unbundledPackPaths.indexOf(filePath) === -1;
 
   const hasSemVerVersion = (pkg: IPackage): boolean => semver.valid(pkg.node.version);
   const isBundled = (pkg: IPackage): boolean => pkg.node.bundled === true;
   const isPackage = (pkg: IPackage): boolean => 'resolved' in pkg.node || 'version' in pkg.node;
-  const isPacked = (pkg: IPackage): boolean => getPackPath(pkg) in packedFilesByPackPath;
+  const isPacked = (pkg: IPackage): boolean => packedFiles.indexOf(getPackPath(pkg)) !== -1;
 
   const packPackage = async (pkg: IPackage) => {
     verbose(`packing ${getPackName(pkg)}`);
@@ -95,17 +93,15 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
     process.exit(1);
   }
 
-  const packedFiles = await readDir(packPath);
-  const packedFilesByPackPath = groupBy<string>((location: string) => location, packedFiles);
-
   const packages = getPackages(lockfile.data).filter(isPackage);
   const unbundledPackages = packages.filter(not(isBundled));
 
   await when.all(unbundledPackages.filter(not(hasSemVerVersion)).map(resolvePackage));
 
-  const packagesByPackPath = groupBy<IPackage>(getPackPath, unbundledPackages);
+  const packedFiles = (await readDir(packPath)).filter(isTarPath);
+  const unbundledPackPaths = unbundledPackages.map(getPackPath);
   const unpackedPackages = unbundledPackages.filter(not(isPacked));
-  const unusedPackages = packedFiles.filter(isTarPath).filter(isUnusedFile);
+  const unusedPackages = packedFiles.filter(isUnusedFile);
 
   await when.all(unpackedPackages.map(packPackage));
   await when.all(unpackedPackages.filter(tarRequired).map(decompressPackage));
