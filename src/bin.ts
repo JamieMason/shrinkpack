@@ -33,8 +33,9 @@ function onHelp() {
   console.log('  Icons:');
   console.log('');
   logIcon(chalk.green, '+', 'Added');
-  logIcon(chalk.blue, 'i', 'Information');
   logIcon(chalk.red, '-', 'Removed');
+  logIcon(chalk.yellow, '✓', 'Resolved');
+  logIcon(chalk.blue, 'i', 'Information');
   logIcon(chalk.grey, '12:34', 'Time Taken');
   console.log('');
   console.log('  Compression:');
