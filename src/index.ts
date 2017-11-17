@@ -91,6 +91,11 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
     process.exit(1);
   }
 
+  if (JSON.stringify(lockfile.data).indexOf('file:node_shrinkwrap') !== -1) {
+    error('npm-shrinkwrap.json is already shrinkpacked, update it using `npm shrinkwrap` then try again');
+    process.exit(1);
+  }
+
   const packages = getPackages(lockfile.data).filter(isPackage);
   const neededPackages = packages.filter(not(isBundled));
   const unresolvedPackages = neededPackages.filter(not(hasSemVerVersion));
