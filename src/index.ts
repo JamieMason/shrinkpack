@@ -71,7 +71,9 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   };
 
   const mutateUnresolvedProps = async (pkg: IPackage): Promise<IPackage> => {
-    const shell: IExeca = await spawn('npm', ['ls', '--json', pkg.key]);
+    const shell: IExeca = await spawn('npm', ['ls', '--json', pkg.key], {
+      stdio: ['pipe', 'pipe', 'inherit']
+    });
     const isSamePackage = (other: IFragment) => other.key === pkg.key;
     const isSameVersion = (other: IFragment) => other.node.resolved === pkg.node.version;
     const fragment: IFragment = getFragments(JSON.parse(shell.stdout))
