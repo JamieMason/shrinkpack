@@ -12,6 +12,16 @@ export interface IExeca {
   timedOut: boolean;
 }
 
+export interface IIntegrity {
+  concat: (other: IIntegrity) => IIntegrity;
+  toJSON: () => string;
+}
+
+export interface ISsri {
+  fromData: (data: string) => IIntegrity;
+  parse: (sri: string) => IIntegrity;
+}
+
 export type Shrinkpack = (options: { decompress: boolean; projectPath: string }) => Promise<void>;
 
 export interface IShrinkwrapIndex {

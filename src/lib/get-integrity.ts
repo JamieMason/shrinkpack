@@ -1,15 +1,15 @@
+import { IIntegrity, ISsri } from '../typings';
 import { readFile } from './fs';
 import { bug } from './log';
 
-const ssri = require('ssri');
+const ssri: ISsri = require('ssri');
 
-export const getIntegrity = async (filePath: string): Promise<string> => {
+export const getIntegrity = async (filePath: string): Promise<IIntegrity> => {
   try {
     const data = await readFile(filePath);
-    const integrity = ssri.fromData(data);
-    return ssri.stringify(integrity);
+    return ssri.fromData(data);
   } catch (err) {
     bug(`failed to get hash integrity of ${filePath} from zkat/ssri`, err);
-    return '';
+    return ssri.parse('');
   }
 };
