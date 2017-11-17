@@ -3,13 +3,13 @@ import { bug } from './log';
 
 const ssri = require('ssri');
 
-export const getIntegrity = async (tarPath: string): Promise<string> => {
+export const getIntegrity = async (filePath: string): Promise<string> => {
   try {
-    const tarContents = await readFile(tarPath);
-    const integrity = ssri.fromData(tarContents);
+    const data = await readFile(filePath);
+    const integrity = ssri.fromData(data);
     return ssri.stringify(integrity);
   } catch (err) {
-    bug(`failed to get hash integrity of ${tarPath} from zkat/ssri`, err);
+    bug(`failed to get hash integrity of ${filePath} from zkat/ssri`, err);
     return '';
   }
 };

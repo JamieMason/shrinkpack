@@ -53,5 +53,5 @@ export interface IFragment {
 
 export interface ILockfilePointer {
   data: IShrinkwrap;
-  location: string;
+  filePath: string;
 }

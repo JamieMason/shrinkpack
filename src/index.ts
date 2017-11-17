@@ -1,7 +1,6 @@
 import { IExeca, IFragment, IPackage, Shrinkpack, VariadicBooleanFn } from './typings';
 
 import { join, relative } from 'path';
-import { addToPack } from './lib/add-to-pack';
 import { spawn } from './lib/child-process';
 import { decompressTar } from './lib/decompress-tar';
 import { mkDir, readDir, rmFile } from './lib/fs';
@@ -10,6 +9,7 @@ import { getTimeBetween } from './lib/get-time-between';
 import { write } from './lib/json';
 import { getFragments, getPackages, locate } from './lib/lockfile';
 import { addition, error, info, removal, resolve, verbose } from './lib/log';
+import { npmPack } from './lib/npm-pack';
 
 const chalk = require('chalk');
 const semver = require('semver');
@@ -17,66 +17,64 @@ const when = require('when');
 
 export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = process.cwd() }) => {
   const startTime = new Date();
-  const packPath = join(projectPath, 'node_shrinkwrap');
+  const cachePath = join(projectPath, 'node_shrinkwrap');
 
-  const tarRequired = (): boolean => decompress;
   const not = (fn: VariadicBooleanFn): VariadicBooleanFn => (...args) => !fn(...args);
 
   const getKey = (pkg: IPackage) => pkg.key.replace(/@/g, '').replace(/\//g, '-');
   const getName = (extension: string) => (pkg: IPackage): string => `${getKey(pkg)}-${pkg.node.version}.${extension}`;
   const getTarName = getName('tar');
   const getTgzName = getName('tgz');
-  const getTarPath = (pkg: IPackage): string => join(packPath, getTarName(pkg));
-  const getTgzPath = (pkg: IPackage): string => join(packPath, getTgzName(pkg));
-  const getPackName = (pkg: IPackage): string => (decompress ? getTarName(pkg) : getTgzName(pkg));
-  const getPackPath = (pkg: IPackage): string => (decompress ? getTarPath(pkg) : getTgzPath(pkg));
-  const getResolvedPath = (pkg: IPackage): string => `file:node_shrinkwrap/${getPackName(pkg)}`;
+  const getTarPath = (pkg: IPackage): string => join(cachePath, getTarName(pkg));
+  const getTgzPath = (pkg: IPackage): string => join(cachePath, getTgzName(pkg));
+  const getArchiveName = (pkg: IPackage): string => (decompress ? getTarName(pkg) : getTgzName(pkg));
+  const getArchivePath = (pkg: IPackage): string => (decompress ? getTarPath(pkg) : getTgzPath(pkg));
 
-  const isTarPath = (str: string): boolean => String(str).search(/\.(tgz|tar)$/) !== -1;
-  const isUnusedFile = (filePath: string): boolean => unbundledPackPaths.indexOf(filePath) === -1;
+  const isArchivePath = (str: string): boolean => String(str).search(/\.(tgz|tar)$/) !== -1;
+  const isNeededArchive = (archivePath: string): boolean => neededArchives.indexOf(archivePath) !== -1;
 
   const hasSemVerVersion = (pkg: IPackage): boolean => semver.valid(pkg.node.version);
   const isBundled = (pkg: IPackage): boolean => pkg.node.bundled === true;
   const isPackage = (pkg: IPackage): boolean => 'resolved' in pkg.node || 'version' in pkg.node;
-  const isPacked = (pkg: IPackage): boolean => packedFiles.indexOf(getPackPath(pkg)) !== -1;
+  const isCached = (pkg: IPackage): boolean => cachedArchives.indexOf(getArchivePath(pkg)) !== -1;
 
-  const packPackage = async (pkg: IPackage) => {
-    verbose(`packing ${getPackName(pkg)}`);
-    await addToPack(packPath, pkg.node.resolved);
-    addition(getPackName(pkg));
+  const addToCache = async (pkg: IPackage) => {
+    verbose(`packing ${getArchiveName(pkg)}`);
+    await npmPack(cachePath, pkg.node.resolved);
+    addition(getArchiveName(pkg));
   };
 
-  const unpackPackage = async (tarPath: string) => {
-    const tarName = relative(packPath, tarPath);
+  const removeFromCache = async (archivePath: string) => {
+    const tarName = relative(cachePath, archivePath);
     verbose(`unpacking ${tarName}`);
-    await rmFile(tarPath);
+    await rmFile(archivePath);
     removal(tarName);
   };
 
   const decompressPackage = async (pkg: IPackage): Promise<IPackage> => {
-    verbose(`decompressing ${getPackName(pkg)}`);
+    verbose(`decompressing ${getArchiveName(pkg)}`);
     await decompressTar(getTgzPath(pkg), getTarPath(pkg));
     return pkg;
   };
 
-  const rewriteIntegrity = async (pkg: IPackage): Promise<IPackage> => {
-    verbose(`hashing ${getPackName(pkg)}`);
+  const mutateIntegrityProp = async (pkg: IPackage): Promise<IPackage> => {
+    verbose(`hashing ${getArchiveName(pkg)}`);
     const tgzIntegrity = pkg.node.integrity;
-    const tarIntegrity = await getIntegrity(getPackPath(pkg));
+    const tarIntegrity = await getIntegrity(getArchivePath(pkg));
     pkg.node.integrity = tgzIntegrity ? `${tgzIntegrity} ${tarIntegrity}` : tarIntegrity;
     return pkg;
   };
 
-  const rewriteResolved = (pkg: IPackage): IPackage => {
-    pkg.node.resolved = getResolvedPath(pkg);
+  const mutateResolvedProp = (pkg: IPackage): IPackage => {
+    pkg.node.resolved = `file:node_shrinkwrap/${getArchiveName(pkg)}`;
     return pkg;
   };
 
-  const resolvePackage = async (pkg: IPackage): Promise<IPackage> => {
-    const res: IExeca = await spawn('npm', ['ls', '--json', pkg.key]);
+  const mutateUnresolvedProps = async (pkg: IPackage): Promise<IPackage> => {
+    const shell: IExeca = await spawn('npm', ['ls', '--json', pkg.key]);
     const isSamePackage = (other: IFragment) => other.key === pkg.key;
     const isSameVersion = (other: IFragment) => other.node.resolved === pkg.node.version;
-    const fragment: IFragment = getFragments(JSON.parse(res.stdout))
+    const fragment: IFragment = getFragments(JSON.parse(shell.stdout))
       .filter(isSamePackage)
       .filter(isSameVersion)[0];
     pkg.node.version = fragment.node.version;
@@ -85,7 +83,7 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
     return pkg;
   };
 
-  await mkDir(packPath);
+  await mkDir(cachePath);
   const lockfile = await locate(projectPath);
 
   if (lockfile === null) {
@@ -94,29 +92,32 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   }
 
   const packages = getPackages(lockfile.data).filter(isPackage);
-  const unbundledPackages = packages.filter(not(isBundled));
+  const neededPackages = packages.filter(not(isBundled));
+  const unresolvedPackages = neededPackages.filter(not(hasSemVerVersion));
 
-  await when.all(unbundledPackages.filter(not(hasSemVerVersion)).map(resolvePackage));
+  const cachedArchives = (await readDir(cachePath)).filter(isArchivePath);
+  const neededArchives = neededPackages.map(getArchivePath);
+  const unneededArchives = cachedArchives.filter(not(isNeededArchive));
 
-  const packedFiles = (await readDir(packPath)).filter(isTarPath);
-  const unbundledPackPaths = unbundledPackages.map(getPackPath);
-  const unpackedPackages = unbundledPackages.filter(not(isPacked));
-  const unusedPackages = packedFiles.filter(isUnusedFile);
+  const tarPackages = neededPackages.filter(() => decompress);
+  const uncachedPackages = neededPackages.filter(not(isCached));
+  const uncachedTarPackages = uncachedPackages.filter(() => decompress);
 
-  await when.all(unpackedPackages.map(packPackage));
-  await when.all(unpackedPackages.filter(tarRequired).map(decompressPackage));
-  await when.all(unusedPackages.map(unpackPackage));
+  await when.all(unresolvedPackages.map(mutateUnresolvedProps));
+  await when.all(uncachedPackages.map(addToCache));
+  await when.all(uncachedTarPackages.map(decompressPackage));
+  await when.all(unneededArchives.map(removeFromCache));
 
-  const tempFiles = (await readDir(packPath)).filter(isTarPath).filter(isUnusedFile);
+  const tempFiles = (await readDir(cachePath)).filter(isArchivePath).filter(not(isNeededArchive));
   await when.all(tempFiles.map(rmFile));
 
-  info(`rewriting ${lockfile.location}`);
-  await when.all(unbundledPackages.filter(tarRequired).map(rewriteIntegrity));
-  await when.all(unbundledPackages.map(rewriteResolved));
-  await write(lockfile.location, lockfile.data);
+  info(`rewriting ${lockfile.filePath}`);
+  await when.all(tarPackages.map(mutateIntegrityProp));
+  await when.all(neededPackages.map(mutateResolvedProp));
+  await write(lockfile.filePath, lockfile.data);
 
-  const added = chalk.green(`+${unpackedPackages.length}`);
-  const removed = chalk.red(`-${unusedPackages.length}`);
+  const added = chalk.green(`+${uncachedPackages.length}`);
+  const removed = chalk.red(`-${unneededArchives.length}`);
   const timeTaken = chalk.grey(getTimeBetween(startTime, new Date()));
 
   console.info('shrinkpack %s %s %s', added, removed, timeTaken);
