@@ -27,7 +27,7 @@
   ],
   "dependencies": {
     "chalk": "2.3.0",
-    "commander": "2.11.0",
+    "commander": "2.12.2",
     "execa": "0.8.0",
     "graceful-fs": "4.1.11",
     "gunzip-maybe": "1.4.1",
@@ -36,12 +36,12 @@
     "when": "3.7.8"
   },
   "devDependencies": {
-    "@types/node": "8.0.51",
-    "ava": "0.23.0",
-    "circular-json": "0.4.0",
+    "@types/node": "8.5.2",
+    "ava": "0.24.0",
+    "circular-json": "0.5.1",
     "rimraf": "2.6.2",
     "tslint": "5.8.0",
-    "typescript": "2.6.1"
+    "typescript": "2.6.2"
   },
   "engines": {
     "node": ">=4.0",
