@@ -8,6 +8,6 @@ node_js:
   - '5'
   - '4'
 env:
-  - NPM_VERSION=5.5.1
+  - NPM_VERSION=4.6.1
 script:
   - NPM_VERSION=$NPM_VERSION npm test
