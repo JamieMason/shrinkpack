@@ -16,4 +16,6 @@ export const error = (value: string): void => console.log(chalk.red('! %s'), val
 export const info = (value: string): void => console.log(chalk.blue('i %s'), value);
 export const removal = (value: string): void => console.log(chalk.red('- %s'), value);
 export const resolve = (value: string): void => console.log(chalk.yellow('✓ %s'), value);
-export const verbose = (value: string): void => isVerbose && console.log(chalk.grey('? %s'), value);
+export const verbose = isVerbose
+  ? (value: string): void => console.info(chalk.grey('? %s'), value)
+  : (value: string): void => undefined;

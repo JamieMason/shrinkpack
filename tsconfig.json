@@ -1,17 +1,23 @@
 {
-  "files": ["./src/bin.ts", "./src/index.ts"],
+  "files": [
+    "./src/bin.ts",
+    "./src/index.ts"
+  ],
   "compilerOptions": {
     "declaration": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": ["es6"],
-    "noEmitHelpers": false,
-    "noImplicitAny": false,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "lib": [
+      "es6"
+    ],
     "outDir": "./dist",
-    "removeComments": true,
+    "skipLibCheck": true,
+    "strict": true,
     "target": "es3",
-    "types": ["node"]
+    "types": [
+      "execa",
+      "node",
+      "rimraf",
+      "when"
+    ]
   }
 }

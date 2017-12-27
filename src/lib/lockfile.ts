@@ -30,7 +30,7 @@ const forEach = (node: any, handler: any, key: string = '') => {
 };
 
 const toArray = <T, C>(lockfile: T): C[] => {
-  const nodes = [];
+  const nodes: any[] = [];
   forEach(lockfile, (key: string, node: T) => nodes.push({ key, node }));
   return nodes;
 };

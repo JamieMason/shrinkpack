@@ -1,7 +1,12 @@
 {
   "extends": "../tsconfig.json",
-  "files": ["./index.ts", "./test-util.ts", "./add-logging.ts"],
+  "files": [
+    "./index.ts",
+    "./test-util.ts",
+    "./add-logging.ts"
+  ],
   "compilerOptions": {
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "strict": false
   }
 }

@@ -8,7 +8,7 @@ import * as log from './lib/log';
 
 const { version } = require('../package.json');
 
-let directoryValue;
+let directoryValue = '';
 
 program
   .version(version)

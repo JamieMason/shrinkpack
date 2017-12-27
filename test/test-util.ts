@@ -1,9 +1,9 @@
-import * as execa from 'execa';
-import * as fs from 'fs';
-import * as os from 'os';
-import * as path from 'path';
-import * as when from 'when';
-import * as whenNode from 'when/node';
+const execa = require('execa');
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+const when = require('when');
+const whenNode = require('when/node');
 
 const mkdir = whenNode.lift(fs.mkdir);
 const readFile = whenNode.lift(fs.readFile);
