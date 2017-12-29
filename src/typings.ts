@@ -1,27 +1,6 @@
 export type VariadicBooleanFn = (...args: any[]) => boolean;
 export type Json = object | any[] | null;
 
-export interface IExeca {
-  cmd: string;
-  code: number;
-  killed: boolean;
-  message: string;
-  signal: null;
-  stderr: string;
-  stdout: string;
-  timedOut: boolean;
-}
-
-export interface IIntegrity {
-  concat: (other: IIntegrity) => IIntegrity;
-  toJSON: () => string;
-}
-
-export interface ISsri {
-  fromData: (data: string) => IIntegrity;
-  parse: (sri: string) => IIntegrity;
-}
-
 export type Shrinkpack = (options: { decompress: boolean; projectPath: string }) => Promise<void>;
 
 export interface IShrinkwrapIndex {

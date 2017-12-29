@@ -1,4 +1,4 @@
-import { spawn } from './child-process';
+import { spawn } from './io';
 import { bug } from './log';
 
 export const npmPack = async (cachePath: string, locator: string) => {

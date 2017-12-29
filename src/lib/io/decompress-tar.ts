@@ -1,12 +1,10 @@
-import { createReadStream, createWriteStream } from './fs';
-import { bug } from './log';
-import { rateLimit } from './rate-limit';
+import { createReadStream, createWriteStream } from 'fs-extra';
+import { bug } from '../log';
 
 const gunzipMaybe = require('gunzip-maybe');
-const when = require('when');
 
-export const decompressTar = rateLimit<string>((sourcePath: string, targetPath: string) =>
-  when.promise((resolve: () => void) => {
+export const decompressTar = (sourcePath: string, targetPath: string) =>
+  new Promise((resolve) => {
     const onError = (message: string) => (err: Error) => bug(message, err);
     const gunzip$ = gunzipMaybe();
     const read$ = createReadStream(sourcePath);
@@ -16,5 +14,4 @@ export const decompressTar = rateLimit<string>((sourcePath: string, targetPath: 
     write$.on('error', onError(`failed to write ${targetPath}`));
     write$.on('finish', resolve);
     read$.pipe(gunzip$).pipe(write$);
-  })
-);
+  });

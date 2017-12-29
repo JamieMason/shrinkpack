@@ -1,23 +1,21 @@
 {
-  "files": [
-    "./src/bin.ts",
-    "./src/index.ts"
+  "include": [
+    "./node_modules/@types",
+    "./src/**/*.ts"
   ],
   "compilerOptions": {
     "declaration": true,
     "forceConsistentCasingInFileNames": true,
     "lib": [
-      "es6"
+      "es2015"
     ],
     "outDir": "./dist",
     "skipLibCheck": true,
     "strict": true,
     "target": "es3",
-    "types": [
-      "execa",
-      "node",
-      "rimraf",
-      "when"
+    "typeRoots": [
+      "**/node_modules/@types",
+      "./src/types/**"
     ]
   }
 }

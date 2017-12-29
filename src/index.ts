@@ -1,19 +1,15 @@
-import { IExeca, IFragment, IPackage, Shrinkpack, VariadicBooleanFn } from './typings';
+import { IFragment, IPackage, Shrinkpack, VariadicBooleanFn } from './typings';
 
+import chalk from 'chalk';
 import { join, relative } from 'path';
-import { spawn } from './lib/child-process';
-import { decompressTar } from './lib/decompress-tar';
-import { mkDir, readDir, rmFile } from './lib/fs';
+import { valid as semverValid } from 'semver';
 import { getIntegrity } from './lib/get-integrity';
 import { getTimeBetween } from './lib/get-time-between';
-import { write } from './lib/json';
+import { decompressTar, mkdir, readdir, spawn, unlink } from './lib/io';
+import { write as writeJson } from './lib/json';
 import { getFragments, getPackages, locate } from './lib/lockfile';
 import { addition, error, info, removal, resolve, verbose } from './lib/log';
 import { npmPack } from './lib/npm-pack';
-
-const chalk = require('chalk');
-const semver = require('semver');
-const when = require('when');
 
 export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = process.cwd() }) => {
   const startTime = new Date();
@@ -33,7 +29,7 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const isArchivePath = (str: string): boolean => String(str).search(/\.(tgz|tar)$/) !== -1;
   const isNeededArchive = (archivePath: string): boolean => neededArchives.indexOf(archivePath) !== -1;
 
-  const hasSemVerVersion = (pkg: IPackage): boolean => semver.valid(pkg.node.version);
+  const hasSemVerVersion = (pkg: IPackage): boolean => semverValid(pkg.node.version) !== null;
   const isBundled = (pkg: IPackage): boolean => pkg.node.bundled === true;
   const isPackage = (pkg: IPackage): boolean => 'resolved' in pkg.node || 'version' in pkg.node;
   const isCached = (pkg: IPackage): boolean => cachedArchives.indexOf(getArchivePath(pkg)) !== -1;
@@ -47,7 +43,7 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const removeFromCache = async (archivePath: string) => {
     const tarName = relative(cachePath, archivePath);
     verbose(`unpacking ${tarName}`);
-    await rmFile(archivePath);
+    await unlink(archivePath);
     removal(tarName);
   };
 
@@ -71,12 +67,12 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   };
 
   const mutateUnresolvedProps = async (pkg: IPackage): Promise<IPackage> => {
-    const shell: IExeca = await spawn('npm', ['ls', '--json', pkg.key], {
+    const stdout = await spawn('npm', ['ls', '--json', pkg.key], {
       stdio: ['pipe', 'pipe', 'inherit']
     });
     const isSamePackage = (other: IFragment) => other.key === pkg.key;
     const isSameVersion = (other: IFragment) => other.node.resolved === pkg.node.version;
-    const fragment: IFragment = getFragments(JSON.parse(shell.stdout))
+    const fragment: IFragment = getFragments(JSON.parse(stdout))
       .filter(isSamePackage)
       .filter(isSameVersion)[0];
     pkg.node.version = fragment.node.version;
@@ -85,7 +81,7 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
     return pkg;
   };
 
-  await mkDir(cachePath);
+  await mkdir(cachePath);
   const lockfile = await locate(projectPath);
 
   if (lockfile === null) {
@@ -103,9 +99,9 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const neededPackages = packages.filter(not(isBundled));
   const unresolvedPackages = neededPackages.filter(not(hasSemVerVersion));
 
-  await when.all(unresolvedPackages.map(mutateUnresolvedProps));
+  await Promise.all(unresolvedPackages.map(mutateUnresolvedProps));
 
-  const cachedArchives = (await readDir(cachePath)).filter(isArchivePath);
+  const cachedArchives = (await readdir(cachePath)).filter(isArchivePath);
   const neededArchives = neededPackages.map(getArchivePath);
   const unneededArchives = cachedArchives.filter(not(isNeededArchive));
 
@@ -113,17 +109,17 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const uncachedPackages = neededPackages.filter(not(isCached));
   const uncachedTarPackages = uncachedPackages.filter(() => decompress);
 
-  await when.all(uncachedPackages.map(addToCache));
-  await when.all(uncachedTarPackages.map(decompressPackage));
-  await when.all(unneededArchives.map(removeFromCache));
+  await Promise.all(uncachedPackages.map(addToCache));
+  await Promise.all(uncachedTarPackages.map(decompressPackage));
+  await Promise.all(unneededArchives.map(removeFromCache));
 
   info(`rewriting ${lockfile.filePath}`);
-  await when.all(tarPackages.map(mutateIntegrityProp));
-  await when.all(neededPackages.map(mutateResolvedProp));
-  await write(lockfile.filePath, lockfile.data);
+  await Promise.all(tarPackages.map(mutateIntegrityProp));
+  await Promise.all(neededPackages.map(mutateResolvedProp));
+  await writeJson(lockfile.filePath, lockfile.data);
 
-  const tempFiles = (await readDir(cachePath)).filter(isArchivePath).filter(not(isNeededArchive));
-  await when.all(tempFiles.map(rmFile));
+  const tempFiles = (await readdir(cachePath)).filter(isArchivePath).filter(not(isNeededArchive));
+  await Promise.all(tempFiles.map(unlink));
 
   const added = chalk.green(`+${uncachedPackages.length}`);
   const removed = chalk.red(`-${unneededArchives.length}`);

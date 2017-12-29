@@ -1,9 +1,8 @@
 {
   "extends": "../tsconfig.json",
-  "files": [
-    "./index.ts",
-    "./test-util.ts",
-    "./add-logging.ts"
+  "include": [
+    "./*.ts",
+    "../node_modules/@types"
   ],
   "compilerOptions": {
     "outDir": "./dist",
