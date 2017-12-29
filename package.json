@@ -36,7 +36,7 @@
     "when": "3.7.8"
   },
   "devDependencies": {
-    "@types/execa": "0.8.0",
+    "@types/execa": "0.8.1",
     "@types/fs-extra": "5.0.0",
     "@types/node": "8.5.2",
     "@types/rimraf": "2.0.2",
