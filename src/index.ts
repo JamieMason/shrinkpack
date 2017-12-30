@@ -66,9 +66,8 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   };
 
   const mutateIntegrityProp = async (pkg: IPackage): Promise<IPackage> => {
-    const tgzIntegrity = await getIntegrity(getTgzPath(pkg));
-    const tarIntegrity = await getIntegrity(getTarPath(pkg));
-    pkg.node.integrity = tgzIntegrity.concat(tarIntegrity).toJSON();
+    const integrity = await getIntegrity(getArchivePath(pkg));
+    pkg.node.integrity = integrity.toJSON();
     return pkg;
   };
 
