@@ -27,6 +27,7 @@
   ],
   "dependencies": {
     "chalk": "2.3.0",
+    "circular-json": "0.5.1",
     "commander": "2.12.2",
     "execa": "0.8.0",
     "fs-extra": "5.0.0",
@@ -43,7 +44,6 @@
     "@types/semver": "5.4.0",
     "@types/when": "2.4.29",
     "ava": "0.24.0",
-    "circular-json": "0.5.1",
     "rimraf": "2.6.2",
     "tslint": "5.8.0",
     "typescript": "2.6.2"

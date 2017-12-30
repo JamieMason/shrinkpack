@@ -1,5 +1,20 @@
 import { IFragment, IPackage, Shrinkpack, VariadicBooleanFn } from './typings';
 
+if (process.env.NODE_ENV === 'development') {
+  const snitch = require('./lib/snitch').snitch;
+  snitch('semver', require('semver'));
+  snitch('ssri', require('ssri'));
+  snitch('src/lib/json', require('./lib/json'));
+  snitch('src/lib/get-integrity', require('./lib/get-integrity'));
+  snitch('src/lib/io/guard', require('./lib/io/guard'));
+  snitch('src/lib/io/fs', require('./lib/io/fs'));
+  snitch('src/lib/io/child-process', require('./lib/io/child-process'));
+  snitch('src/lib/io/decompress-tar', require('./lib/io/decompress-tar'));
+  snitch('src/lib/npm-pack', require('./lib/npm-pack'));
+  snitch('src/lib/lockfile', require('./lib/lockfile'));
+  snitch('src/lib/get-time-between', require('./lib/get-time-between'));
+}
+
 import chalk from 'chalk';
 import { join, relative } from 'path';
 import { valid as semverValid } from 'semver';
@@ -8,7 +23,7 @@ import { getTimeBetween } from './lib/get-time-between';
 import { decompressTar, mkdir, readdir, spawn, unlink } from './lib/io';
 import { write as writeJson } from './lib/json';
 import { getFragments, getPackages, locate } from './lib/lockfile';
-import { addition, error, info, removal, resolve, verbose } from './lib/log';
+import { addition, error, info, removal, resolve } from './lib/log';
 import { npmPack } from './lib/npm-pack';
 
 export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = process.cwd() }) => {
@@ -35,26 +50,22 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const isCached = (pkg: IPackage): boolean => cachedArchives.indexOf(getArchivePath(pkg)) !== -1;
 
   const addToCache = async (pkg: IPackage) => {
-    verbose(`packing ${getArchiveName(pkg)} using "${pkg.node.resolved}"`);
     await npmPack(cachePath, pkg.node.resolved);
     addition(getArchiveName(pkg));
   };
 
   const removeFromCache = async (archivePath: string) => {
     const tarName = relative(cachePath, archivePath);
-    verbose(`unpacking ${tarName}`);
     await unlink(archivePath);
     removal(tarName);
   };
 
   const decompressPackage = async (pkg: IPackage): Promise<IPackage> => {
-    verbose(`decompressing ${getArchiveName(pkg)}`);
     await decompressTar(getTgzPath(pkg), getTarPath(pkg));
     return pkg;
   };
 
   const mutateIntegrityProp = async (pkg: IPackage): Promise<IPackage> => {
-    verbose(`hashing ${getArchiveName(pkg)}`);
     const tgzIntegrity = await getIntegrity(getTgzPath(pkg));
     const tarIntegrity = await getIntegrity(getTarPath(pkg));
     pkg.node.integrity = tgzIntegrity.concat(tarIntegrity).toJSON();
