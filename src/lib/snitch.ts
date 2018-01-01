@@ -26,10 +26,9 @@ export const snitch = (file: string, api: { [key: string]: any }) => {
     .filter((key) => typeof api[key] === 'function')
     .map((key) => ({ key, value: api[key] }))
     .forEach(({ key, value }) => {
-      const original = api[key];
       api[key] = (...args: any[]) => {
         try {
-          const result = original.call(api, ...args);
+          const result = value.call(api, ...args);
           logFunction(chalk.blue(file), key, args, result);
           if (isPromise(result)) {
             result

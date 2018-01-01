@@ -1,10 +1,11 @@
-import { IFragment, IPackage, Shrinkpack, VariadicBooleanFn } from './typings';
+import { IPackage, Shrinkpack, VariadicBooleanFn } from './typings';
 
 if (process.env.NODE_ENV === 'development') {
   const snitch = require('./lib/snitch').snitch;
   snitch('semver', require('semver'));
   snitch('ssri', require('ssri'));
   snitch('src/lib/json', require('./lib/json'));
+  snitch('src/lib/get-fragment', require('./lib/get-fragment'));
   snitch('src/lib/get-integrity', require('./lib/get-integrity'));
   snitch('src/lib/io/guard', require('./lib/io/guard'));
   snitch('src/lib/io/fs', require('./lib/io/fs'));
@@ -18,11 +19,12 @@ if (process.env.NODE_ENV === 'development') {
 import chalk from 'chalk';
 import { join, relative } from 'path';
 import { valid as semverValid } from 'semver';
+import { getFragment } from './lib/get-fragment';
 import { getIntegrity } from './lib/get-integrity';
 import { getTimeBetween } from './lib/get-time-between';
-import { decompressTar, mkdir, readdir, spawn, unlink } from './lib/io';
+import { decompressTar, mkdir, readdir, unlink } from './lib/io';
 import { write as writeJson } from './lib/json';
-import { getFragments, getPackages, locate } from './lib/lockfile';
+import { getPackages, locate } from './lib/lockfile';
 import { addition, error, info, removal, resolve } from './lib/log';
 import { npmPack } from './lib/npm-pack';
 
@@ -77,12 +79,7 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   };
 
   const mutateUnresolvedProps = async (pkg: IPackage): Promise<IPackage> => {
-    const stdout = await spawn('npm', ['ls', '--json', pkg.key]);
-    const isSamePackage = (other: IFragment) => other.key === pkg.key;
-    const isSameVersion = (other: IFragment) => other.node.resolved === pkg.node.version;
-    const fragment: IFragment = getFragments(JSON.parse(stdout))
-      .filter(isSamePackage)
-      .filter(isSameVersion)[0];
+    const fragment = await getFragment(pkg);
     pkg.node.version = fragment.node.version;
     pkg.node.resolved = fragment.node.resolved;
     resolve(`${pkg.key}@${pkg.node.version} (${pkg.node.resolved})`);
