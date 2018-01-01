@@ -44,19 +44,19 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const getArchivePath = (pkg: IPackage): string => (decompress ? getTarPath(pkg) : getTgzPath(pkg));
 
   const isArchivePath = (str: string): boolean => String(str).search(/\.(tgz|tar)$/) !== -1;
-  const isNeededArchive = (archivePath: string): boolean => neededArchives.indexOf(archivePath) !== -1;
+  const isNeededArchive = (archivePath: string): boolean => archivesToKeep.indexOf(archivePath) !== -1;
 
   const hasSemVerVersion = (pkg: IPackage): boolean => semverValid(pkg.node.version) !== null;
   const isBundled = (pkg: IPackage): boolean => pkg.node.bundled === true;
   const isPackage = (pkg: IPackage): boolean => 'resolved' in pkg.node || 'version' in pkg.node;
-  const isCached = (pkg: IPackage): boolean => cachedArchives.indexOf(getArchivePath(pkg)) !== -1;
+  const isCached = (pkg: IPackage): boolean => archives.indexOf(getArchivePath(pkg)) !== -1;
 
-  const addToCache = async (pkg: IPackage) => {
+  const addArchive = async (pkg: IPackage) => {
     await npmPack(cachePath, pkg.node.resolved);
     addition(getArchiveName(pkg));
   };
 
-  const removeFromCache = async (archivePath: string) => {
+  const removeArchive = async (archivePath: string) => {
     const tarName = relative(cachePath, archivePath);
     await unlink(archivePath);
     removal(tarName);
@@ -67,18 +67,18 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
     return pkg;
   };
 
-  const mutateIntegrityProp = async (pkg: IPackage): Promise<IPackage> => {
+  const rehashPackage = async (pkg: IPackage): Promise<IPackage> => {
     const integrity = await getIntegrity(getArchivePath(pkg));
     pkg.node.integrity = integrity.toJSON();
     return pkg;
   };
 
-  const mutateResolvedProp = (pkg: IPackage): IPackage => {
+  const repointPackage = (pkg: IPackage): IPackage => {
     pkg.node.resolved = `file:node_shrinkwrap/${getArchiveName(pkg)}`;
     return pkg;
   };
 
-  const mutateUnresolvedProps = async (pkg: IPackage): Promise<IPackage> => {
+  const resolvePackage = async (pkg: IPackage): Promise<IPackage> => {
     const fragment = await getFragment(pkg);
     pkg.node.version = fragment.node.version;
     pkg.node.resolved = fragment.node.resolved;
@@ -100,35 +100,36 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
     process.exit(1);
   }
 
-  const packages = getPackages(lockfile.data).filter(isPackage);
-  const neededPackages = packages.filter(not(isBundled));
-  const unresolvedPackages = neededPackages.filter(not(hasSemVerVersion));
+  const packages = getPackages(lockfile.data)
+    .filter(isPackage)
+    .filter(not(isBundled));
 
-  await Promise.all(unresolvedPackages.map(mutateUnresolvedProps));
+  const packagesToResolve = packages.filter(not(hasSemVerVersion));
+  await Promise.all(packagesToResolve.map(resolvePackage));
 
-  const cachedArchives = (await readdir(cachePath)).filter(isArchivePath);
-  const neededArchives = neededPackages.map(getArchivePath);
-  const unneededArchives = cachedArchives.filter(not(isNeededArchive));
+  const archives = (await readdir(cachePath)).filter(isArchivePath);
+  const archivesToKeep = packages.map(getArchivePath);
+  const archivesToRemove = archives.filter(not(isNeededArchive));
 
-  const tarPackages = neededPackages.filter(() => decompress);
-  const uncachedPackages = neededPackages.filter(not(isCached));
-  const uncachedTarPackages = uncachedPackages.filter(() => decompress);
+  const packagesToAdd = packages.filter(not(isCached));
+  const packagesToDecompress = decompress ? packagesToAdd : [];
+  const packagesToRehash = decompress ? packages : [];
 
-  await Promise.all(uncachedPackages.map(addToCache));
-  await Promise.all(uncachedTarPackages.map(decompressPackage));
-  await Promise.all(unneededArchives.map(removeFromCache));
+  await Promise.all(packagesToAdd.map(addArchive));
+  await Promise.all(packagesToDecompress.map(decompressPackage));
+  await Promise.all(archivesToRemove.map(removeArchive));
 
   info(`rewriting ${lockfile.filePath}`);
-  await Promise.all(tarPackages.map(mutateIntegrityProp));
-  await Promise.all(neededPackages.map(mutateResolvedProp));
+  await Promise.all(packagesToRehash.map(rehashPackage));
+  await Promise.all(packages.map(repointPackage));
   await writeJson(lockfile.filePath, lockfile.data);
 
   const tempFiles = (await readdir(cachePath)).filter(isArchivePath).filter(not(isNeededArchive));
   await Promise.all(tempFiles.map(unlink));
 
-  const added = chalk.green(`+${uncachedPackages.length}`);
-  const removed = chalk.red(`-${unneededArchives.length}`);
-  const resolved = chalk.yellow(`✓${unresolvedPackages.length}`);
+  const added = chalk.green(`+${packagesToAdd.length}`);
+  const removed = chalk.red(`-${archivesToRemove.length}`);
+  const resolved = chalk.yellow(`✓${packagesToResolve.length}`);
   const timeTaken = chalk.grey(getTimeBetween(startTime, new Date()));
 
   console.info(`shrinkpack ${added} ${removed} ${resolved} ${timeTaken}`);
