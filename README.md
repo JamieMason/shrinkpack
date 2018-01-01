@@ -97,8 +97,9 @@ Shrinkpack works in 2 phases;
 ```js
 var shrinkpack = require('shrinkpack');
 
-shrinkpack.analyse({ compress: false, directory: process.cwd(), keepOptional: false })
-  .then(data => shrinkpack.update(data));
+shrinkpack
+  .analyse({ compress: false, directory: process.cwd(), keepOptional: false })
+  .then((data) => shrinkpack.update(data));
 ```
 
 Or to run `shrinkpack` in full, including all the additional logging that you see when using the CLI.
@@ -106,8 +107,7 @@ Or to run `shrinkpack` in full, including all the additional logging that you se
 ```js
 var shrinkpack = require('shrinkpack');
 
-shrinkpack.cli({ compress: false, directory: process.cwd(), keepOptional: false })
-  .then(() => {});
+shrinkpack.cli({ compress: false, directory: process.cwd(), keepOptional: false }).then(() => {});
 ```
 
 ## Target Problem
@@ -124,8 +124,8 @@ We were all very happy with this process and the convenience of npm in particula
 our builds where `npm install` listed a huge amount of network traffic would always raise the same
 concerns;
 
-+ This seems slow, wasteful, and inefficient.
-+ We _really_ depend on registry.npmjs.org, what do we do if it goes down?
+* This seems slow, wasteful, and inefficient.
+* We _really_ depend on registry.npmjs.org, what do we do if it goes down?
 
 The first suggestion was always to check in our dependencies, but the idea of some large and chatty
 commits whenever we chose to upgrade or change them would put us off.
@@ -136,7 +136,7 @@ to find that some packages such as [phantomjs](https://www.npmjs.com/package/pha
 depending on what system you're running.
 
 This meant that if Chris added `phantomjs` or `node-sass` to the project on his Mac and checked it
-into the repository, Helen wouldn't be able to use it on her  Windows Machine.
+into the repository, Helen wouldn't be able to use it on her Windows Machine.
 
 The remaining alternatives were proxies, mirrors, and caches-of-sorts. None of which appealed to us
 and, grudgingly, we continued as we were (<abbr title="Your Mileage May Vary">YMMV</abbr>).
@@ -146,10 +146,10 @@ and, grudgingly, we continued as we were (<abbr title="Your Mileage May Vary">YM
 Whenever we add, remove, or update an npm dependency — we should test our application for
 regressions before locking down our dependencies to avoid them mutating over time.
 
-+ You can't be sure of this without `npm shrinkwrap`.
-+ Checking in `node_modules` is horrible (and doesn't work in many cases anyway).
-+ You can be reasonably sure of this with `npm shrinkwrap`.
-+ You can be completely sure of this with `npm shrinkwrap` and `shrinkpack`.
+* You can't be sure of this without `npm shrinkwrap`.
+* Checking in `node_modules` is horrible (and doesn't work in many cases anyway).
+* You can be reasonably sure of this with `npm shrinkwrap`.
+* You can be completely sure of this with `npm shrinkwrap` and `shrinkpack`.
 
 ### npm shrinkwrap
 
@@ -179,17 +179,16 @@ contains a regression.
 With you hopefully convinced of the merits of `npm shrinkwrap`, `shrinkpack` will hopefully be seen
 as a small and complementary addition.
 
-`shrinkpack` takes the .tgz tarballs of that specific, shrinkwrapped dependency graph saved by `npm
-shrinkwrap` and stores them within your project.
+`shrinkpack` takes the .tgz tarballs of that specific, shrinkwrapped dependency graph saved by `npm shrinkwrap` and stores them within your project.
 
 This means;
 
-+ No need for repeated requests to registry.npmjs.org.
-+ Each package/version pair can be checked in as a single tarball, avoiding commits with all kinds
+* No need for repeated requests to registry.npmjs.org.
+* Each package/version pair can be checked in as a single tarball, avoiding commits with all kinds
   of noisy diffs.
-+ Packages can be checked in, while still installed by members of the team on different operating
+* Packages can be checked in, while still installed by members of the team on different operating
   systems.
-+ Complements the typical `npm shrinkwrap` workflow.
+* Complements the typical `npm shrinkwrap` workflow.
 
 ## Suitability to your project
 
@@ -274,8 +273,8 @@ npm shrinkwrap --dev
 ### Create a project-specific cache (optional)
 
 When using `shrinkpack`, the local file path to dependencies will be added to the `npm` client's
-[local cache](https://docs.npmjs.com/cli/cache). This can be  problematic when working on several
-projects on a single machine  ([#31](https://github.com/JamieMason/shrinkpack/issues/31)).
+[local cache](https://docs.npmjs.com/cli/cache). This can be problematic when working on several
+projects on a single machine ([#31](https://github.com/JamieMason/shrinkpack/issues/31)).
 
 This step prevents npm from using this project as a registry should you install the same
 package/version pair on another project on your machine.

@@ -44,6 +44,7 @@
     "@types/semver": "5.4.0",
     "@types/when": "2.4.29",
     "ava": "0.24.0",
+    "prettier": "1.9.2",
     "rimraf": "2.6.2",
     "tslint": "5.8.0",
     "typescript": "2.6.2"
@@ -76,10 +77,12 @@
     "build": "npm run build:src && npm run build:test",
     "build:src": "tsc --project .",
     "build:test": "tsc --project ./test",
+    "format": "prettier --write '**/*.md' './src/**/*.ts' './test/**/*.ts'",
     "lint": "npm run lint:src && npm run lint:test",
     "lint:src": "tslint --fix --project ./tsconfig.json",
     "lint:test": "tslint --fix --project ./test/tsconfig.json",
     "prebuild": "rimraf dist ./test/dist",
+    "prelint": "npm run format",
     "prepack": "npm run build",
     "pretest": "npm run build:test",
     "test": "ava"
