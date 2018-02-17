@@ -68,8 +68,7 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   };
 
   const rehashPackage = async (pkg: IPackage): Promise<IPackage> => {
-    const integrity = await getIntegrity(getArchivePath(pkg));
-    pkg.node.integrity = integrity.toJSON();
+    pkg.node.integrity += ' ' + await getIntegrity(getArchivePath(pkg))
     return pkg;
   };
 
@@ -90,7 +89,7 @@ export const shrinkpack: Shrinkpack = async ({ decompress = true, projectPath = 
   const lockfile = await locate(projectPath);
 
   if (lockfile === null) {
-    error('npm-shrinkwrap.json is missing, create it using `npm shrinkwrap` then try again');
+    error('no package-lock.json or npm-shrinkwrap.json found. Please install using npm@5 or later, or run `npm shrinkwrap` to generate one.');
     process.exit(1);
     return;
   }
