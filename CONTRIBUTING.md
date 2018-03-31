@@ -2,15 +2,15 @@
 
 ## Installation
 
-1. Download `node` at [nodejs.org](http://nodejs.org) and install it, if you haven't already.
-1. Clone the repo.
+1.  Download `node` at [nodejs.org](http://nodejs.org) and install it, if you haven't already.
+1.  Clone the repo.
 
 ```sh
 git clone https://github.com/JamieMason/shrinkpack.git
 cd shrinkpack
 ```
 
-1. Install dependencies.
+1.  Install dependencies.
 
 ```sh
 npm install
@@ -18,15 +18,15 @@ npm install
 
 ## Running Tests
 
-1. Download `docker` at [docker.com](https://docs.docker.com) and install it, if you haven't already.
-1. Start a Terminal Session with `docker` running.
-1. Build the tests
+1.  Download `docker` at [docker.com](https://docs.docker.com) and install it, if you haven't already.
+1.  Start a Terminal Session with `docker` running.
+1.  Build the tests
 
 ```sh
 npm run build-tests
 ```
 
-1. Run the tests
+1.  Run the tests
 
 ```sh
 npm test
@@ -40,10 +40,10 @@ If an issue with a known npm package is found or a particular type of package co
 
 ## Configuring Tests
 
-1. To change the version of `node`, edit the first statement of the `./Dockerfile` from eg `FROM node:4.2.4` to eg `FROM node:6.2.2`.
-1. To change the version of `npm`, set the `NPM_VERSION` variable in `scripts.test` in `./package.json`.
-1. Build the tests.
-1. Run the tests.
+1.  To change the version of `node`, edit the first statement of the `./Dockerfile` from eg `FROM node:4.2.4` to eg `FROM node:6.2.2`.
+1.  To change the version of `npm`, set the `NPM_VERSION` variable in `scripts.test` in `./package.json`.
+1.  Build the tests.
+1.  Run the tests.
 
 ## Coding Style
 
