@@ -1,7 +1,9 @@
-import { spawn } from './io';
+import { guard, limitTo, spawn } from './io';
 import { bug } from './log';
 
-export const npmPack = async (cachePath: string, locator: string) => {
+const rateLimit = limitTo(12);
+
+export const guardedNpmPack = async (cachePath: string, locator: string) => {
   try {
     await spawn('npm', ['pack', locator], {
       cwd: cachePath
@@ -10,3 +12,5 @@ export const npmPack = async (cachePath: string, locator: string) => {
     bug(`failed to "npm pack ${locator}"`, err);
   }
 };
+
+export const npmPack: typeof guardedNpmPack = guard(rateLimit, guardedNpmPack);
