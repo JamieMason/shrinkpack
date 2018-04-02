@@ -41,7 +41,7 @@ module.exports = {
     return execa('npm', ['shrinkwrap', '--dev'], {cwd: project});
   },
   shrinkpack: function (project) {
-    return execa('shrinkpack', ['--keep-optional'], {cwd: project});
+    return execa('shrinkpack', ['.'], {cwd: project});
   },
   linkShrinkpack: function (root) {
     return execa('npm', ['link'], {cwd: root});

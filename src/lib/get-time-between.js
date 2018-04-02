@@ -13,7 +13,7 @@ function msToTime(ms) {
 }
 
 function msToMins(ms) {
-  return Math.floor(ms ? (ms / 1000) / 60 : 0);
+  return Math.floor(ms ? ms / 1000 / 60 : 0);
 }
 
 function msToSecs(ms) {
