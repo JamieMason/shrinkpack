@@ -1,0 +1,38 @@
+name: verify
+
+on:
+  push:
+    branches: [master]
+  pull_request_target:
+
+jobs:
+  all:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+
+      - name: Install
+        run: npm install
+
+      - name: Build
+        run: npm run build
+        env:
+          FORCE_COLOR: 3
+          TERM: xterm-256color
+
+      - name: Lint
+        run: npm run lint
+        env:
+          FORCE_COLOR: 3
+          TERM: xterm-256color
+
+      - name: Test
+        run: ./test/integration.sh
+        env:
+          FORCE_COLOR: 3
+          TERM: xterm-256color

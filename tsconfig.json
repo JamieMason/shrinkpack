@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "declaration": false,
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["es2017", "es6"],
+    "outDir": "./dist",
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "es3"
+  },
+  "include": ["./package.json", "./src/**/*.ts"],
+  "exclude": ["./src/**/*.spec.ts"]
+}
