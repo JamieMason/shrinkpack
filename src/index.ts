@@ -26,40 +26,37 @@ export async function shrinkpack({ directory }: Options): Promise<void> {
 
   for (const key in lockfile.packages) {
     if (key === '') continue;
+    if (!key.includes('node_modules')) continue;
     const record = lockfile.packages[key];
-    if (!record.resolved) {
-      log.error(
-        `missing "resolved" fields in ${lockfilePath}\n  delete and recreate the lockfile`,
-      );
-      process.exit(1);
-    }
+    if (record.link === true) continue;
+    if (!record.resolved && !record.version) continue;
     const name = key.replace(/^.*node_modules\//g, '');
+    const scopelessName = name.replace(/^.+\//, '');
+    const resolved =
+      record.resolved ||
+      `https://registry.npmjs.org/${name}/-/${scopelessName}-${record.version}.tgz`;
     const wrapFileName = `${name.replace(/\//g, '_')}-${record.version}.tar`;
     const wrapFilePath = join(wrapDirPath, wrapFileName);
     const shortWrapFilePath = relative(directory, wrapFilePath);
     const spec = `${name}@${record.version}`;
     const isInWrapDir = wrapDirContents.includes(wrapFileName);
-    const isAlreadyWrapped = record.resolved.includes('node_shrinkpack');
-    if (isAlreadyWrapped) {
-      if (isInWrapDir) {
-        log.info(`${spec} is already shrinkpacked`);
-      } else {
-        const header = `${spec} points to ${record.resolved} which is missing`;
-        const footer = `delete lockfile, reinstall, then run shrinkpack again`;
-        log.error(`${header}\n  ${footer}`);
-        process.exit(1);
-      }
+    const isAlreadyWrapped = resolved.includes('node_shrinkpack');
+    if (isAlreadyWrapped && !isInWrapDir) {
+      const header = `${spec} points to ${resolved} which is missing`;
+      const footer = `delete lockfile, reinstall, then run shrinkpack again`;
+      log.error(`${header}\n  ${footer}`);
+      process.exit(1);
     }
     const integrity = isInWrapDir
       ? await getSsriFromFile(wrapFilePath)
-      : await fromNetwork(record.resolved, wrapFilePath);
+      : await fromNetwork(resolved, wrapFilePath);
 
     if (!isInWrapDir) {
       log.download(spec);
       totalAdded++;
     }
 
-    record.integrity = `${record.integrity} ${integrity}`;
+    record.integrity = [record.integrity, integrity].filter(Boolean).join(' ');
     record.resolved = `file:${shortWrapFilePath}`;
     requiredWrapDirContents[wrapFileName] = true;
   }

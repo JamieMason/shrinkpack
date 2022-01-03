@@ -26,6 +26,7 @@ export interface LockfilePackage {
    */
   integrity: string;
   license: string;
+  link?: true;
   name: string;
   optional?: true;
   /**
