@@ -1,7 +1,7 @@
 {
   "name": "shrinkpack",
   "description": "Fast, resilient, reproducible builds with npm install.",
-  "version": "0.19.0",
+  "version": "0.20.0",
   "author": "Jamie Mason (https://github.com/JamieMason)",
   "bin": {
     "shrinkpack": "dist/bin.js"

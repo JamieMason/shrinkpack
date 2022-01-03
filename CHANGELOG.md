@@ -1,3 +1,12 @@
+# [0.20.0](https://github.com/JamieMason/shrinkpack/compare/0.19.0...0.20.0) (2022-01-03)
+
+
+### Features
+
+* **package-lock:** handle missing resolved fields ([41a304f](https://github.com/JamieMason/shrinkpack/commit/41a304f4ea7914f497c45cb095aeae9f70cc50c8))
+
+
+
 # [0.19.0](https://github.com/JamieMason/shrinkpack/compare/0.18.1...0.19.0) (2021-12-29)
 
 
